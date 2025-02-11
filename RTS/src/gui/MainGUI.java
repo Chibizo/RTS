@@ -5,10 +5,14 @@ import javax.swing.JPanel;
 import javax.swing.JButton;
 import engine.process.*;
 
+import java.awt.Color;
+import java.awt.FlowLayout;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -35,8 +39,13 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private MobileInterface manager;
 	
-	private JPanel panelBuilding=new JPanel() ;
+	private JPanel panelInteraction=new JPanel(new FlowLayout()) ;
+	
+	
+	
 	private JButton baseBuilding=new JButton("Base");
+	
+	private boolean placingBuilding= false;
 
 
 	public MainGUI(String title) {
@@ -69,9 +78,9 @@ public class MainGUI extends JFrame implements Runnable {
 		
 		contentPane.add(dashboard,BorderLayout.CENTER);
 		
-		panelBuilding.setLayout(new GridLayout());
-		panelBuilding.add(baseBuilding);
-		contentPane.add(panelBuilding, BorderLayout.EAST);
+		panelInteraction.add(baseBuilding);
+		baseBuilding.addActionListener(new PutBase());
+		contentPane.add(panelInteraction, BorderLayout.EAST);
 
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -84,12 +93,13 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private void initStyle() {
 		  baseBuilding.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
-		  baseBuilding.setBackground(new java.awt.Color(45, 45, 45));  
-		  baseBuilding.setForeground(new java.awt.Color(255, 255, 255));
+		  baseBuilding.setBackground(new Color(50, 100, 150));
+		  baseBuilding.setForeground(Color.WHITE);
 		  baseBuilding.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-		  baseBuilding.setPreferredSize(new Dimension(315, 50));
+		  baseBuilding.setPreferredSize(new Dimension(100,100));
 		  
-		  panelBuilding.setBackground(new java.awt.Color(33, 33, 33));
+		  panelInteraction.setBackground(new Color(40, 40, 40));
+		  
 	}
 
 	@Override
@@ -139,21 +149,24 @@ public class MainGUI extends JFrame implements Runnable {
 			int x = e.getX()/GameConfiguration.BLOCK_SIZE;
 			int y = e.getY()/GameConfiguration.BLOCK_SIZE;
 
-			
-			ArrayList<Position> listPosition= new ArrayList<Position>();
-			listPosition.add(map.getBlock(x, y));
-			listPosition.add(map.getBlock(x-1, y));
-			listPosition.add(map.getBlock(x-1, y-1));
-			listPosition.add(map.getBlock(x, y-1));
-
-			Zone zone=new Zone(listPosition);		
-			
-			manager.putBuilding(zone);
-			
-			for(Position position : listPosition){
-				System.out.println(position.getLine()+" "+position.getColumn());
+			if(placingBuilding) {
+				ArrayList<Position> listPosition= new ArrayList<Position>();
+				listPosition.add(map.getBlock(x, y));
+				listPosition.add(map.getBlock(x-1, y));
+				listPosition.add(map.getBlock(x-1, y-1));
+				listPosition.add(map.getBlock(x, y-1));
+	
+				Zone zone=new Zone(listPosition);		
+				
+				manager.putBuilding(zone);
+				
+				for(Position position : listPosition){
+					System.out.println(position.getLine()+" "+position.getColumn());
+				}
+					System.out.println(x + " " + y);
+				placingBuilding=false;
+				baseBuilding.setText("Base");
 			}
-				System.out.println(x + " " + y);
 		}
 
 		@Override
@@ -175,5 +188,13 @@ public class MainGUI extends JFrame implements Runnable {
 		public void mouseExited(MouseEvent e) {
 
 		}
+	}
+	private class PutBase implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+				placingBuilding=true;
+				baseBuilding.setText("...");
+		}
+		
 	}
 }

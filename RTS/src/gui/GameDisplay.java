@@ -2,6 +2,7 @@ package gui;
 
 
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -30,13 +31,15 @@ public class GameDisplay extends JPanel {
 	@Override
 	public void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		Graphics2D g2 = (Graphics2D) g;
+
 
 		paintStrategy.paint(map, g);
 		
 		
 		Building building=manager.getBuilding();
 		if(building!=null) {
-			paintStrategy.paint(building,g);
+			paintStrategy.paint(building,g2);
 		}
 
 		

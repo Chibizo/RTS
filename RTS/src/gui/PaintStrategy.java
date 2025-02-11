@@ -1,7 +1,9 @@
 package gui;
 
-
+import java.awt.Graphics2D;
 import engine.mobile.*;
+import engine.process.GameBuilder;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
@@ -13,6 +15,7 @@ import engine.map.*;
 
 public class PaintStrategy {
 	
+
 	
 	public void paint(Map map, Graphics graphics) {
 		int blockSize=GameConfiguration.BLOCK_SIZE;
@@ -30,7 +33,8 @@ public class PaintStrategy {
 		
 	}
 	
-	public void paint(Building building,Graphics graphics) {
+	
+	/**public void paint(Building building,Graphics graphics) {
 		int blockSize=GameConfiguration.BLOCK_SIZE;		
 		for(Position position : building.getZone().getPositions()) {
 			int x=position.getLine();
@@ -40,6 +44,17 @@ public class PaintStrategy {
 			graphics.setColor(Color.BLACK);
 			graphics.fillRect(x*blockSize, y*blockSize, blockSize, blockSize);
 		}
+	}
+	**/
+	
+	public void paint(Building building, Graphics2D g2) {
+	    Position position = building.getZone().getPositions().get(0);
+	    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
+	    	position.getLine() * GameConfiguration.BLOCK_SIZE-15,   
+	        position.getColumn() * GameConfiguration.BLOCK_SIZE-30, 
+	        GameConfiguration.BLOCK_SIZE * 4,
+	        GameConfiguration.BLOCK_SIZE * 4,
+	        null);
 	}
 
 }

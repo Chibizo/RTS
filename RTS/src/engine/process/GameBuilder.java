@@ -1,5 +1,11 @@
 package engine.process;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
+
 import config.GameConfiguration;
 import engine.map.Map;
 
@@ -15,4 +21,12 @@ public class GameBuilder {
 		return manager;
 	}
 	
+	public static Image readImage(String filePath) {
+		try {
+			return ImageIO.read(new File(filePath));
+		} catch (IOException e) {
+			System.err.println("-- Can not read the image file ! --");
+			return null;
+		}
+	}
 }

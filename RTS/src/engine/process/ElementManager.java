@@ -16,6 +16,11 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	public void putBuilding(Zone zone) {
+		for(Position position : zone.getPositions()) {
+			if (map.isOnBorder(position)) {
+				return;
+			}
+		}
 		building=new Building(zone);		
 	}
 	
