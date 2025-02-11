@@ -1,9 +1,14 @@
 package engine.process;
 
-public class MobileInterface {
+import engine.map.*;
+import engine.mobile.*;
+import java.util.ArrayList;
+
+public interface MobileInterface {
 
 	
-	void putBuilding
+	void putBuilding(Zone zone);
 	
+	Building getBuilding();
 	
 }
