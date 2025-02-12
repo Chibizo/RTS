@@ -39,25 +39,29 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private MobileInterface manager;
 	
-	private JPanel panelInteraction=new JPanel(new FlowLayout()) ;
+	private JPanel panelInteraction=new JPanel(new GridLayout(5,1)) ;
 	
+	private BuildingPanel buildingPanel=new BuildingPanel();
+
 	
-	
-	private JButton baseBuilding=new JButton("Base");
+	private JButton buildingButton=new JButton("Building");
 	
 	private boolean placingBuilding= false;
+	
+	private Container contentPane;
+	
 
 
 	public MainGUI(String title) {
 		super(title);
 		init();
 		initStyle();
-		
+		initAction();
 	}
 
 	private void init() {
-
-		Container contentPane = getContentPane();
+		
+		contentPane = getContentPane();
 		contentPane.setLayout(new BorderLayout());
 
 		KeyControls keyControls = new KeyControls();
@@ -78,8 +82,7 @@ public class MainGUI extends JFrame implements Runnable {
 		
 		contentPane.add(dashboard,BorderLayout.CENTER);
 		
-		panelInteraction.add(baseBuilding);
-		baseBuilding.addActionListener(new PutBase());
+		panelInteraction.add(buildingButton);	
 		contentPane.add(panelInteraction, BorderLayout.EAST);
 
 
@@ -92,14 +95,20 @@ public class MainGUI extends JFrame implements Runnable {
 	}
 	
 	private void initStyle() {
-		  baseBuilding.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
-		  baseBuilding.setBackground(new Color(50, 100, 150));
-		  baseBuilding.setForeground(Color.WHITE);
-		  baseBuilding.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-		  baseBuilding.setPreferredSize(new Dimension(100,100));
+		  buildingButton.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
+		  buildingButton.setBackground(new Color(50, 100, 150));
+		  buildingButton.setForeground(Color.WHITE);
+		  buildingButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+		  buildingButton.setPreferredSize(new Dimension(100,100));
 		  
 		  panelInteraction.setBackground(new Color(40, 40, 40));
 		  
+	}
+	
+	private void initAction() {
+		buildingButton.addActionListener(new SwapBuilding());
+		buildingPanel.getBackButton().addActionListener(new BackAction());
+		buildingPanel.getBaseBuilding().addActionListener(new PutBase());
 	}
 
 	@Override
@@ -165,7 +174,6 @@ public class MainGUI extends JFrame implements Runnable {
 				}
 					System.out.println(x + " " + y);
 				placingBuilding=false;
-				baseBuilding.setText("Base");
 			}
 		}
 
@@ -193,8 +201,25 @@ public class MainGUI extends JFrame implements Runnable {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 				placingBuilding=true;
-				baseBuilding.setText("...");
 		}
 		
 	}
+	
+	private class SwapBuilding implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			contentPane.remove(panelInteraction);;
+			contentPane.add(buildingPanel,BorderLayout.EAST);
+		    buildingPanel.revalidate();
+		}
+	}
+	
+	private class BackAction implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			contentPane.remove(buildingPanel);
+			contentPane.add(panelInteraction,BorderLayout.EAST);
+		    buildingPanel.revalidate();
+		}
+	}
+	
+	
 }
