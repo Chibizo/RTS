@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class Building {
 	
+
 	private Zone zone;
 	
 	public Building(Zone zone) {

@@ -10,6 +10,7 @@ public class Map {
 	Position[][] block;
 	
 	public Map(int lineCount,int columnCount ) {
+		System.out.println("Création de la carte avec dimensions : " + lineCount + "x" + columnCount);
 		init(lineCount,columnCount);
 		
 		for(int lineIndex=0; lineIndex<lineCount;lineIndex++) {

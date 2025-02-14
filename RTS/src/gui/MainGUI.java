@@ -82,8 +82,8 @@ public class MainGUI extends JFrame implements Runnable {
 		
 		contentPane.add(dashboard,BorderLayout.CENTER);
 		
-		panelInteraction.add(buildingButton);
-		contentPane.add(panelInteraction,BorderLayout.EAST);		
+		panelInteraction.add(buildingButton);	
+		contentPane.add(panelInteraction,BorderLayout.EAST);
 
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -159,21 +159,26 @@ public class MainGUI extends JFrame implements Runnable {
 			int y = e.getY()/GameConfiguration.BLOCK_SIZE;
 
 			if(placingBuilding) {
-				ArrayList<Position> listPosition= new ArrayList<Position>();
-				listPosition.add(map.getBlock(x, y));
-				listPosition.add(map.getBlock(x-1, y));
-				listPosition.add(map.getBlock(x-1, y-1));
-				listPosition.add(map.getBlock(x, y-1));
-	
-				Zone zone=new Zone(listPosition);		
 				
-				manager.putBuilding(zone);
-				
-				for(Position position : listPosition){
-					System.out.println(position.getLine()+" "+position.getColumn());
+			
+				if(y >= 0 && y < map.getLineCount()-1 && 
+			              x >= 0 && x < map.getColumnCount()-1) {
+					ArrayList<Position> listPosition= new ArrayList<Position>();
+					listPosition.add(map.getBlock(y, x));
+					listPosition.add(map.getBlock(y, x+1));
+					listPosition.add(map.getBlock(y+1, x));
+					listPosition.add(map.getBlock(y+1, x+1));
+		
+					Zone zone=new Zone(listPosition);		
+					
+					manager.putBuilding(zone);
+					
+					for(Position position : listPosition){
+						System.out.println(position.getLine()+" "+position.getColumn());
+					}
+						System.out.println(x + " " + y);
+					placingBuilding=false;
 				}
-					System.out.println(x + " " + y);
-				placingBuilding=false;
 			}
 		}
 
@@ -216,7 +221,6 @@ public class MainGUI extends JFrame implements Runnable {
 	private class BackAction implements ActionListener {
 		public void actionPerformed(ActionEvent e){
 			contentPane.remove(buildingPanel);
-			contentPane.remove(buildingPanel.getSectionName());
 			contentPane.add(panelInteraction,BorderLayout.EAST);
 		    buildingPanel.revalidate();
 		}
