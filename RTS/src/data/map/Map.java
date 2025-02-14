@@ -1,11 +1,13 @@
 package data.map;
 
+import java.util.HashMap;
+
 public class Map {
 
-	int lineCount;
-	int columnCount;
+	private int lineCount;
+	private int columnCount;
+	private Position[][] block;
 	
-	Position[][] block;
 	
 	public Map(int lineCount,int columnCount ) {
 		System.out.println("Création de la carte avec dimensions : " + lineCount + "x" + columnCount);

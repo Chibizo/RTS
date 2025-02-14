@@ -41,7 +41,7 @@ public class PaintStrategy {
 					        imageSize,
 					        null);
 				}
-				if (position.getLine() == 9 && position.getColumn() == 43) {
+				if (position.getLine() == 12 && position.getColumn() == 50 ) {
 		                g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
 		                        position.getLine() * GameConfiguration.BLOCK_SIZE - 15,
 		                        position.getColumn() * GameConfiguration.BLOCK_SIZE - 30,
