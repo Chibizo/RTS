@@ -1,9 +1,9 @@
 package engine.process;
 
-import config.GameConfiguration;
-import engine.map.*;
-import engine.mobile.*;
-import java.util.ArrayList;
+import data.map.Map;
+import data.map.Position;
+import data.map.Zone;
+import data.mobile.Building;
 
 
 public class ElementManager implements MobileInterface {

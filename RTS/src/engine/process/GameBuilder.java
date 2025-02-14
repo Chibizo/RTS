@@ -7,7 +7,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 import config.GameConfiguration;
-import engine.map.Map;
+import data.map.Map;
 
 public class GameBuilder {
 

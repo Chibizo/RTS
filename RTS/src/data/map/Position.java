@@ -1,4 +1,4 @@
-package engine.map;
+package data.map;
 
 public class Position {
 	

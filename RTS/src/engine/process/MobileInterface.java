@@ -1,8 +1,7 @@
 package engine.process;
 
-import engine.map.*;
-import engine.mobile.*;
-import java.util.ArrayList;
+import data.map.Zone;
+import data.mobile.Building;
 
 public interface MobileInterface {
 

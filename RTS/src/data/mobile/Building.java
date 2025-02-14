@@ -1,7 +1,6 @@
-package engine.mobile;
+package data.mobile;
 
-import engine.map.Zone;
-import java.util.ArrayList;
+import data.map.Zone;
 
 public class Building {
 	

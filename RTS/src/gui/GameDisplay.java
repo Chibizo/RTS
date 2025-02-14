@@ -3,14 +3,12 @@ package gui;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.List;
 
 import javax.swing.JPanel;
 
-import config.GameConfiguration;
-import engine.map.*;
-import engine.process.*;
-import engine.mobile.*;
+import data.map.Map;
+import data.mobile.Building;
+import engine.process.MobileInterface;
 
 public class GameDisplay extends JPanel {
 

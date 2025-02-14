@@ -1,6 +1,4 @@
-package engine.map;
-
-import config.GameConfiguration;
+package data.map;
 
 public class Map {
 

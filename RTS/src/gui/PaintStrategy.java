@@ -1,15 +1,14 @@
 package gui;
 
-import java.awt.Graphics2D;
-import engine.mobile.*;
-import engine.process.GameBuilder;
-
 import java.awt.Color;
 import java.awt.Graphics;
-import java.util.List;
+import java.awt.Graphics2D;
 
 import config.GameConfiguration;
-import engine.map.*;
+import data.map.Map;
+import data.map.Position;
+import data.mobile.Building;
+import engine.process.GameBuilder;
 
 
 

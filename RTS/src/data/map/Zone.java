@@ -1,4 +1,4 @@
-package engine.map;
+package data.map;
 
 import java.util.ArrayList;
 
