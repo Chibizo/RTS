@@ -83,7 +83,7 @@ public class MainGUI extends JFrame implements Runnable {
 		contentPane.add(dashboard,BorderLayout.CENTER);
 		
 		panelInteraction.add(buildingButton);	
-		contentPane.add(panelInteraction, BorderLayout.EAST);
+		
 
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);

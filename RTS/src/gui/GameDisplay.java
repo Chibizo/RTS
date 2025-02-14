@@ -34,7 +34,7 @@ public class GameDisplay extends JPanel {
 		Graphics2D g2 = (Graphics2D) g;
 
 
-		paintStrategy.paint(map, g);
+		paintStrategy.paint(map, g,g2);
 		
 		
 		Building building=manager.getBuilding();
