@@ -82,8 +82,8 @@ public class MainGUI extends JFrame implements Runnable {
 		
 		contentPane.add(dashboard,BorderLayout.CENTER);
 		
-		panelInteraction.add(buildingButton);	
-		
+		panelInteraction.add(buildingButton);
+		contentPane.add(panelInteraction,BorderLayout.EAST);		
 
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -216,6 +216,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class BackAction implements ActionListener {
 		public void actionPerformed(ActionEvent e){
 			contentPane.remove(buildingPanel);
+			contentPane.remove(buildingPanel.getSectionName());
 			contentPane.add(panelInteraction,BorderLayout.EAST);
 		    buildingPanel.revalidate();
 		}
