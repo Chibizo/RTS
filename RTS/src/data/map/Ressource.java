@@ -4,10 +4,8 @@ public class Ressource {
 	
 	private Position position;
 	private String type;
-	private int health;
 	
-	public Ressource(Position positon,String type) {
-		health=100;
+	public Ressource(Position position,String type) {
 		this.type=type;
 		this.position=position;
 	}
@@ -20,8 +18,11 @@ public class Ressource {
 		return type;
 	}
 
-	public int getHealth() {
-		return health;
+
+
+	@Override
+	public String toString() {
+		return "Ressource [position=" + position + ", type=" + type + "]";
 	}
 	
 	

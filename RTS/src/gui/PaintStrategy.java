@@ -9,6 +9,7 @@ import data.map.Map;
 import data.map.Position;
 import data.mobile.Building;
 import engine.process.GameBuilder;
+import data.map.*;
 
 
 
@@ -47,6 +48,14 @@ public class PaintStrategy {
 		                        position.getColumn() * GameConfiguration.BLOCK_SIZE - 30,
 		                        imageSize, imageSize, null);
 		        }
+				
+				if((position.getColumn()>=59 && position.getColumn()<=62) && (position.getLine()>=26 && position.getLine()<=30) 
+						&&((lineIndex+columnIndex)%2==0)) {
+	                g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalEnvironment_11.png"),
+	                        position.getLine() * GameConfiguration.BLOCK_SIZE -15,
+	                        position.getColumn() * GameConfiguration.BLOCK_SIZE -30,
+	                        imageSize, imageSize, null);
+				}
 		
 			}
 		}
@@ -66,6 +75,7 @@ public class PaintStrategy {
 	        imageSize,
 	        imageSize,
 	        null);
+	    
 	}
 
 }

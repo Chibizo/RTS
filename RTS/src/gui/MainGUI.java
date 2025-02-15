@@ -158,7 +158,6 @@ public class MainGUI extends JFrame implements Runnable {
 		public void mouseClicked(MouseEvent e) {
 			int x = e.getX()/GameConfiguration.BLOCK_SIZE;
 			int y = e.getY()/GameConfiguration.BLOCK_SIZE;
-
 			if(placingBuilding) {
 				
 			
