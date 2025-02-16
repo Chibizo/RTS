@@ -35,7 +35,7 @@ public class PaintStrategy {
 				int imageSize = GameConfiguration.BLOCK_SIZE*4;
 				Position position=block[lineIndex][columnIndex];
 				if(map.isOnBorder(position) && (lineIndex+columnIndex)%3==0) {
-					g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalTile_48v2.png"),
+					g2.drawImage(GameBuilder.readImage("src/images/medievalTile_48v2.png"),
 							position.getColumn() * GameConfiguration.BLOCK_SIZE -(imageSize - GameConfiguration.BLOCK_SIZE)/2 ,
 							position.getLine() * GameConfiguration.BLOCK_SIZE -(imageSize - GameConfiguration.BLOCK_SIZE)/2,   
 							imageSize,
@@ -43,7 +43,7 @@ public class PaintStrategy {
 					        null);
 				}
 				if (position.getLine() == 12 && position.getColumn() == 50 ) {
-		                g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
+		                g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_02.png"),
 		                        position.getLine() * GameConfiguration.BLOCK_SIZE - 15,
 		                        position.getColumn() * GameConfiguration.BLOCK_SIZE - 30,
 		                        imageSize, imageSize, null);
@@ -51,7 +51,7 @@ public class PaintStrategy {
 				
 				if((position.getColumn()>=59 && position.getColumn()<=62) && (position.getLine()>=26 && position.getLine()<=30) 
 						&&((lineIndex+columnIndex)%2==0)) {
-	                g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalEnvironment_11.png"),
+	                g2.drawImage(GameBuilder.readImage("src/images/medievalEnvironment_11.png"),
 	                        position.getLine() * GameConfiguration.BLOCK_SIZE -15,
 	                        position.getColumn() * GameConfiguration.BLOCK_SIZE -30,
 	                        imageSize, imageSize, null);
@@ -69,7 +69,7 @@ public class PaintStrategy {
 	public void paint(Building building, Graphics2D g2) {
 	    Position position = building.getZone().getPositions().get(0);
 	    int imageSize = GameConfiguration.BLOCK_SIZE*4;
-	    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
+	    g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_02.png"),
 	    	position.getColumn() * GameConfiguration.BLOCK_SIZE-20,   
 	        position.getLine() * GameConfiguration.BLOCK_SIZE-35, 
 	        imageSize,
