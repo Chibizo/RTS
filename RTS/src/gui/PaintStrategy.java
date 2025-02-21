@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import config.GameConfiguration;
 import data.map.Map;
 import data.map.Position;
-import data.mobile.Building;
+import data.mobile.*;
 import engine.process.GameBuilder;
 import data.map.*;
 
@@ -77,5 +77,18 @@ public class PaintStrategy {
 	        null);
 	    
 	}
+	
+	public void paint(Unit unit,Graphics g2) {
+		Position position = unit.getZone().getPositions().get(0);
+	    int imageSize = GameConfiguration.BLOCK_SIZE*4;
+	    g2.drawImage(GameBuilder.readImage("src/images/medievalUnit_08.png"),
+	    	position.getColumn() * GameConfiguration.BLOCK_SIZE-20,   
+	        position.getLine() * GameConfiguration.BLOCK_SIZE-35, 
+	        imageSize,
+	        imageSize,
+	        null);
+	}
+	
+	
 
 }

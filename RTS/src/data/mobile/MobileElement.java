@@ -1,5 +1,6 @@
 package data.mobile;
 
+import java.util.ArrayList;
 import data.map.*;
 import data.model.*;
 
@@ -43,6 +44,12 @@ public abstract class MobileElement {
 
 	public Race getRace() {
 		return race;
+	}
+	public void setPosition(Position position) {
+		ArrayList<Position> pos=new ArrayList<Position>();
+		pos.add(position);
+		Zone newZone=new Zone(pos);
+		zone=newZone;
 	}
 	
 	

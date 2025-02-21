@@ -7,7 +7,7 @@ import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
 import data.map.Map;
-import data.mobile.Building;
+import data.mobile.*;
 import engine.process.MobileInterface;
 
 public class GameDisplay extends JPanel {
@@ -39,8 +39,11 @@ public class GameDisplay extends JPanel {
 		if(building!=null) {
 			paintStrategy.paint(building,g2);
 		}
-
 		
+		Unit unit=manager.getUnit();
+		if(unit!=null) {
+			paintStrategy.paint(unit,g2);
+		}
 
 	}
 	

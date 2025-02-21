@@ -15,4 +15,13 @@ public class Unit extends MobileElement{
 		super(zone,maxHealth,currentHealth,wood,magicOre,constructTime,race);
 		this.type=type;
 	}
+	
+	public Zone getZone() {
+		return super.getZone();
+	}
+	
+	public void setPosition(Position position) {
+		super.setPosition(position);
+
+	}
 }

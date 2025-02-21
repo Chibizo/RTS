@@ -49,6 +49,8 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private boolean placingBuilding= false;
 	
+	private boolean placingUnit=false;
+	
 	private Container contentPane;
 	
 
@@ -121,6 +123,9 @@ public class MainGUI extends JFrame implements Runnable {
 				System.out.println(e.getMessage());
 			}
 			dashboard.repaint();
+			if(placingUnit) {
+				manager.moveUnit();
+			}
 		}
 	}
 
@@ -158,26 +163,32 @@ public class MainGUI extends JFrame implements Runnable {
 		public void mouseClicked(MouseEvent e) {
 			int x = e.getX()/GameConfiguration.BLOCK_SIZE;
 			int y = e.getY()/GameConfiguration.BLOCK_SIZE;
-			if(placingBuilding) {
-				
 			
-				if(y >= 0 && y < map.getLineCount()-1 && 
-			              x >= 0 && x < map.getColumnCount()-1) {
-					ArrayList<Position> listPosition= new ArrayList<Position>();
-					listPosition.add(map.getBlock(y, x));
-					listPosition.add(map.getBlock(y, x+1));
-					listPosition.add(map.getBlock(y+1, x));
-					listPosition.add(map.getBlock(y+1, x+1));
-		
-					Zone zone=new Zone(listPosition);		
+			if(y >= 0 && y < map.getLineCount()-1 && 
+					x >= 0 && x < map.getColumnCount()-1) {
+				ArrayList<Position> listPosition= new ArrayList<Position>();
+				listPosition.add(map.getBlock(y, x));
+				listPosition.add(map.getBlock(y, x+1));
+				listPosition.add(map.getBlock(y+1, x));
+				listPosition.add(map.getBlock(y+1, x+1));
+				
+				Zone zone=new Zone(listPosition);		
+			
+				if(placingBuilding) {
 					
-					manager.putBuilding(zone);
+						manager.putBuilding(zone);
+						
+						for(Position position : listPosition){
+							System.out.println(position.getLine()+" "+position.getColumn());
+						}
+							System.out.println(x + " " + y);
+						placingBuilding=false;
 					
-					for(Position position : listPosition){
-						System.out.println(position.getLine()+" "+position.getColumn());
-					}
-						System.out.println(x + " " + y);
-					placingBuilding=false;
+				}
+				else {
+					manager.putUnit(zone);	
+					placingUnit=true;
+
 				}
 			}
 		}
