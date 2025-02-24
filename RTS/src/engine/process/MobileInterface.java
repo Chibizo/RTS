@@ -2,6 +2,7 @@ package engine.process;
 
 import data.map.Zone;
 import data.mobile.*;
+import data.model.Player;
 
 public interface MobileInterface {
 
@@ -15,4 +16,6 @@ public interface MobileInterface {
 	Unit getUnit();
 	
 	void moveUnit();
+	
+	public Player getMainPlayer();
 }

@@ -19,6 +19,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+
+import data.model.Player;
 import config.GameConfiguration;
 import data.map.Map;
 import data.map.Position;
@@ -40,10 +42,13 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private MobileInterface manager;
 	
-	private JPanel panelInteraction=new JPanel(new GridLayout(5,1)) ;
+	private String  raceMainPlayer;
 	
+	private JPanel panelInteraction=new JPanel(new GridLayout(5,1)) ;
+		
 	private BuildingPanel buildingPanel=new BuildingPanel();
-
+	
+	private InfoPlayerPanel infoPlayerPanel;
 	
 	private JButton buildingButton=new JButton("Building");
 	
@@ -55,8 +60,9 @@ public class MainGUI extends JFrame implements Runnable {
 	
 
 
-	public MainGUI(String title) {
+	public MainGUI(String title,String race) {
 		super(title);
+		raceMainPlayer=race;
 		init();
 		initStyle();
 		initAction();
@@ -74,7 +80,7 @@ public class MainGUI extends JFrame implements Runnable {
 		
 		map=GameBuilder.buildMap();
 		
-		manager= GameBuilder.buildInitMobile(map);
+		manager= GameBuilder.buildInitMobile(map,raceMainPlayer);
 		
 		dashboard = new GameDisplay(map,manager);
 		
@@ -87,6 +93,8 @@ public class MainGUI extends JFrame implements Runnable {
 		
 		panelInteraction.add(buildingButton);	
 		contentPane.add(panelInteraction,BorderLayout.EAST);
+		infoPlayerPanel=new InfoPlayerPanel(raceMainPlayer);
+		contentPane.add(infoPlayerPanel,BorderLayout.SOUTH);
 
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);

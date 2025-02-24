@@ -2,16 +2,16 @@ package data.map;
 
 public class Ressource {
 	
-	private Position position;
+	private Zone zone;
 	private String type;
 	
-	public Ressource(Position position,String type) {
+	public Ressource(Zone zone,String type) {
 		this.type=type;
-		this.position=position;
+		this.zone=zone;
 	}
 
-	public Position getPosition() {
-		return position;
+	public Zone getPosition() {
+		return zone;
 	}
 
 	public String getType() {
@@ -22,7 +22,7 @@ public class Ressource {
 
 	@Override
 	public String toString() {
-		return "Ressource [position=" + position + ", type=" + type + "]";
+		return "Ressource [position=" + zone + ", type=" + type + "]";
 	}
 	
 	

@@ -37,11 +37,13 @@ public class ChoiceMenu extends JFrame{
 	
 	
 	private String race;
+	private int numberPlayer;
 	
 	private Container contentPane;
 
 	private JPanel racePanel ;
-	private JPanel numberPlayerPanel;
+	private JPanel flowNumberPlayerPanel;
+	private JPanel gridNumberPlayerPanel;
 	
 	
 	private JButton humanButton =new JButton("Human");
@@ -83,11 +85,14 @@ public class ChoiceMenu extends JFrame{
 		racePanel.add(elfButton);
 		racePanel.add(dwarfButton);
 		
-		numberPlayerPanel=new JPanel(new GridLayout(2,2));
-		numberPlayerPanel.add(duoButton);
-		numberPlayerPanel.add(trioButton);
-		numberPlayerPanel.add(quatorButton);
-		numberPlayerPanel.add(backButton);
+		gridNumberPlayerPanel=new JPanel(new GridLayout(2,2,25,25));
+		gridNumberPlayerPanel.add(duoButton);
+		gridNumberPlayerPanel.add(trioButton);
+		gridNumberPlayerPanel.add(quatorButton);
+		gridNumberPlayerPanel.add(backButton);
+		
+		flowNumberPlayerPanel=new JPanel(new FlowLayout(FlowLayout.CENTER,50,10));
+		flowNumberPlayerPanel.add(gridNumberPlayerPanel);
 		
 		contentPane.add(raceLabel,BorderLayout.NORTH);
 		contentPane.add(racePanel,BorderLayout.CENTER);
@@ -106,20 +111,25 @@ public class ChoiceMenu extends JFrame{
 	    raceLabel.setForeground(new java.awt.Color(255, 255, 255));
 	    raceLabel.setHorizontalAlignment(JLabel.CENTER);
 	    raceLabel.setBorder(new EmptyBorder(100, 0, 40, 0));
+	    
+	    numberPlayerLabel.setFont(new Font("Nimbus Sans", Font.BOLD, 25));
+	    numberPlayerLabel.setForeground(new java.awt.Color(255, 255, 255));
+	    numberPlayerLabel.setHorizontalAlignment(JLabel.CENTER);
+	    numberPlayerLabel.setBorder(new EmptyBorder(100, 0, 40, 0));
 
 	    
 	    humanButton.setFont(new Font("Nimbus Sans", Font.BOLD, 25));
-	    humanButton.setBackground(new java.awt.Color(45, 45, 45));  
+	    humanButton.setBackground(new Color(50, 100, 150));
 	    humanButton.setForeground(new java.awt.Color(255, 255, 255));
 	    humanButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 	    
 	    elfButton.setFont(new Font("Nimbus Sans", Font.BOLD, 25));
-	    elfButton.setBackground(new java.awt.Color(45, 45, 45));  
+	    elfButton.setBackground(new Color(50, 100, 150));
 	    elfButton.setForeground(new java.awt.Color(255, 255, 255));
 	    elfButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 	    
 	    dwarfButton.setFont(new Font("Nimbus Sans", Font.BOLD, 25));
-	    dwarfButton.setBackground(new java.awt.Color(45, 45, 45));  
+	    dwarfButton.setBackground(new Color(50, 100, 150)); 
 	    dwarfButton.setForeground(new java.awt.Color(255, 255, 255));
 	    dwarfButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 	    
@@ -127,31 +137,58 @@ public class ChoiceMenu extends JFrame{
 	    
 	    getContentPane().setBackground(new Color(33, 33, 33));
 	    racePanel.setBackground(new Color(33, 33, 33));
-	    numberPlayerPanel.setBackground(new Color(33, 33, 33));
+	    flowNumberPlayerPanel.setBackground(new Color(33, 33, 33));
+	    gridNumberPlayerPanel.setBackground(new Color(33, 33, 33));
 
+	    
+	    
+	    duoButton.setFont(new Font("Nimbus Sans", Font.BOLD, 25));
+	    duoButton.setBackground(new Color(50, 100, 150));
+	    duoButton.setForeground(new java.awt.Color(255, 255, 255));
+	    duoButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
+	    trioButton.setFont(new Font("Nimbus Sans", Font.BOLD, 25));
+	    trioButton.setBackground(new Color(50, 100, 150));
+	    trioButton.setForeground(new java.awt.Color(255, 255, 255));
+	    trioButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+	    
+	    quatorButton.setFont(new Font("Nimbus Sans", Font.BOLD, 25));
+	    quatorButton.setBackground(new Color(50, 100, 150));
+	    quatorButton.setForeground(new java.awt.Color(255, 255, 255));
+	    quatorButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+	    
+	    backButton.setFont(new Font("Nimbus Sans", Font.BOLD, 25));
+	    backButton.setBackground(new Color(205, 92, 92)); 
+	    backButton.setForeground(new java.awt.Color(255, 255, 255));
+	    backButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 
 
 	}
 	
 	public void initAction() {
-		humanButton.addActionListener(new HumanAction(this));
-		elfButton.addActionListener(new ElfAction(this));
-		dwarfButton.addActionListener(new DwarfAction(this));
+		humanButton.addActionListener(new HumanAction());
+		elfButton.addActionListener(new ElfAction());
+		dwarfButton.addActionListener(new DwarfAction());
+		
+		duoButton.addActionListener(new DuoAction(this));
+		trioButton.addActionListener(new TrioAction(this));
+		quatorButton.addActionListener(new QuatorAction(this));
+		
+		backButton.addActionListener(new BackAction());
+		
 
 	}
 	
 	
 	public class HumanAction implements ActionListener {
 			
-			private JFrame fenetre;
-			public HumanAction(JFrame fenetre) {
-				this.fenetre=fenetre;
-			}
-			
 			public void actionPerformed(ActionEvent e) {
 				race="human";
-				fenetre.dispose();	
+				contentPane.removeAll();
+				contentPane.revalidate();
+				contentPane.repaint();
+				contentPane.add(numberPlayerLabel,BorderLayout.NORTH);
+				contentPane.add(flowNumberPlayerPanel,BorderLayout.CENTER);
 				
 			}
 		}
@@ -159,29 +196,93 @@ public class ChoiceMenu extends JFrame{
 	
 	public class ElfAction implements ActionListener {
 		
-		private JFrame fenetre;
-		public ElfAction(JFrame fenetre) {
-			this.fenetre=fenetre;
-		}
-		
 		public void actionPerformed(ActionEvent e) {
-			race="human";
-			fenetre.dispose();	
+			race="elf";	
+			contentPane.removeAll();
+			contentPane.revalidate();
+			contentPane.repaint();
+			contentPane.add(numberPlayerLabel,BorderLayout.NORTH);
+			contentPane.add(flowNumberPlayerPanel,BorderLayout.CENTER);
 			
 		}
 	}
 	
 	public class DwarfAction implements ActionListener {
 		
+		public void actionPerformed(ActionEvent e) {
+			race="dwarf";	
+			contentPane.removeAll();
+			contentPane.revalidate();
+			contentPane.repaint();
+			contentPane.add(numberPlayerLabel,BorderLayout.NORTH);
+			contentPane.add(flowNumberPlayerPanel,BorderLayout.CENTER);
+			
+		}
+	}
+	
+	public class BackAction implements ActionListener {
+			
+			public void actionPerformed(ActionEvent e) {
+				
+				contentPane.removeAll();
+				contentPane.revalidate();
+				contentPane.repaint();
+				contentPane.add(raceLabel,BorderLayout.NORTH);
+				contentPane.add(racePanel,BorderLayout.CENTER);
+				
+			}
+		}
+	
+	
+	public class DuoAction implements ActionListener {
+			
 		private JFrame fenetre;
-		public DwarfAction(JFrame fenetre) {
+		public DuoAction(JFrame fenetre) {
 			this.fenetre=fenetre;
 		}
 		
 		public void actionPerformed(ActionEvent e) {
-			race="human";
+			numberPlayer=2;
 			fenetre.dispose();	
-			
+			MainGUI gameMainGUI = new MainGUI("RTS",race);
+
+			Thread gameThread = new Thread(gameMainGUI);
+			gameThread.start();
+		}
+	}
+	
+	public class TrioAction implements ActionListener {
+		
+		private JFrame fenetre;
+		public TrioAction(JFrame fenetre) {
+			this.fenetre=fenetre;
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			numberPlayer=3;
+			fenetre.dispose();	
+			MainGUI gameMainGUI = new MainGUI("RTS",race);
+
+			Thread gameThread = new Thread(gameMainGUI);
+			gameThread.start();
+		}
+	}
+	
+	
+	public class QuatorAction implements ActionListener {
+		
+		private JFrame fenetre;
+		public QuatorAction(JFrame fenetre) {
+			this.fenetre=fenetre;
+		}
+		
+		public void actionPerformed(ActionEvent e) {
+			numberPlayer=4;
+			fenetre.dispose();	
+			MainGUI gameMainGUI = new MainGUI("RTS",race);
+
+			Thread gameThread = new Thread(gameMainGUI);
+			gameThread.start();
 		}
 	}
 	

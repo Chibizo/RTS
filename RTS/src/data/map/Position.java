@@ -1,5 +1,7 @@
 package data.map;
 
+import java.util.Objects;
+
 public class Position {
 	
 	int line ;
@@ -21,6 +23,23 @@ public class Position {
 	@Override
 	public String toString() {
 		return "Block [line=" + line + ", column=" + column + "]";
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(column, line);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Position other = (Position) obj;
+		return column == other.column && line == other.line;
 	}
 	
 }

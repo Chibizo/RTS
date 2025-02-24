@@ -1,5 +1,6 @@
 package data.map;
 
+import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
 import data.mobile.*;
@@ -9,8 +10,12 @@ public class Map {
 	private int lineCount;
 	private int columnCount;
 	private Position[][] block;
-	private ArrayList<Ressource> ressources;
-	private HashMap<Zone,MobileElement> elements;
+	
+	private Zone woodLocations;
+	private Zone magicOreLocations;
+	
+	private List<Zone> fullPosition=new ArrayList<Zone>();
+	
 	
 	public Map(int lineCount,int columnCount ) {
 		System.out.println("Création de la carte avec dimensions : " + lineCount + "x" + columnCount);
@@ -30,15 +35,35 @@ public class Map {
 	}
 	
 	public void intiRessources() {
-		ressources=new ArrayList<Ressource>();
-		for(int lineIndex=26 ; lineIndex<=30 ;lineIndex++) {
-			for(int columnIndex=59;columnIndex<=62;columnIndex++) {
-				Position position=block[lineIndex][columnIndex];
-				ressources.add(new Ressource(position,"magicOre"));
-			}
-		}
+		
+		
+		ArrayList<Position> magicOrePositions = new ArrayList<Position>();
+		magicOrePositions.add(new Position(55, 24)); 
+		magicOrePositions.add(new Position(56, 24)); 
+		magicOrePositions.add(new Position(55, 23));
+		magicOrePositions.add(new Position(56, 23));
+	    magicOreLocations=new Zone(magicOrePositions);
+	    
+		
+		ArrayList<Position> woodPositions=new ArrayList<Position>();
+		 for (int lineIndex = 44; lineIndex <= 46; lineIndex++) {
+		        for (int columnIndex = 6; columnIndex <= 8; columnIndex++) {
+		            Position position = block[lineIndex][columnIndex];
+		            woodPositions.add(position);
+		        }
+		 }
+		woodLocations=new Zone(woodPositions);
+		fullPosition.add(magicOreLocations);
+		fullPosition.add(woodLocations);
+		
 	}
+		
 	
+	public void addFullPosition(Zone zone) {
+	    if (!fullPosition.contains(zone)) {
+	        fullPosition.add(zone);  
+	    }
+	}
 	
 	public int getLineCount() {
 		return lineCount;
@@ -73,19 +98,25 @@ public class Map {
 		int column = position.getColumn();
 		return column == columnCount - 1;
 	}
+	
+	public boolean isfull(Position position) {
+		
+		for(Zone zone : fullPosition) {
+			for(Position pos : zone.getPositions()) {
+				if(position.equals(pos)) {
+					return true;
+				}
+			}
+			
+		}
+		return false;
+	}
 
 	public boolean isOnBorder(Position position) {
 		return isOnTop(position) || isOnBottom(position) || isOnLeftBorder(position) || isOnRightBorder(position);
 	}
 	
-	public void setRessources(Ressource ressource) {
-		ressources.add(ressource);
-	}
-	@Override
-	public String toString() {
-		return "Map [ressources=" + ressources.toString() + "]";
-	}
-	
+		
 	
 	
 	
