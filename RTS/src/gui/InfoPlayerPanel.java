@@ -1,5 +1,6 @@
 package gui;
 
+import data.model.Player;
 import java.awt.Button;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -11,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 public class InfoPlayerPanel extends JPanel{
+	
+	private Player mainPlayer;
 	
 	private JPanel grid;
 	
@@ -27,13 +30,15 @@ public class InfoPlayerPanel extends JPanel{
 	
 	
 	
-	public InfoPlayerPanel (String raceName) {
+	public InfoPlayerPanel (Player mainPlayer) {
+		this.mainPlayer=mainPlayer;
+		
 		setLayout(new FlowLayout(FlowLayout.LEFT,100,10));
 		grid=new JPanel(new GridLayout(3,2,10,10));
 		
-		raceNameValue.setText(raceName);
-		woodValue.setText("500");
-		magicOreValue.setText("500");
+		raceNameValue.setText(mainPlayer.getRace().getName());
+		woodValue.setText(String.valueOf(mainPlayer.getWood()));
+		magicOreValue.setText(String.valueOf(mainPlayer.getMagicOre()));
 		initStyle();
 		grid.add(raceNameLabel);
 		grid.add(raceNameValue);
@@ -41,7 +46,8 @@ public class InfoPlayerPanel extends JPanel{
 		grid.add(woodValue);
 		grid.add(magicOreLabel);
 		grid.add(magicOreValue);
-		add(grid);
+		add(grid); 
+		
 		
 	}
 	
@@ -71,5 +77,9 @@ public class InfoPlayerPanel extends JPanel{
 		
 	}
 	
+	public void update() {
+	    woodValue.setText(String.valueOf(mainPlayer.getWood()));
+	    magicOreValue.setText(String.valueOf(mainPlayer.getMagicOre()));
+	}
 
 }

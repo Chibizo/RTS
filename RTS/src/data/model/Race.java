@@ -7,4 +7,11 @@ public class Race {
 	public Race (String name) {
 		this.name=name;
 	}
+
+
+	public String getName() {
+		return name;
+	}
+	
+	
 }

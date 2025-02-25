@@ -26,4 +26,53 @@ public class Player {
 	public Zone getStarterZone() {
 		return starterZone;
 	}
+
+
+	public int getWood() {
+		return wood;
+	}
+
+
+	public int getMagicOre() {
+		return magicOre;
+	}
+
+
+	public int getSlave() {
+		return slave;
+	}
+
+
+	public int getMaxSlaves() {
+		return maxSlaves;
+	}
+
+
+	public Race getRace() {
+		return race;
+	}
+
+
+	public Building getBase() {
+		return base;
+	}
+
+
+	public ArrayList<MobileElement> getElements() {
+		return elements;
+	}
+
+
+	public void setWood(int wood) {
+		this.wood = wood;
+	}
+
+
+	public void setMagicOre(int magicOre) {
+		this.magicOre = magicOre;
+	}
+	
+	
+	
+	
 }

@@ -1,11 +1,15 @@
 package gui;
 
+import data.map.*;
 
+import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import config.GameConfiguration;
 import data.map.Map;
 import data.mobile.*;
 import engine.process.MobileInterface;
@@ -19,12 +23,13 @@ public class GameDisplay extends JPanel {
 	private PaintStrategy paintStrategy = new PaintStrategy();
 	
 	private MobileInterface manager;
-
+	
 
 	public GameDisplay(Map map,MobileInterface manager) {
 		this.map=map;
 		this.manager=manager;
 	}
+	
 
 	@Override
 	public void paintComponent(Graphics g) {
@@ -43,6 +48,9 @@ public class GameDisplay extends JPanel {
 		Unit unit=manager.getUnit();
 		if(unit!=null) {
 			paintStrategy.paint(unit,g2);
+			
+	
+		
 		}
 
 	}

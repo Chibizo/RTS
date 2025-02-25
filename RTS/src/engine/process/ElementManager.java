@@ -18,12 +18,10 @@ public class ElementManager implements MobileInterface {
 	private Player mainPlayer;
 	
 	
-	public ElementManager(Map map,String raceMainPlayer) {
+	public ElementManager(Map map,Player mainPlayer) {
 		this.map=map;
-		this.raceMainPlayer=raceMainPlayer;
-		ArrayList<Position> starterPositionBase=new ArrayList<Position>();
-		starterPositionBase.add(new Position(50,12));
-		mainPlayer=new Player(500,500,new Race("raceMainPlayer"),new Zone(starterPositionBase));
+		this.mainPlayer=mainPlayer;	
+				
 	}
 	
 	public void putBuilding(Zone zone) {
@@ -35,6 +33,7 @@ public class ElementManager implements MobileInterface {
 		Race race=new Race("temporaier");
 		building=new Building(zone,0,0,0,0,0,0,race);	
 		map.addFullPosition(zone);
+		mainPlayer.setWood(mainPlayer.getWood()-50);
 	}
 	
 	

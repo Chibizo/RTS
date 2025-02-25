@@ -1,5 +1,6 @@
 package engine.process;
 
+import data.model.Player;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
@@ -15,8 +16,8 @@ public class GameBuilder {
 		return new Map(GameConfiguration.LINE_COUNT, GameConfiguration.COLUMN_COUNT);
 	}
 	
-	public static MobileInterface buildInitMobile(Map map,String raceMainPlayer) {
-		MobileInterface manager=new ElementManager(map,raceMainPlayer);
+	public static MobileInterface buildInitMobile(Map map,Player mainPlayer) {
+		MobileInterface manager=new ElementManager(map,mainPlayer);
 		manager.putBuilding(manager.getMainPlayer().getStarterZone());
 		return manager;
 	}

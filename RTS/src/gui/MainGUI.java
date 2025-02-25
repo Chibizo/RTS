@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -12,15 +13,18 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionAdapter;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 
 import data.model.Player;
+import data.model.Race;
 import config.GameConfiguration;
 import data.map.Map;
 import data.map.Position;
@@ -48,7 +52,11 @@ public class MainGUI extends JFrame implements Runnable {
 		
 	private BuildingPanel buildingPanel=new BuildingPanel();
 	
+	private ShowBuildingMenuPanel showBuildingMenuPanel;
+	
 	private InfoPlayerPanel infoPlayerPanel;
+	
+	private Player mainPlayer;
 	
 	private JButton buildingButton=new JButton("Building");
 	
@@ -80,29 +88,47 @@ public class MainGUI extends JFrame implements Runnable {
 		
 		map=GameBuilder.buildMap();
 		
-		manager= GameBuilder.buildInitMobile(map,raceMainPlayer);
+		mainPlayer=initMainPlayer(raceMainPlayer);
+		
+		manager= GameBuilder.buildInitMobile(map,mainPlayer);
 		
 		dashboard = new GameDisplay(map,manager);
-		
 		MouseControls mouseControls = new MouseControls();
 		dashboard.addMouseListener(mouseControls);
-		
 		dashboard.setPreferredSize(preferredSize);
+		
+		
 		
 		contentPane.add(dashboard,BorderLayout.CENTER);
 		
 		panelInteraction.add(buildingButton);	
 		contentPane.add(panelInteraction,BorderLayout.EAST);
-		infoPlayerPanel=new InfoPlayerPanel(raceMainPlayer);
+		
+		showBuildingMenuPanel=new ShowBuildingMenuPanel(mainPlayer);
+		
+		infoPlayerPanel=new InfoPlayerPanel(mainPlayer);
 		contentPane.add(infoPlayerPanel,BorderLayout.SOUTH);
 
 
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		pack();
 		setVisible(true);
-		/*setExtendedState(JFrame.MAXIMIZED_BOTH);*/
+		
 		this.setLocationRelativeTo(null);
 		setResizable(false);
+	}
+	
+	public Player initMainPlayer(String raceMainPlayer) {
+		ArrayList<Position> starterPositionBase=new ArrayList<Position>();
+			
+		for (int lineIndex = 50; lineIndex <= 52; lineIndex++) {
+	        for (int columnIndex = 13; columnIndex <= 14; columnIndex++) {
+	            Position position = new Position(lineIndex,columnIndex);
+	            starterPositionBase.add(position);
+	        }
+		}
+		Player mainPlayer=new Player(550,550,new Race(raceMainPlayer),new Zone(starterPositionBase));
+		return mainPlayer;
 	}
 	
 	private void initStyle() {
@@ -120,6 +146,7 @@ public class MainGUI extends JFrame implements Runnable {
 		buildingButton.addActionListener(new SwapBuilding());
 		buildingPanel.getBackButton().addActionListener(new BackAction());
 		buildingPanel.getBaseBuilding().addActionListener(new PutBase());
+		showBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 	}
 
 	@Override
@@ -166,25 +193,34 @@ public class MainGUI extends JFrame implements Runnable {
 		}
 	}
 	private class MouseControls implements MouseListener {
-
+		
+		
+		
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			int x = e.getX()/GameConfiguration.BLOCK_SIZE;
 			int y = e.getY()/GameConfiguration.BLOCK_SIZE;
 			
-			if(y >= 0 && y < map.getLineCount()-1 && 
-					x >= 0 && x < map.getColumnCount()-1) {
+			if(y >= 2 && y < map.getLineCount()-2 && 
+					x >= 0 && x < map.getColumnCount()-2) {
+				
+				if (isInBaseZone(x, y)) {
+		            System.out.println("Clic sur la base du joueur principal !");
+		            contentPane.remove(panelInteraction);
+		            contentPane.add(showBuildingMenuPanel,BorderLayout.EAST);
+				    showBuildingMenuPanel.revalidate();
+				    showBuildingMenuPanel.repaint();
+				   
+		        }		
+				
 				ArrayList<Position> listPosition= new ArrayList<Position>();
 				listPosition.add(map.getBlock(y, x));
-				listPosition.add(map.getBlock(y, x+1));
-				listPosition.add(map.getBlock(y+1, x));
-				listPosition.add(map.getBlock(y+1, x+1));
-				
 				Zone zone=new Zone(listPosition);		
 			
 				if(placingBuilding) {
 					
 						manager.putBuilding(zone);
+						infoPlayerPanel.update();
 						
 						for(Position position : listPosition){
 							System.out.println(position.getLine()+" "+position.getColumn());
@@ -199,6 +235,19 @@ public class MainGUI extends JFrame implements Runnable {
 
 				}
 			}
+			
+		}
+		
+		private boolean isInBaseZone(int x, int y) {
+		    Position clickedPosition = map.getBlock(y, x);
+		    Zone baseZone = mainPlayer.getStarterZone();
+		    
+		    for (Position position : baseZone.getPositions()) {
+		        if (position.equals(clickedPosition)) {
+		            return true;
+		        }
+		    }
+		    return false;
 		}
 
 		@Override
@@ -239,11 +288,15 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private class BackAction implements ActionListener {
 		public void actionPerformed(ActionEvent e){
-			contentPane.remove(buildingPanel);
+			BorderLayout layout = (BorderLayout) contentPane.getLayout();
+			Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
+			contentPane.remove(eastComponent);
 			contentPane.add(panelInteraction,BorderLayout.EAST);
-		    buildingPanel.revalidate();
+		    panelInteraction.revalidate();
+		    panelInteraction.repaint();
 		}
 	}
+	
 	
 	
 }

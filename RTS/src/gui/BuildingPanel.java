@@ -45,7 +45,7 @@ public class BuildingPanel extends JPanel{
 
 		  
 		  backButton.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
-		  backButton.setBackground(new Color(50, 100, 150));
+		  backButton.setBackground(new Color(205, 92, 92));
 		  backButton.setForeground(Color.WHITE);
 		  backButton.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
 		  backButton.setPreferredSize(new Dimension(100,100));
