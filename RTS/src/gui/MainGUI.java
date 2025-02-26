@@ -147,6 +147,7 @@ public class MainGUI extends JFrame implements Runnable {
 		buildingPanel.getBackButton().addActionListener(new BackAction());
 		buildingPanel.getBaseBuilding().addActionListener(new PutBase());
 		showBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
+		showBuildingMenuPanel.getUnitsButton().addActionListener(new UnitButton());
 	}
 
 	@Override
@@ -158,7 +159,7 @@ public class MainGUI extends JFrame implements Runnable {
 				System.out.println(e.getMessage());
 			}
 			dashboard.repaint();
-			if(placingUnit) {
+			if(placingUnit ) {
 				manager.moveUnit();
 			}
 		}
@@ -215,9 +216,13 @@ public class MainGUI extends JFrame implements Runnable {
 				
 				ArrayList<Position> listPosition= new ArrayList<Position>();
 				listPosition.add(map.getBlock(y, x));
+				listPosition.add(map.getBlock(y+1, x));
+				listPosition.add(map.getBlock(y, x+1));
+				listPosition.add(map.getBlock(y+1, x+1));
+
 				Zone zone=new Zone(listPosition);		
 			
-				if(placingBuilding) {
+				if(placingBuilding && !map.isfull(listPosition.get(0))) {
 					
 						manager.putBuilding(zone);
 						infoPlayerPanel.update();
@@ -229,10 +234,14 @@ public class MainGUI extends JFrame implements Runnable {
 						placingBuilding=false;
 					
 				}
+				
+				else if (placingUnit && !map.isfull(listPosition.get(0))) {
+					manager.getUnit().setTargetPosition(listPosition.get(0));
+					System.out.println(manager.getUnit().getZone().getPositions().get(0));
+					System.out.println(manager.getUnit().getTargetPosition());
+				}
 				else {
-					manager.putUnit(zone);	
-					placingUnit=true;
-
+					
 				}
 			}
 			
@@ -294,6 +303,16 @@ public class MainGUI extends JFrame implements Runnable {
 			contentPane.add(panelInteraction,BorderLayout.EAST);
 		    panelInteraction.revalidate();
 		    panelInteraction.repaint();
+		}
+	}
+	
+	private class UnitButton implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			Position unitPosition=new Position(mainPlayer.getStarterZone().getPositions().get(0).getLine()+5,
+					mainPlayer.getStarterZone().getPositions().get(0).getColumn());
+			System.out.println(unitPosition);
+			manager.putUnit(unitPosition);
+			placingUnit=true;
 		}
 	}
 	

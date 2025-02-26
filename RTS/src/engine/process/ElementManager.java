@@ -47,14 +47,43 @@ public class ElementManager implements MobileInterface {
 		unit=new Unit(zone,"temp",0,0,0,0,0,race);
 	}
 	
+	public void putUnit(Position position) {
+		ArrayList<Position> zone=new ArrayList<Position>();
+		zone.add(position);
+		putUnit(new Zone(zone));
+	}
+	
 	public void moveUnit() {
-		Position position=unit.getZone().getPositions().get(0);
-		
-
-		if(!map.isOnTop(position) && !map.isfull(position)) {
-			Position newPosition = map.getBlock(position.getLine() -1, position.getColumn()+1);
-			unit.setPosition(newPosition);
+		if(!correctPosition()) {
+			Position currentPosition=unit.getZone().getPositions().get(0);
+			System.out.println('a');
+			int currentPositionX=unit.getZone().getPositions().get(0).getColumn();
+			int currentPositionY=unit.getZone().getPositions().get(0).getLine();
+			
+			int targetPositionX=unit.getTargetPosition().getColumn();
+			int targetPositionY=unit.getTargetPosition().getLine();
+			
+			if(currentPositionX < targetPositionX ) {
+				unit.getZone().getPositions().get(0).setColumn(currentPositionX+1);
+			}
+			else if(currentPositionX > targetPositionX ) {
+				unit.getZone().getPositions().get(0).setColumn(currentPositionX-1);
+			}
+			
+			if(currentPositionY < targetPositionY ) {
+				unit.getZone().getPositions().get(0).setLine(currentPositionY+1);
+			}
+			else if(currentPositionY > targetPositionY ) {
+				unit.getZone().getPositions().get(0).setLine(currentPositionY-1);
+			}
+			
+			
+			
 		}
+	}
+	
+	public boolean correctPosition() {
+		return unit.getZone().getPositions().get(0).equals(unit.getTargetPosition());
 	}
 	
 	public Building getBuilding() {
