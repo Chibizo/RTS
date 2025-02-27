@@ -105,6 +105,17 @@ public class PaintStrategy {
 	        imageSize,
 	        imageSize,
 	        null);
+	    
+	    if (unit.isSelected()) {
+	        g2.setColor(Color.GREEN);
+	        ((Graphics2D) g2).setStroke(new BasicStroke(2));
+	        g2.drawRect(
+	            position.getColumn() * GameConfiguration.BLOCK_SIZE - 5,
+	            position.getLine() * GameConfiguration.BLOCK_SIZE - 5,
+	            GameConfiguration.BLOCK_SIZE + 10,
+	            GameConfiguration.BLOCK_SIZE + 10
+	        );
+	    }
 	}
 	
 	

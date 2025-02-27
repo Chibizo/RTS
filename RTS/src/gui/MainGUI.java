@@ -29,6 +29,7 @@ import config.GameConfiguration;
 import data.map.Map;
 import data.map.Position;
 import data.map.Zone;
+import data.mobile.Unit;
 import engine.process.GameBuilder;
 import engine.process.MobileInterface;
 
@@ -127,7 +128,7 @@ public class MainGUI extends JFrame implements Runnable {
 	            starterPositionBase.add(position);
 	        }
 		}
-		Player mainPlayer=new Player(550,550,new Race(raceMainPlayer),new Zone(starterPositionBase));
+		Player mainPlayer=new Player(550,500,new Race(raceMainPlayer),new Zone(starterPositionBase));
 		return mainPlayer;
 	}
 	
@@ -159,9 +160,7 @@ public class MainGUI extends JFrame implements Runnable {
 				System.out.println(e.getMessage());
 			}
 			dashboard.repaint();
-			if(placingUnit ) {
-				manager.moveUnit();
-			}
+			
 		}
 	}
 
@@ -205,10 +204,34 @@ public class MainGUI extends JFrame implements Runnable {
 			if(y >= 2 && y < map.getLineCount()-2 && 
 					x >= 0 && x < map.getColumnCount()-2) {
 				
+				
+				Unit clickedUnit = findUnitAtPosition(x, y);
+				
+				
+				if (clickedUnit != null) {
+				      for (Unit unit : manager.getAllUnits()) {
+				          unit.setSelected(false);
+				      }
+				      clickedUnit.setSelected(true);
+				      placingUnit = true;
+				 }
+				
+				else if (placingUnit && getSelectedUnit() != null) {
+			        Position targetPosition = map.getBlock(y, x);
+			        if (!map.isfull(targetPosition)) {
+			            getSelectedUnit().setTargetPosition(targetPosition);
+			            for (Unit unit : manager.getAllUnits()) {
+					          unit.setSelected(false);
+					      }
+			        }
+			    }
+				
 				if (isInBaseZone(x, y)) {
 		            System.out.println("Clic sur la base du joueur principal !");
-		            contentPane.remove(panelInteraction);
-		            contentPane.add(showBuildingMenuPanel,BorderLayout.EAST);
+		            BorderLayout layout = (BorderLayout) contentPane.getLayout();
+					Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
+					contentPane.remove(eastComponent);
+					contentPane.add(showBuildingMenuPanel,BorderLayout.EAST);
 				    showBuildingMenuPanel.revalidate();
 				    showBuildingMenuPanel.repaint();
 				   
@@ -235,11 +258,7 @@ public class MainGUI extends JFrame implements Runnable {
 					
 				}
 				
-				else if (placingUnit && !map.isfull(listPosition.get(0))) {
-					manager.getUnit().setTargetPosition(listPosition.get(0));
-					System.out.println(manager.getUnit().getZone().getPositions().get(0));
-					System.out.println(manager.getUnit().getTargetPosition());
-				}
+				
 				else {
 					
 				}
@@ -257,6 +276,25 @@ public class MainGUI extends JFrame implements Runnable {
 		        }
 		    }
 		    return false;
+		}
+		
+		private Unit findUnitAtPosition(int x, int y) {
+		    for (Unit unit : manager.getAllUnits()) {
+		        Position unitPos = unit.getZone().getPositions().get(0);
+		        if (unitPos.getColumn() == x && unitPos.getLine() == y) {
+		            return unit;
+		        }
+		    }
+		    return null;
+		}
+
+		private Unit getSelectedUnit() {
+		    for (Unit unit : manager.getAllUnits()) {
+		        if (unit.isSelected()) {
+		            return unit;
+		        }
+		    }
+		    return null;
 		}
 
 		@Override
@@ -308,10 +346,13 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private class UnitButton implements ActionListener {
 		public void actionPerformed(ActionEvent e){
-			Position unitPosition=new Position(mainPlayer.getStarterZone().getPositions().get(0).getLine()+5,
-					mainPlayer.getStarterZone().getPositions().get(0).getColumn());
+			Position unitPosition = new Position(
+		            mainPlayer.getStarterZone().getPositions().get(0).getLine() + 3,
+		            mainPlayer.getStarterZone().getPositions().get(0).getColumn() + manager.getAllUnits().size() %15 -5 
+		        );;
 			System.out.println(unitPosition);
 			manager.putUnit(unitPosition);
+			manager.selectMostRecentUnit();
 			placingUnit=true;
 		}
 	}

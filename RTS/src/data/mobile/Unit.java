@@ -11,6 +11,9 @@ public class Unit extends MobileElement{
 	private int attackDamage;
 	private int attackRange;
 	private Position targetPosition;
+	private boolean selected = false;
+
+	
 	
 	public Unit (Zone zone,String type,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race) {
 		super(zone,maxHealth,currentHealth,wood,magicOre,constructTime,race);
@@ -20,6 +23,14 @@ public class Unit extends MobileElement{
 	
 	public Zone getZone() {
 		return super.getZone();
+	}
+	
+	public boolean isSelected() {
+	    return selected;
+	}
+	
+	public void setSelected(boolean selected) {
+	    this.selected = selected;
 	}
 	
 	public void setPosition(Position position) {

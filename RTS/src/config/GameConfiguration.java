@@ -2,7 +2,7 @@ package config;
 
 public class GameConfiguration {
 	
-	public static final int GAME_SPEED=100;
+	public static final int GAME_SPEED=1;
 	
 	public static final int WINDOW_HEIGHT=900;
 	

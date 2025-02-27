@@ -2,6 +2,9 @@ package engine.process;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import data.map.Map;
 import data.map.Position;
 import data.map.Zone;
@@ -13,9 +16,10 @@ public class ElementManager implements MobileInterface {
 	private Map map;
 	
 	private Building building;
-	private Unit unit;
+	private ArrayList<Unit> units = new ArrayList<Unit>(); 
 	private String raceMainPlayer;
 	private Player mainPlayer;
+	private HashMap<Unit, UnitStepper> unitSteppers = new HashMap<>();
 	
 	
 	public ElementManager(Map map,Player mainPlayer) {
@@ -44,7 +48,13 @@ public class ElementManager implements MobileInterface {
 			}
 		}
 		Race race=new Race("temp");
-		unit=new Unit(zone,"temp",0,0,0,0,0,race);
+		Unit unit=new Unit(zone,"temp",0,0,0,0,0,race);
+		units.add(unit);
+		UnitStepper stepper = new UnitStepper(unit);
+		unitSteppers.put(unit, stepper);
+		Thread thread = new Thread(stepper);
+		thread.start();
+		
 	}
 	
 	public void putUnit(Position position) {
@@ -53,36 +63,29 @@ public class ElementManager implements MobileInterface {
 		putUnit(new Zone(zone));
 	}
 	
-	public void moveUnit() {
-		if(!correctPosition()) {
-			Position currentPosition=unit.getZone().getPositions().get(0);
-			System.out.println('a');
-			int currentPositionX=unit.getZone().getPositions().get(0).getColumn();
-			int currentPositionY=unit.getZone().getPositions().get(0).getLine();
-			
-			int targetPositionX=unit.getTargetPosition().getColumn();
-			int targetPositionY=unit.getTargetPosition().getLine();
-			
-			if(currentPositionX < targetPositionX ) {
-				unit.getZone().getPositions().get(0).setColumn(currentPositionX+1);
-			}
-			else if(currentPositionX > targetPositionX ) {
-				unit.getZone().getPositions().get(0).setColumn(currentPositionX-1);
-			}
-			
-			if(currentPositionY < targetPositionY ) {
-				unit.getZone().getPositions().get(0).setLine(currentPositionY+1);
-			}
-			else if(currentPositionY > targetPositionY ) {
-				unit.getZone().getPositions().get(0).setLine(currentPositionY-1);
-			}
-			
-			
-			
-		}
+	
+	public void moveUnitOneStep(Unit unit) {
+	    Position currentPosition = unit.getZone().getPositions().get(0);
+	    int currentPositionX = currentPosition.getColumn();
+	    int currentPositionY = currentPosition.getLine();
+	    
+	    int targetPositionX = unit.getTargetPosition().getColumn();
+	    int targetPositionY = unit.getTargetPosition().getLine();
+	    
+	    if (currentPositionX < targetPositionX) {
+	        unit.getZone().getPositions().get(0).setColumn(currentPositionX + 1);
+	    } else if (currentPositionX > targetPositionX) {
+	        unit.getZone().getPositions().get(0).setColumn(currentPositionX - 1);
+	    }
+	    
+	    if (currentPositionY < targetPositionY) {
+	        unit.getZone().getPositions().get(0).setLine(currentPositionY + 1);
+	    } else if (currentPositionY > targetPositionY) {
+	        unit.getZone().getPositions().get(0).setLine(currentPositionY - 1);
+	    }
 	}
 	
-	public boolean correctPosition() {
+	public boolean correctPosition(Unit unit) {
 		return unit.getZone().getPositions().get(0).equals(unit.getTargetPosition());
 	}
 	
@@ -91,11 +94,63 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	public Unit getUnit() {
-		return unit;
+		if (units.isEmpty()) {
+	        return null;
+	    }
+	    return units.get(units.size() - 1);
+	}
+	
+	public List<Unit> getAllUnits() {
+	    return units;
+	}
+	
+	public void selectMostRecentUnit() {
+	    for (Unit unit : units) {
+	        unit.setSelected(false);
+	    }
+	    if (!units.isEmpty()) {
+	        units.get(units.size() - 1).setSelected(true);
+	    }
 	}
 	
 	public Player getMainPlayer() {
 		return mainPlayer;
+	}
+	
+	
+	
+	private class UnitStepper implements Runnable {
+	    private Unit unit;
+	    private volatile boolean running = true;
+	    private int speed ;
+
+	    public UnitStepper(Unit unit,int speed) {
+	        this.unit = unit;
+	        this.speed=speed;
+	    }
+	    public UnitStepper(Unit unit) {
+	    	this(unit,100);
+	    }
+
+	    public void stop() {
+	        running = false;
+	    }
+
+	    @Override
+	    public void run() {
+	        while (running) {
+	            if (!correctPosition(unit)) {
+	                moveUnitOneStep(unit);
+	            }
+	            
+	            try {
+	                Thread.sleep(speed); 
+                } catch (InterruptedException e) {
+	                Thread.currentThread().interrupt();
+	                return;
+	            }
+	        }
+	    }
 	}
 	
 	

@@ -1,5 +1,6 @@
 package engine.process;
 
+import java.util.List;
 import data.map.*;
 import data.mobile.*;
 import data.model.Player;
@@ -15,10 +16,14 @@ public interface MobileInterface {
 	Building getBuilding();
 	
 	Unit getUnit();
+		
+	void moveUnitOneStep(Unit unit);
 	
-	void moveUnit();
+	boolean correctPosition(Unit unit);
 	
-	boolean correctPosition();
+	public List<Unit> getAllUnits();
+	
+	public void selectMostRecentUnit();
 	
 	public Player getMainPlayer();
 }
