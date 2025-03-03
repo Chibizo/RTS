@@ -236,7 +236,6 @@ public class ElementManager implements MobileInterface {
 	            		if(currentTime - lastHarvestTime > GameConfiguration.HARVEST_TIME) {
 	            			harvestResource((Slave)unit);
 	            			lastHarvestTime=currentTime;
-	            			System.out.println(mainPlayer.getWood());
 	            		}
 	            	}
 	            	
