@@ -116,6 +116,25 @@ public class PaintStrategy {
 	            GameConfiguration.BLOCK_SIZE + 10
 	        );
 	    }
+	    
+	    if(((Slave)unit).isHarvesting()||((Slave)unit).isReturning() ) {
+            int barWidth = GameConfiguration.BLOCK_SIZE;
+            int barHeight = 5;
+            int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE;
+            int barY = position.getLine() * GameConfiguration.BLOCK_SIZE + 10;
+            
+            g2.setColor(Color.GRAY);
+            g2.fillRect(barX, barY, barWidth, barHeight);
+            
+            float progress = (float) ((Slave)unit).getResourceAmount() / 50.0f;
+            if (((Slave)unit).getHarvestingResourceType().equals("wood")) {
+            	g2.setColor(new Color(139, 69, 19));
+            } else {
+            	g2.setColor(new Color(0, 255, 255));
+            }
+            g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
+            
+	    }
 	}
 	
 	

@@ -26,4 +26,13 @@ public interface MobileInterface {
 	public void selectMostRecentUnit();
 	
 	public Player getMainPlayer();
+	
+	public String getResourceTypeAt(Position position);
+	
+	public void startHarvesting(Slave slave, Position resourcePosition);
+	
+	public void harvestResource(Slave slave);
+	
+	public void putSlave(Zone zone);
+	public void putSlave(Position position);
 }

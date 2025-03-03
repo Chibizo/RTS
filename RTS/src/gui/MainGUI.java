@@ -29,6 +29,7 @@ import config.GameConfiguration;
 import data.map.Map;
 import data.map.Position;
 import data.map.Zone;
+import data.mobile.Slave;
 import data.mobile.Unit;
 import engine.process.GameBuilder;
 import engine.process.MobileInterface;
@@ -160,6 +161,7 @@ public class MainGUI extends JFrame implements Runnable {
 				System.out.println(e.getMessage());
 			}
 			dashboard.repaint();
+			infoPlayerPanel.update();
 			
 		}
 	}
@@ -204,6 +206,7 @@ public class MainGUI extends JFrame implements Runnable {
 			if(y >= 2 && y < map.getLineCount()-2 && 
 					x >= 0 && x < map.getColumnCount()-2) {
 				
+				Position clickedPosition = map.getBlock(y, x);
 				
 				Unit clickedUnit = findUnitAtPosition(x, y);
 				
@@ -217,14 +220,22 @@ public class MainGUI extends JFrame implements Runnable {
 				 }
 				
 				else if (placingUnit && getSelectedUnit() != null) {
-			        Position targetPosition = map.getBlock(y, x);
-			        if (!map.isfull(targetPosition)) {
-			            getSelectedUnit().setTargetPosition(targetPosition);
-			            for (Unit unit : manager.getAllUnits()) {
-					          unit.setSelected(false);
-					      }
-			        }
-			    }
+				    Unit selectedUnit = getSelectedUnit();
+	                
+	                String resourceType = manager.getResourceTypeAt(clickedPosition);
+	                
+	                if (resourceType != null) {
+	                    manager.startHarvesting((Slave)selectedUnit, clickedPosition);
+	                    for (Unit unit : manager.getAllUnits()) {
+	                        unit.setSelected(false);
+	                    }
+	                } else if (!map.isfull(clickedPosition)) {
+	                    selectedUnit.setTargetPosition(clickedPosition);
+	                    for (Unit unit : manager.getAllUnits()) {
+	                        unit.setSelected(false);
+	                    }
+	                }
+	            }
 				
 				if (isInBaseZone(x, y)) {
 		            System.out.println("Clic sur la base du joueur principal !");
@@ -351,7 +362,7 @@ public class MainGUI extends JFrame implements Runnable {
 		            mainPlayer.getStarterZone().getPositions().get(0).getColumn() + manager.getAllUnits().size() %15 -5 
 		        );;
 			System.out.println(unitPosition);
-			manager.putUnit(unitPosition);
+			manager.putSlave(unitPosition);
 			manager.selectMostRecentUnit();
 			placingUnit=true;
 		}

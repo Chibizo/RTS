@@ -15,7 +15,7 @@ import data.model.Player;
 public class ShowBuildingMenuPanel extends JPanel{
 		
 	private JLabel baseLabel= new JLabel("Base Management", JLabel.CENTER);;
-	private JButton unitsButton=new JButton("Units"); ;
+	private JButton unitsButton=new JButton("Slave"); ;
 	private JButton  upgradeButton= new JButton("Upgrade Base");;
 	private JButton backButton= new JButton("Back"); ;
 	

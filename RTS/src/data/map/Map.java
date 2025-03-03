@@ -115,6 +115,17 @@ public class Map {
 	public boolean isOnBorder(Position position) {
 		return isOnTop(position) || isOnBottom(position) || isOnLeftBorder(position) || isOnRightBorder(position);
 	}
+	public Zone getWoodLocations() {
+		return woodLocations;
+	}
+	public Zone getMagicOreLocations() {
+		return magicOreLocations;
+	}
+	public List<Zone> getFullPosition() {
+		return fullPosition;
+	}
+	
+	
 	
 		
 	
