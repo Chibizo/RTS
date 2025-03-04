@@ -54,7 +54,7 @@ public class MainGUI extends JFrame implements Runnable {
 		
 	private BuildingPanel buildingPanel=new BuildingPanel();
 	
-	private ShowBuildingMenuPanel showBuildingMenuPanel;
+	private BaseBuildingMenuPanel baseBuildingMenuPanel;
 	
 	private InfoPlayerPanel infoPlayerPanel;
 	
@@ -106,7 +106,7 @@ public class MainGUI extends JFrame implements Runnable {
 		panelInteraction.add(buildingButton);	
 		contentPane.add(panelInteraction,BorderLayout.EAST);
 		
-		showBuildingMenuPanel=new ShowBuildingMenuPanel(mainPlayer);
+		baseBuildingMenuPanel=new BaseBuildingMenuPanel(mainPlayer);
 		
 		infoPlayerPanel=new InfoPlayerPanel(mainPlayer);
 		contentPane.add(infoPlayerPanel,BorderLayout.SOUTH);
@@ -148,8 +148,8 @@ public class MainGUI extends JFrame implements Runnable {
 		buildingButton.addActionListener(new SwapBuilding());
 		buildingPanel.getBackButton().addActionListener(new BackAction());
 		buildingPanel.getBaseBuilding().addActionListener(new PutBase());
-		showBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
-		showBuildingMenuPanel.getUnitsButton().addActionListener(new UnitButton());
+		baseBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
+		baseBuildingMenuPanel.getUnitsButton().addActionListener(new SlaveButton());
 	}
 
 	@Override
@@ -242,9 +242,9 @@ public class MainGUI extends JFrame implements Runnable {
 		            BorderLayout layout = (BorderLayout) contentPane.getLayout();
 					Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
 					contentPane.remove(eastComponent);
-					contentPane.add(showBuildingMenuPanel,BorderLayout.EAST);
-				    showBuildingMenuPanel.revalidate();
-				    showBuildingMenuPanel.repaint();
+					contentPane.add(baseBuildingMenuPanel,BorderLayout.EAST);
+				    baseBuildingMenuPanel.revalidate();
+				    baseBuildingMenuPanel.repaint();
 				   
 		        }		
 				
@@ -331,7 +331,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class PutBase implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-				placingBuilding=true;
+				/**placingBuilding=true;**/
 		}
 		
 	}
@@ -355,7 +355,7 @@ public class MainGUI extends JFrame implements Runnable {
 		}
 	}
 	
-	private class UnitButton implements ActionListener {
+	private class SlaveButton implements ActionListener {
 		public void actionPerformed(ActionEvent e){
 			Position unitPosition = new Position(
 		            mainPlayer.getStarterZone().getPositions().get(0).getLine() + 3,

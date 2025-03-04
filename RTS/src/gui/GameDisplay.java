@@ -47,9 +47,12 @@ public class GameDisplay extends JPanel {
 		
 		
 		 for (Unit unit : manager.getAllUnits()) {
-		        paintStrategy.paint(unit, g2);
+			 if(unit instanceof Slave) {
+				 paintStrategy.paint((Slave)unit, g2);
+			 }
+			 else {
 		    }
-	
+		 }
 	
 		
 

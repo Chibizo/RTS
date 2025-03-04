@@ -96,10 +96,10 @@ public class PaintStrategy {
 	    
 	}
 	
-	public void paint(Unit unit,Graphics g2) {
+	public void paint(Slave unit,Graphics g2) {
 		Position position = unit.getZone().getPositions().get(0);
 	    int imageSize = GameConfiguration.BLOCK_SIZE*4;
-	    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_08.png"),
+	    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_06.png"),
 	    	position.getColumn() * GameConfiguration.BLOCK_SIZE-20,   
 	        position.getLine() * GameConfiguration.BLOCK_SIZE-35, 
 	        imageSize,
@@ -117,22 +117,34 @@ public class PaintStrategy {
 	        );
 	    }
 	    
+	    int barWidth = GameConfiguration.BLOCK_SIZE;
+        int barHeight = 5;
+        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE+2;
+        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE -25;
+        
+        g2.setColor(Color.GRAY);
+        g2.fillRect(barX, barY, barWidth, barHeight);
+        
+        float progress = (float) unit.getCurrentHealth() / 100.0f;
+        g2.setColor(Color.red);
+        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
+	    
 	    if(((Slave)unit).isHarvesting()||((Slave)unit).isReturning() ) {
-            int barWidth = GameConfiguration.BLOCK_SIZE;
-            int barHeight = 5;
-            int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE;
-            int barY = position.getLine() * GameConfiguration.BLOCK_SIZE + 10;
+            int barWidth2 = GameConfiguration.BLOCK_SIZE;
+            int barHeight2 = 5;
+            int barX2 = position.getColumn() * GameConfiguration.BLOCK_SIZE + 2;
+            int barY2 = position.getLine() * GameConfiguration.BLOCK_SIZE + 10;
             
             g2.setColor(Color.GRAY);
-            g2.fillRect(barX, barY, barWidth, barHeight);
+            g2.fillRect(barX2, barY2, barWidth2, barHeight2);
             
-            float progress = (float) ((Slave)unit).getResourceAmount() / 50.0f;
+            float progress2 = (float) ((Slave)unit).getResourceAmount() / 50.0f;
             if (((Slave)unit).getHarvestingResourceType().equals("wood")) {
             	g2.setColor(new Color(139, 69, 19));
             } else {
             	g2.setColor(new Color(0, 255, 255));
             }
-            g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
+            g2.fillRect(barX2, barY2, (int)(barWidth2 * progress2), barHeight2);
             
 	    }
 	}

@@ -12,14 +12,14 @@ import javax.swing.JPanel;
 
 import data.model.Player;
 
-public class ShowBuildingMenuPanel extends JPanel{
+public class BaseBuildingMenuPanel extends JPanel{
 		
 	private JLabel baseLabel= new JLabel("Base Management", JLabel.CENTER);;
 	private JButton unitsButton=new JButton("Slave"); ;
 	private JButton  upgradeButton= new JButton("Upgrade Base");;
 	private JButton backButton= new JButton("Back"); ;
 	
-	public ShowBuildingMenuPanel(Player mainPlayer) {
+	public BaseBuildingMenuPanel(Player mainPlayer) {
 		setLayout(new GridLayout(4,1,10,10));
 		initStyle();
 		add(baseLabel);

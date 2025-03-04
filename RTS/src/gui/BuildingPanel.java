@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 public class BuildingPanel extends JPanel{
 	
 	private JLabel sectionName=new JLabel("Buildings");
-	private Button baseBuilding=new Button("Base") ;
+	private Button runwayBuilding=new Button("runway") ;
 	private Button barracksBuilding=new Button("Barracks");
 	private Button backButton=new Button("Back");
 
@@ -20,7 +20,7 @@ public class BuildingPanel extends JPanel{
 		setLayout(new GridLayout(4,1,10,10));
 		initStyle();
 		add(sectionName);
-		add(baseBuilding);
+		add(runwayBuilding);
 		add(barracksBuilding);
 		add(backButton);
 		
@@ -28,11 +28,11 @@ public class BuildingPanel extends JPanel{
 	
 	
 	private void initStyle() {
-		  baseBuilding.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
-		  baseBuilding.setBackground(new Color(50, 100, 150));
-		  baseBuilding.setForeground(Color.WHITE);
-		  baseBuilding.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-		  baseBuilding.setPreferredSize(new Dimension(100,100));
+		runwayBuilding.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
+		runwayBuilding.setBackground(new Color(50, 100, 150));
+		runwayBuilding.setForeground(Color.WHITE);
+		runwayBuilding.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+		runwayBuilding.setPreferredSize(new Dimension(100,100));
 		  
 		  barracksBuilding.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
 		  barracksBuilding.setBackground(new Color(50, 100, 150));
@@ -61,7 +61,7 @@ public class BuildingPanel extends JPanel{
 
 
 	public Button getBaseBuilding() {
-		return baseBuilding;
+		return runwayBuilding;
 	}
 
 

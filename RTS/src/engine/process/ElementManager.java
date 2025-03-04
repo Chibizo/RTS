@@ -133,9 +133,9 @@ public class ElementManager implements MobileInterface {
 			}
 		}
 		Race race=new Race("temp");
-		Slave slave=new Slave(zone,"temp",0,0,0,0,0,race);
+		Slave slave=new Slave(zone,"temp",100,100,0,0,0,race);
 		units.add(slave);
-		UnitStepper stepper = new UnitStepper(slave,150);
+		UnitStepper stepper = new UnitStepper(slave,100);
 		unitSteppers.put(slave, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -151,22 +151,18 @@ public class ElementManager implements MobileInterface {
 	
 	public void moveUnitOneStep(Unit unit) {
 	    Position currentPosition = unit.getZone().getPositions().get(0);
-	    int currentPositionX = currentPosition.getColumn();
-	    int currentPositionY = currentPosition.getLine();
+	    Position targetPosition = unit.getTargetPosition();
 	    
-	    int targetPositionX = unit.getTargetPosition().getColumn();
-	    int targetPositionY = unit.getTargetPosition().getLine();
-	    
-	    if (currentPositionX < targetPositionX) {
-	        unit.getZone().getPositions().get(0).setColumn(currentPositionX + 1);
-	    } else if (currentPositionX > targetPositionX) {
-	        unit.getZone().getPositions().get(0).setColumn(currentPositionX - 1);
+	    if (currentPosition.getColumn() < targetPosition.getColumn()) {
+	        currentPosition.setColumn(currentPosition.getColumn() + 1);
+	    } else if (currentPosition.getColumn() > targetPosition.getColumn()) {
+	        currentPosition.setColumn(currentPosition.getColumn() - 1);
 	    }
 	    
-	    if (currentPositionY < targetPositionY) {
-	        unit.getZone().getPositions().get(0).setLine(currentPositionY + 1);
-	    } else if (currentPositionY > targetPositionY) {
-	        unit.getZone().getPositions().get(0).setLine(currentPositionY - 1);
+	   if (currentPosition.getLine() < targetPosition.getLine()) {
+	        currentPosition.setLine(currentPosition.getLine() + 1);
+	    } else if (currentPosition.getLine() > targetPosition.getLine()) {
+	        currentPosition.setLine(currentPosition.getLine() - 1);
 	    }
 	}
 	
