@@ -60,7 +60,7 @@ public class BuildingPanel extends JPanel{
 	}
 
 
-	public Button getBaseBuilding() {
+	public Button getRunWayBuilding() {
 		return runwayBuilding;
 	}
 

@@ -62,7 +62,7 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private JButton buildingButton=new JButton("Building");
 	
-	private boolean placingBuilding= false;
+	private String placingBuilding="";
 	
 	private boolean placingUnit=false;
 	
@@ -147,7 +147,8 @@ public class MainGUI extends JFrame implements Runnable {
 	private void initAction() {
 		buildingButton.addActionListener(new SwapBuilding());
 		buildingPanel.getBackButton().addActionListener(new BackAction());
-		buildingPanel.getBaseBuilding().addActionListener(new PutBase());
+		buildingPanel.getRunWayBuilding().addActionListener(new PutBase());
+		buildingPanel.getBarracksBuilding().addActionListener(new PutBarracks());
 		baseBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		baseBuildingMenuPanel.getUnitsButton().addActionListener(new SlaveButton());
 	}
@@ -256,16 +257,16 @@ public class MainGUI extends JFrame implements Runnable {
 
 				Zone zone=new Zone(listPosition);		
 			
-				if(placingBuilding && !map.isfull(listPosition.get(0))) {
+				if(placingBuilding=="barracks" && !map.isfull(listPosition.get(0))) {
 					
-						manager.putBuilding(zone);
+						manager.putBuilding(zone,"barracks");
 						infoPlayerPanel.update();
 						
 						for(Position position : listPosition){
 							System.out.println(position.getLine()+" "+position.getColumn());
 						}
 							System.out.println(x + " " + y);
-						placingBuilding=false;
+						placingBuilding="";
 					
 				}
 				
@@ -332,6 +333,14 @@ public class MainGUI extends JFrame implements Runnable {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 				/**placingBuilding=true;**/
+		}
+		
+	}
+	
+	private class PutBarracks implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+				placingBuilding="barracks";
 		}
 		
 	}

@@ -6,6 +6,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -40,10 +43,16 @@ public class GameDisplay extends JPanel {
 		paintStrategy.paint(map, g,g2);
 		
 		
-		Building building=manager.getBuilding();
-		if(building!=null) {
-			paintStrategy.paint(building,g2);
+		HashMap<String,Building> buildings=manager.getBuildings();
+		for (String typeBuilding : buildings.keySet()) {
+			if(typeBuilding=="barracks") {
+				paintStrategy.paint(buildings.get(typeBuilding),"barracks", g2);
+			} 
+			else if (typeBuilding=="base") {
+				paintStrategy.paint(buildings.get(typeBuilding),"base", g2);
+			}
 		}
+		
 		
 		
 		 for (Unit unit : manager.getAllUnits()) {

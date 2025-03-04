@@ -1,5 +1,6 @@
 package engine.process;
 
+import java.util.HashMap;
 import java.util.List;
 import data.map.*;
 import data.mobile.*;
@@ -8,12 +9,12 @@ import data.model.Player;
 public interface MobileInterface {
 
 	
-	void putBuilding(Zone zone);
+	void putBuilding(Zone zone,String type);
 	
 	void putUnit(Zone zone);
 	void putUnit(Position position);
 	
-	Building getBuilding();
+	HashMap<String,Building> getBuildings();
 	
 	Unit getUnit();
 		

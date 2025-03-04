@@ -17,7 +17,7 @@ import data.model.*;
 public class ElementManager implements MobileInterface {
 	private Map map;
 	
-	private Building building;
+	private HashMap<String,Building> buildings=new HashMap<String,Building>();
 	private ArrayList<Unit> units = new ArrayList<Unit>(); 
 	private String raceMainPlayer;
 	private Player mainPlayer;
@@ -92,16 +92,25 @@ public class ElementManager implements MobileInterface {
  
      
 	
-	public void putBuilding(Zone zone) {
+	public void putBuilding(Zone zone,String type) {
 		for(Position position : zone.getPositions()) {
 			if (map.isOnBorder(position)) {
 				return;
 			}
 		}
 		Race race=new Race("temporaier");
-		building=new Building(zone,0,0,0,0,0,0,race);	
-		map.addFullPosition(zone);
-		mainPlayer.setWood(mainPlayer.getWood()-50);
+		if(type=="barracks" && mainPlayer.getWood()>=700) {
+			Building building=new Building(zone,1,250,250,0,0,0,race);	
+			buildings.put("barracks",building);
+			map.addFullPosition(zone);
+			mainPlayer.setWood(mainPlayer.getWood()-700);
+		}
+		else if (type=="base") {
+			Building building=new Building(zone,1,1000,1000,0,0,0,race);	
+			buildings.put("base",building);
+			map.addFullPosition(zone);
+		}
+
 	}
 	
 	
@@ -170,8 +179,8 @@ public class ElementManager implements MobileInterface {
 		return unit.getZone().getPositions().get(0).equals(unit.getTargetPosition());
 	}
 	
-	public Building getBuilding() {
-		return building;
+	public HashMap<String,Building> getBuildings() {
+		return buildings;
 	}
 	
 	public Unit getUnit() {
