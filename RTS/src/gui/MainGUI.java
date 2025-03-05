@@ -328,6 +328,10 @@ public class MainGUI extends JFrame implements Runnable {
 		public void mouseExited(MouseEvent e) {
 
 		}
+		
+		public void mouseDragged(MouseEvent e) {
+			
+		}
 	}
 	private class PutBase implements ActionListener {
 		@Override
