@@ -123,8 +123,8 @@ public class MainGUI extends JFrame implements Runnable {
 	public Player initMainPlayer(String raceMainPlayer) {
 		ArrayList<Position> starterPositionBase=new ArrayList<Position>();
 			
-		for (int lineIndex = 50; lineIndex <= 52; lineIndex++) {
-	        for (int columnIndex = 13; columnIndex <= 14; columnIndex++) {
+		for (int lineIndex = 50; lineIndex <= 51; lineIndex++) {
+	        for (int columnIndex = 11; columnIndex <= 14; columnIndex++) {
 	            Position position = new Position(lineIndex,columnIndex);
 	            starterPositionBase.add(position);
 	        }
@@ -354,6 +354,7 @@ public class MainGUI extends JFrame implements Runnable {
 			contentPane.remove(panelInteraction);;
 			contentPane.add(buildingPanel,BorderLayout.EAST);
 		    buildingPanel.revalidate();
+		    buildingPanel.repaint();
 		}
 	}
 	

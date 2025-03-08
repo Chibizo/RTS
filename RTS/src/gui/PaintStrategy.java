@@ -86,11 +86,22 @@ public class PaintStrategy {
 		if(type=="base") {
 		    Position position = building.getZone().getPositions().get(0);
 		    g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_02.png"),
-		    	position.getColumn() * GameConfiguration.BLOCK_SIZE-20,   
-		        position.getLine() * GameConfiguration.BLOCK_SIZE-35, 
+		    	position.getColumn() * GameConfiguration.BLOCK_SIZE+5,   
+		        position.getLine() * GameConfiguration.BLOCK_SIZE-22, 
 		        imageSize,
 		        imageSize,
 		        null);
+
+		    
+		}
+		else if (type=="barracks") {
+		    Position position = building.getZone().getPositions().get(0);
+		    g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
+			    	position.getColumn() * GameConfiguration.BLOCK_SIZE-6,   
+			        position.getLine() * GameConfiguration.BLOCK_SIZE, 
+			        imageSize,
+			        imageSize,
+			        null);
 		    
 		    for (Position pos : building.getZone().getPositions()) {
 			    g2.setColor(Color.GREEN);
@@ -101,15 +112,6 @@ public class PaintStrategy {
 		            GameConfiguration.BLOCK_SIZE + 10,
 		            GameConfiguration.BLOCK_SIZE + 10);
 		    }
-		}
-		else if (type=="barracks") {
-		    Position position = building.getZone().getPositions().get(0);
-		    g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
-			    	position.getColumn() * GameConfiguration.BLOCK_SIZE-20,   
-			        position.getLine() * GameConfiguration.BLOCK_SIZE-35, 
-			        imageSize,
-			        imageSize,
-			        null);
 
 		}
 	    
