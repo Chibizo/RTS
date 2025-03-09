@@ -207,6 +207,58 @@ public class ElementManager implements MobileInterface {
 		return mainPlayer;
 	}
 	
+	// Implement new methods for multi-unit operations
+	@Override
+	public List<Unit> getSelectedUnits() {
+	    List<Unit> selectedUnits = new ArrayList<>();
+	    for (Unit unit : units) {
+	        if (unit.isSelected()) {
+	            selectedUnits.add(unit);
+	        }
+	    }
+	    return selectedUnits;
+	}
+	
+	@Override
+	public void moveSelectedUnits(Position targetPosition) {
+	    List<Unit> selectedUnits = getSelectedUnits();
+	    
+	    // Calculate target positions for each unit in a formation
+	    int formationSize = (int) Math.ceil(Math.sqrt(selectedUnits.size()));
+	    int offsetX = 0, offsetY = 0;
+	    
+	    for (Unit unit : selectedUnits) {
+	        // Create slightly offset target positions for each unit
+	        Position unitTargetPos = new Position(
+	            targetPosition.getLine() + offsetY,
+	            targetPosition.getColumn() + offsetX
+	        );
+	        
+	        // Set the target position for the unit
+	        unit.setTargetPosition(unitTargetPos);
+	        
+	        // Update offset for next unit in formation
+	        offsetX++;
+	        if (offsetX >= formationSize) {
+	            offsetX = 0;
+	            offsetY++;
+	        }
+	    }
+	}
+	
+	@Override
+	public void harvestWithSelectedSlaves(Position resourcePosition) {
+	    String resourceType = getResourceTypeAt(resourcePosition);
+	    if (resourceType == null) {
+	        return;
+	    }
+	    
+	    for (Unit unit : getSelectedUnits()) {
+	        if (unit instanceof Slave) {
+	            startHarvesting((Slave) unit, resourcePosition);
+	        }
+	    }
+	}
 	
 	
 	private class UnitStepper implements Runnable {
@@ -255,7 +307,4 @@ public class ElementManager implements MobileInterface {
 	        }
 	    }
 	}
-	
-	
 }
-

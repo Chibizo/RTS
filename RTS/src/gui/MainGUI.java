@@ -7,13 +7,15 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
@@ -48,7 +50,7 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private MobileInterface manager;
 	
-	private String  raceMainPlayer;
+	private String raceMainPlayer;
 	
 	private JPanel panelInteraction=new JPanel(new GridLayout(5,1)) ;
 		
@@ -68,7 +70,9 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private Container contentPane;
 	
-
+	private Point selectionStart = null;
+	private Point selectionEnd = null;
+	private boolean isDragging = false;
 
 	public MainGUI(String title,String race) {
 		super(title);
@@ -97,6 +101,10 @@ public class MainGUI extends JFrame implements Runnable {
 		dashboard = new GameDisplay(map,manager);
 		MouseControls mouseControls = new MouseControls();
 		dashboard.addMouseListener(mouseControls);
+		
+		DragControls dragControls = new DragControls();
+		dashboard.addMouseMotionListener(dragControls);
+		
 		dashboard.setPreferredSize(preferredSize);
 		
 		
@@ -164,6 +172,12 @@ public class MainGUI extends JFrame implements Runnable {
 			dashboard.repaint();
 			infoPlayerPanel.update();
 			
+			// Pass selection rectangle to the dashboard for rendering
+			if (isDragging && selectionStart != null && selectionEnd != null) {
+				dashboard.setSelectionRectangle(selectionStart, selectionEnd);
+			} else {
+				dashboard.setSelectionRectangle(null, null);
+			}
 		}
 	}
 
@@ -195,9 +209,23 @@ public class MainGUI extends JFrame implements Runnable {
 
 		}
 	}
+	
+	private class DragControls implements MouseMotionListener {
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			if (selectionStart != null) {
+				isDragging = true;
+				selectionEnd = e.getPoint();
+				dashboard.repaint();
+			}
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+		}
+	}
+	
 	private class MouseControls implements MouseListener {
-		
-		
 		
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -220,23 +248,27 @@ public class MainGUI extends JFrame implements Runnable {
 				      placingUnit = true;
 				 }
 				
-				else if (placingUnit && getSelectedUnit() != null) {
-				    Unit selectedUnit = getSelectedUnit();
-	                
-	                String resourceType = manager.getResourceTypeAt(clickedPosition);
-	                
-	                if (resourceType != null) {
-	                    manager.startHarvesting((Slave)selectedUnit, clickedPosition);
-	                    for (Unit unit : manager.getAllUnits()) {
-	                        unit.setSelected(false);
-	                    }
-	                } else if (!map.isfull(clickedPosition)) {
-	                    selectedUnit.setTargetPosition(clickedPosition);
-	                    for (Unit unit : manager.getAllUnits()) {
-	                        unit.setSelected(false);
-	                    }
-	                }
-	            }
+				else if (placingUnit && !getSelectedUnits().isEmpty()) {
+				    ArrayList<Unit> selectedUnits = getSelectedUnits();
+				    
+				    String resourceType = manager.getResourceTypeAt(clickedPosition);
+				    
+				    if (resourceType != null) {
+				        for (Unit unit : selectedUnits) {
+				            if (unit instanceof Slave) {
+				                manager.startHarvesting((Slave) unit, clickedPosition);
+				            }
+				        }
+				    } else if (!map.isfull(clickedPosition)) {
+				        for (Unit unit : selectedUnits) {
+				            unit.setTargetPosition(clickedPosition);
+				        }
+				    }
+
+				    for (Unit unit : manager.getAllUnits()) {
+				        unit.setSelected(false);
+				    }
+				}
 				
 				if (isInBaseZone(x, y)) {
 		            System.out.println("Clic sur la base du joueur principal !");
@@ -269,13 +301,7 @@ public class MainGUI extends JFrame implements Runnable {
 						placingBuilding="";
 					
 				}
-				
-				
-				else {
-					
-				}
 			}
-			
 		}
 		
 		private boolean isInBaseZone(int x, int y) {
@@ -290,7 +316,7 @@ public class MainGUI extends JFrame implements Runnable {
 		    return false;
 		}
 		
-		private Unit findUnitAtPosition(int x, int y) {
+		public Unit findUnitAtPosition(int x, int y) {
 		    for (Unit unit : manager.getAllUnits()) {
 		        Position unitPos = unit.getZone().getPositions().get(0);
 		        if (unitPos.getColumn() == x && unitPos.getLine() == y) {
@@ -300,23 +326,66 @@ public class MainGUI extends JFrame implements Runnable {
 		    return null;
 		}
 
-		private Unit getSelectedUnit() {
+		public ArrayList<Unit> getSelectedUnits() {
+		    ArrayList<Unit> selectedUnits = new ArrayList<>();
 		    for (Unit unit : manager.getAllUnits()) {
 		        if (unit.isSelected()) {
-		            return unit;
+		            selectedUnits.add(unit);
 		        }
 		    }
-		    return null;
+		    return selectedUnits;
 		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-
+			selectionStart = e.getPoint();
+			isDragging = false;
 		}
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-
+			if (isDragging && selectionStart != null) {
+				selectionEnd = e.getPoint();
+				
+				Rectangle selectionRect = createSelectionRectangle(selectionStart, selectionEnd);
+				
+				selectUnitsInRectangle(selectionRect);
+				
+				selectionStart = null;
+				selectionEnd = null;
+				isDragging = false;
+				dashboard.setSelectionRectangle(null, null);
+				dashboard.repaint();
+			}
+		}
+		
+		public Rectangle createSelectionRectangle(Point start, Point end) {
+			int x = Math.min(start.x, end.x);
+			int y = Math.min(start.y, end.y);
+			int width = Math.abs(end.x - start.x);
+			int height = Math.abs(end.y - start.y);
+			return new Rectangle(x, y, width, height);
+		}
+		
+		private void selectUnitsInRectangle(Rectangle selectionRect) {
+			for (Unit unit : manager.getAllUnits()) {
+				unit.setSelected(false);
+			}
+			boolean unitsSelected = false;
+			for (Unit unit : manager.getAllUnits()) {
+				Position unitPos = unit.getZone().getPositions().get(0);
+				int unitX = unitPos.getColumn() * GameConfiguration.BLOCK_SIZE;
+				int unitY = unitPos.getLine() * GameConfiguration.BLOCK_SIZE;
+				
+				if (selectionRect.contains(unitX, unitY)) {
+					unit.setSelected(true);
+					unitsSelected = true;
+				}
+			}
+			
+			if (unitsSelected) {
+				placingUnit = true;
+			}
 		}
 
 		@Override
@@ -328,11 +397,8 @@ public class MainGUI extends JFrame implements Runnable {
 		public void mouseExited(MouseEvent e) {
 
 		}
-		
-		public void mouseDragged(MouseEvent e) {
-			
-		}
 	}
+	
 	private class PutBase implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -381,7 +447,4 @@ public class MainGUI extends JFrame implements Runnable {
 			placingUnit=true;
 		}
 	}
-	
-	
-	
 }
