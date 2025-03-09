@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -248,8 +249,8 @@ public class MainGUI extends JFrame implements Runnable {
 				      placingUnit = true;
 				 }
 				
-				else if (placingUnit && !getSelectedUnits().isEmpty()) {
-				    ArrayList<Unit> selectedUnits = getSelectedUnits();
+				else if (placingUnit && !manager.getSelectedUnits().isEmpty()) {
+				    List<Unit> selectedUnits = manager.getSelectedUnits();
 				    
 				    String resourceType = manager.getResourceTypeAt(clickedPosition);
 				    
@@ -326,15 +327,6 @@ public class MainGUI extends JFrame implements Runnable {
 		    return null;
 		}
 
-		public ArrayList<Unit> getSelectedUnits() {
-		    ArrayList<Unit> selectedUnits = new ArrayList<>();
-		    for (Unit unit : manager.getAllUnits()) {
-		        if (unit.isSelected()) {
-		            selectedUnits.add(unit);
-		        }
-		    }
-		    return selectedUnits;
-		}
 
 		@Override
 		public void mousePressed(MouseEvent e) {
@@ -440,7 +432,7 @@ public class MainGUI extends JFrame implements Runnable {
 			Position unitPosition = new Position(
 		            mainPlayer.getStarterZone().getPositions().get(0).getLine() + 3,
 		            mainPlayer.getStarterZone().getPositions().get(0).getColumn() + manager.getAllUnits().size() %15 -5 
-		        );;
+		        );
 			System.out.println(unitPosition);
 			manager.putSlave(unitPosition);
 			manager.selectMostRecentUnit();

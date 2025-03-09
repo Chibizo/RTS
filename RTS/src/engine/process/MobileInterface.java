@@ -37,8 +37,6 @@ public interface MobileInterface {
 	public void putSlave(Zone zone);
 	public void putSlave(Position position);
 	
-	// New methods to support multi-unit operations
 	public List<Unit> getSelectedUnits();
-	public void moveSelectedUnits(Position targetPosition);
-	public void harvestWithSelectedSlaves(Position resourcePosition);
+
 }

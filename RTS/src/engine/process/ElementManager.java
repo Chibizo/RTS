@@ -123,6 +123,7 @@ public class ElementManager implements MobileInterface {
 		Race race=new Race("temp");
 		Unit unit=new Unit(zone,"temp",0,0,0,0,0,race);
 		units.add(unit);
+		map.addFullUnitsPosition(unit.getZone());
 		UnitStepper stepper = new UnitStepper(unit);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
@@ -144,6 +145,7 @@ public class ElementManager implements MobileInterface {
 		Race race=new Race("temp");
 		Slave slave=new Slave(zone,"temp",100,100,0,0,0,race);
 		units.add(slave);
+		map.addFullUnitsPosition(zone);
 		UnitStepper stepper = new UnitStepper(slave,100);
 		unitSteppers.put(slave, stepper);
 		Thread thread = new Thread(stepper);
@@ -161,18 +163,23 @@ public class ElementManager implements MobileInterface {
 	public void moveUnitOneStep(Unit unit) {
 	    Position currentPosition = unit.getZone().getPositions().get(0);
 	    Position targetPosition = unit.getTargetPosition();
+	    Position newPosition = new Position(currentPosition.getLine(), currentPosition.getColumn());
 	    
 	    if (currentPosition.getColumn() < targetPosition.getColumn()) {
-	        currentPosition.setColumn(currentPosition.getColumn() + 1);
+	        newPosition.setColumn(currentPosition.getColumn() + 1);
 	    } else if (currentPosition.getColumn() > targetPosition.getColumn()) {
-	        currentPosition.setColumn(currentPosition.getColumn() - 1);
+	    	newPosition.setColumn(currentPosition.getColumn() - 1);
 	    }
 	    
 	   if (currentPosition.getLine() < targetPosition.getLine()) {
-	        currentPosition.setLine(currentPosition.getLine() + 1);
+		   newPosition.setLine(currentPosition.getLine() + 1);
 	    } else if (currentPosition.getLine() > targetPosition.getLine()) {
-	        currentPosition.setLine(currentPosition.getLine() - 1);
+	    	newPosition.setLine(currentPosition.getLine() - 1);
 	    }
+	   if (!map.isfullUnits(newPosition)) {
+	        currentPosition.setColumn(newPosition.getColumn());
+	        currentPosition.setLine(newPosition.getLine());
+	   }
 	}
 	
 	public boolean correctPosition(Unit unit) {
@@ -207,8 +214,6 @@ public class ElementManager implements MobileInterface {
 		return mainPlayer;
 	}
 	
-	// Implement new methods for multi-unit operations
-	@Override
 	public List<Unit> getSelectedUnits() {
 	    List<Unit> selectedUnits = new ArrayList<>();
 	    for (Unit unit : units) {
@@ -219,46 +224,8 @@ public class ElementManager implements MobileInterface {
 	    return selectedUnits;
 	}
 	
-	@Override
-	public void moveSelectedUnits(Position targetPosition) {
-	    List<Unit> selectedUnits = getSelectedUnits();
-	    
-	    // Calculate target positions for each unit in a formation
-	    int formationSize = (int) Math.ceil(Math.sqrt(selectedUnits.size()));
-	    int offsetX = 0, offsetY = 0;
-	    
-	    for (Unit unit : selectedUnits) {
-	        // Create slightly offset target positions for each unit
-	        Position unitTargetPos = new Position(
-	            targetPosition.getLine() + offsetY,
-	            targetPosition.getColumn() + offsetX
-	        );
-	        
-	        // Set the target position for the unit
-	        unit.setTargetPosition(unitTargetPos);
-	        
-	        // Update offset for next unit in formation
-	        offsetX++;
-	        if (offsetX >= formationSize) {
-	            offsetX = 0;
-	            offsetY++;
-	        }
-	    }
-	}
 	
-	@Override
-	public void harvestWithSelectedSlaves(Position resourcePosition) {
-	    String resourceType = getResourceTypeAt(resourcePosition);
-	    if (resourceType == null) {
-	        return;
-	    }
-	    
-	    for (Unit unit : getSelectedUnits()) {
-	        if (unit instanceof Slave) {
-	            startHarvesting((Slave) unit, resourcePosition);
-	        }
-	    }
-	}
+	
 	
 	
 	private class UnitStepper implements Runnable {
@@ -284,7 +251,17 @@ public class ElementManager implements MobileInterface {
 	    public void run() {
 	        while (running) {
 	            if (!correctPosition(unit)) {
+	                Position oldPosition = new Position(
+	                    unit.getZone().getPositions().get(0).getLine(),
+	                    unit.getZone().getPositions().get(0).getColumn()
+	                );
+	                
 	                moveUnitOneStep(unit);
+	                
+	                if (!oldPosition.equals(unit.getZone().getPositions().get(0))) {
+	                    map.removeFullUnitsPosition(oldPosition);
+	                    map.addFullUnitsPosition(unit.getZone());
+	                }
 	            }
 	            
 	            if(unit instanceof Slave) {

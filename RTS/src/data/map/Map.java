@@ -15,6 +15,7 @@ public class Map {
 	private Zone magicOreLocations;
 	
 	private List<Zone> fullPosition=new ArrayList<Zone>();
+	private List<Zone> fullUnitsPosition=new ArrayList<Zone>();
 	
 	
 	public Map(int lineCount,int columnCount ) {
@@ -65,6 +66,12 @@ public class Map {
 	    }
 	}
 	
+	public void addFullUnitsPosition(Zone zone) {
+		if(!fullUnitsPosition.contains(zone)) {
+			fullUnitsPosition.add(zone);
+		}
+	}
+	
 	public int getLineCount() {
 		return lineCount;
 	}
@@ -109,7 +116,48 @@ public class Map {
 			}
 			
 		}
+		for(Zone zone : fullUnitsPosition) {
+			for(Position pos : zone.getPositions()) {
+				if(position.equals(pos)) {
+					return true;
+				}
+			}
+			
+		}
 		return false;
+	}
+	
+		public boolean isfullUnits(Position position) {
+			for(Zone zone : fullUnitsPosition) {
+				for(Position pos : zone.getPositions()) {
+					if(position.equals(pos)) {
+						return true;
+					}
+				}
+				
+			}
+			return false;
+		}
+	
+		
+	
+	public void removeFullPosition(Position position) {
+		for(Zone  zone : fullPosition ) {
+			for(Position pos : zone.getPositions()) {
+				if(pos.equals(position)) {
+					fullPosition.remove(zone);
+				}
+			}
+		}
+	}
+	public void removeFullUnitsPosition(Position position) {
+		for(Zone  zone : fullUnitsPosition ) {
+			for(Position pos : zone.getPositions()) {
+				if(pos.equals(position)) {
+					fullUnitsPosition.remove(zone);
+				}
+			}
+		}
 	}
 
 	public boolean isOnBorder(Position position) {
@@ -123,6 +171,10 @@ public class Map {
 	}
 	public List<Zone> getFullPosition() {
 		return fullPosition;
+	}
+	
+	public List<Zone> getFullUnitsPosition() {
+		return fullUnitsPosition;
 	}
 	
 	
