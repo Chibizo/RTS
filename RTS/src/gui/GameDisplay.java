@@ -28,8 +28,7 @@ public class GameDisplay extends JPanel {
 	
 	private MobileInterface manager;
 	
-	// Selection rectangle points
-	private Point selectionStart = null;
+ 	private Point selectionStart = null;
 	private Point selectionEnd = null;
 
 	public GameDisplay(Map map, MobileInterface manager) {
@@ -67,23 +66,10 @@ public class GameDisplay extends JPanel {
 		   }
 		}
 		
-		// Draw selection rectangle if active
 		if (selectionStart != null && selectionEnd != null) {
-			drawSelectionRectangle(g2);
+			paintStrategy.drawSelectionRectangle(selectionStart,selectionEnd,g2);
 		}
 	}
 	
-	private void drawSelectionRectangle(Graphics2D g2) {
-		int x = Math.min(selectionStart.x, selectionEnd.x);
-		int y = Math.min(selectionStart.y, selectionEnd.y);
-		int width = Math.abs(selectionEnd.x - selectionStart.x);
-		int height = Math.abs(selectionEnd.y - selectionStart.y);
-		
-		g2.setColor(new Color(0, 255, 0, 80)); // Semi-transparent green
-		g2.fillRect(x, y, width, height);
-		
-		g2.setColor(Color.GREEN);
-		g2.setStroke(new BasicStroke(2));
-		g2.drawRect(x, y, width, height);
-	}
+
 }

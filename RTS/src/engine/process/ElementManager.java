@@ -180,6 +180,7 @@ public class ElementManager implements MobileInterface {
 	        currentPosition.setColumn(newPosition.getColumn());
 	        currentPosition.setLine(newPosition.getLine());
 	   }
+	 
 	}
 	
 	public boolean correctPosition(Unit unit) {

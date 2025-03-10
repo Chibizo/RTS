@@ -1,9 +1,11 @@
 package gui;
 
+import java.math.*;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 
 import config.GameConfiguration;
 import data.map.Map;
@@ -34,7 +36,7 @@ public class PaintStrategy {
 			for(int columnIndex=0 ;columnIndex<map.getColumnCount();columnIndex++) {
 				Position position=block[lineIndex][columnIndex];
 				if(map.isOnBorder(position) && (lineIndex+columnIndex)%3==0) {
-					g2.drawImage(GameBuilder.readImage("src/images/medievalTile_48v2.png"),
+					g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalTile_48v2.png"),
 							position.getColumn() * GameConfiguration.BLOCK_SIZE -(imageSize - GameConfiguration.BLOCK_SIZE)/2 ,
 							position.getLine() * GameConfiguration.BLOCK_SIZE -(imageSize - GameConfiguration.BLOCK_SIZE)/2,   
 							imageSize,
@@ -46,7 +48,7 @@ public class PaintStrategy {
 				 */
 				if((position.getLine() == 55 || position.getLine() == 56) && 
 					    (position.getColumn() == 22 || position.getColumn() == 23)) {
-	                g2.drawImage(GameBuilder.readImage("src/images/medievalEnvironment_11.png"),
+	                g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalEnvironment_11.png"),
 	                        position.getColumn() * GameConfiguration.BLOCK_SIZE -15,
 	                        position.getLine() * GameConfiguration.BLOCK_SIZE -30,
 	                        imageSize, imageSize, null);
@@ -57,13 +59,13 @@ public class PaintStrategy {
 				if((position.getLine() >= 44 && position.getLine() <= 46) && 
 					    (position.getColumn() >= 6 && position.getColumn() <= 8)) {
 					if ((position.getLine() + position.getColumn()) % 2 == 0) {
-						 g2.drawImage(GameBuilder.readImage("src/images/medievalEnvironment_01.png"),
+						 g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalEnvironment_01.png"),
 			                        position.getColumn() * GameConfiguration.BLOCK_SIZE -15,
 			                        position.getLine() * GameConfiguration.BLOCK_SIZE -30,
 			                        imageSize, imageSize, null);
 					}
 					else {
-							g2.drawImage(GameBuilder.readImage("src/images/medievalEnvironment_02.png"),
+							g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalEnvironment_02.png"),
 	                        position.getColumn() * GameConfiguration.BLOCK_SIZE -15,
 	                        position.getLine() * GameConfiguration.BLOCK_SIZE -30,
 	                        imageSize, imageSize, null);
@@ -85,7 +87,7 @@ public class PaintStrategy {
 	public void paint(Building building,String type, Graphics2D g2) {
 		if(type=="base") {
 		    Position position = building.getZone().getPositions().get(0);
-		    g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_02.png"),
+		    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
 		    	position.getColumn() * GameConfiguration.BLOCK_SIZE+5,   
 		        position.getLine() * GameConfiguration.BLOCK_SIZE-22, 
 		        imageSize,
@@ -96,7 +98,7 @@ public class PaintStrategy {
 		}
 		else if (type=="barracks") {
 		    Position position = building.getZone().getPositions().get(0);
-		    g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
+		    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
 			    	position.getColumn() * GameConfiguration.BLOCK_SIZE-6,   
 			        position.getLine() * GameConfiguration.BLOCK_SIZE, 
 			        imageSize,
@@ -119,7 +121,7 @@ public class PaintStrategy {
 	
 	public void paint(Slave unit,Graphics g2) {
 		Position position = unit.getZone().getPositions().get(0);
-	    g2.drawImage(GameBuilder.readImage("src/images/medievalUnit_06.png"),
+	    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_06.png"),
 	    	position.getColumn() * GameConfiguration.BLOCK_SIZE-20,   
 	        position.getLine() * GameConfiguration.BLOCK_SIZE-20, 
 	        imageSize,
@@ -167,6 +169,21 @@ public class PaintStrategy {
             g2.fillRect(barX2, barY2, (int)(barWidth2 * progress2), barHeight2);
             
 	    }
+	    
+	    
+	} 
+    public void drawSelectionRectangle(Point selectionStart,Point selectionEnd,Graphics2D g2) {
+		int x = Math.min(selectionStart.x, selectionEnd.x);
+		int y = Math.min(selectionStart.y, selectionEnd.y);
+		int width = Math.abs(selectionEnd.x - selectionStart.x);
+		int height = Math.abs(selectionEnd.y - selectionStart.y);
+		
+		g2.setColor(new Color(0, 255, 0, 80)); 
+		g2.fillRect(x, y, width, height);
+		
+		g2.setColor(Color.GREEN);
+		g2.setStroke(new BasicStroke(2));
+		g2.drawRect(x, y, width, height);
 	}
 	
 	
