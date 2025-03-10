@@ -160,7 +160,7 @@ public class ElementManager implements MobileInterface {
 	
 	
 	
-	public void moveUnitOneStep(Unit unit) {
+	public synchronized void moveUnitOneStep(Unit unit) {
 	    Position currentPosition = unit.getZone().getPositions().get(0);
 	    Position targetPosition = unit.getTargetPosition();
 	    Position newPosition = new Position(currentPosition.getLine(), currentPosition.getColumn());

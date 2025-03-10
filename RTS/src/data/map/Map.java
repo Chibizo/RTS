@@ -150,14 +150,19 @@ public class Map {
 			}
 		}
 	}
-	public void removeFullUnitsPosition(Position position) {
-		for(Zone  zone : fullUnitsPosition ) {
-			for(Position pos : zone.getPositions()) {
-				if(pos.equals(position)) {
-					fullUnitsPosition.remove(zone);
-				}
-			}
-		}
+	public synchronized void removeFullUnitsPosition(Position position) {
+	    List<Zone> zonesToRemove = new ArrayList<>();
+	    
+	    for (Zone zone : fullUnitsPosition) {
+	        for (Position pos : zone.getPositions()) {
+	            if (pos.equals(position)) {
+	                zonesToRemove.add(zone);
+	                break; 
+	            }
+	        }
+	    }
+	    
+	    fullUnitsPosition.removeAll(zonesToRemove);
 	}
 
 	public boolean isOnBorder(Position position) {
