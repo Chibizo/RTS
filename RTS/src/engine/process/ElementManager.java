@@ -46,6 +46,11 @@ public class ElementManager implements MobileInterface {
     }
 	
 	 public void startHarvesting(Slave slave, Position resourcePosition) {
+		 
+		 	if(slave.isUnderConstruction()) {
+		 		return ;
+		 	}
+		 	
 	        String resourceType = getResourceTypeAt(resourcePosition);
 	        if (resourceType == null) {
 	            return; 
@@ -99,8 +104,8 @@ public class ElementManager implements MobileInterface {
 			}
 		}
 		Race race=new Race("temporaier");
-		if(type=="barracks" && mainPlayer.getWood()>=700) {
-			Building building=new Building(zone,1,250,250,0,0,0,race);	
+		if(type=="barracks") {
+			Building building=new Building(zone,1,250,250,0,0,45000,race);	
 			buildings.put("barracks",building);
 			map.addFullPosition(zone);
 			mainPlayer.setWood(mainPlayer.getWood()-700);
@@ -121,9 +126,10 @@ public class ElementManager implements MobileInterface {
 			}
 		}
 		Race race=new Race("temp");
-		Unit unit=new Unit(zone,"temp",0,0,0,0,0,race);
+		Unit unit=new Unit(zone,"temp",0,0,0,0,15000,race);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
+		mainPlayer.setWood(mainPlayer.getWood()-100);
 		UnitStepper stepper = new UnitStepper(unit);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
@@ -143,9 +149,10 @@ public class ElementManager implements MobileInterface {
 			}
 		}
 		Race race=new Race("temp");
-		Slave slave=new Slave(zone,"temp",100,100,0,0,0,race);
+		Slave slave=new Slave(zone,"temp",100,100,0,0,15000,race);
 		units.add(slave);
 		map.addFullUnitsPosition(zone);
+		mainPlayer.setWood(mainPlayer.getWood()-100);
 		UnitStepper stepper = new UnitStepper(slave,100);
 		unitSteppers.put(slave, stepper);
 		Thread thread = new Thread(stepper);
@@ -161,6 +168,11 @@ public class ElementManager implements MobileInterface {
 	
 	
 	public synchronized void moveUnitOneStep(Unit unit) {
+		
+		if(unit.isUnderConstruction()) {
+			return;
+		}
+		
 	    Position currentPosition = unit.getZone().getPositions().get(0);
 	    Position targetPosition = unit.getTargetPosition();
 	    Position newPosition = new Position(currentPosition.getLine(), currentPosition.getColumn());
@@ -184,6 +196,9 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	public boolean correctPosition(Unit unit) {
+		if(unit.isUnderConstruction()) {
+			return true;
+		}
 		return unit.getZone().getPositions().get(0).equals(unit.getTargetPosition());
 	}
 	
@@ -226,7 +241,23 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	
-	
+	public void updateConstruction() {
+	    for (Building building : buildings.values()) {
+	        if (building.isUnderConstruction()) {
+	            if (building.getConstructionProgress() >= 1.0f) {
+	                building.setUnderConstruction(false);
+	            }
+	        }
+	    }
+	    
+	    for (Unit unit : units) {
+	        if (unit.isUnderConstruction()) {
+	            if (unit.getConstructionProgress() >= 1.0f) {
+	                unit.setUnderConstruction(false);
+	            }
+	        }
+	    }
+	}
 	
 	
 	private class UnitStepper implements Runnable {
@@ -251,6 +282,15 @@ public class ElementManager implements MobileInterface {
 	    @Override
 	    public void run() {
 	        while (running) {
+	            if (unit.isUnderConstruction()) {
+	                try {
+	                    Thread.sleep(speed);
+	                } catch (InterruptedException e) {
+	                    Thread.currentThread().interrupt();
+	                    return;
+	                }
+	                continue;
+	            }
 	            if (!correctPosition(unit)) {
 	                Position oldPosition = new Position(
 	                    unit.getZone().getPositions().get(0).getLine(),
@@ -285,4 +325,7 @@ public class ElementManager implements MobileInterface {
 	        }
 	    }
 	}
+	
+	
+	
 }

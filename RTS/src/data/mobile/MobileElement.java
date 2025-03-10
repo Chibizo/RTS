@@ -10,16 +10,21 @@ public abstract class MobileElement {
 	private int maxHealth;
 	private int currentHealth;
 	private Cost cost;
-	private int constructTime;
 	private Race race;
+	
+	private int constructionTime;
+	private boolean underConstruction = true;
+	private long constructionStartTime;
 
 	public MobileElement(Zone zone,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race) {
 		this.cost=new Cost(wood,magicOre);
 		this.zone=zone;
 		this.maxHealth=maxHealth;
 		this.currentHealth=currentHealth;
-		this.constructTime=constructTime;
 		this.race=race;
+
+		this.constructionTime=constructTime;
+	    this.constructionStartTime = System.currentTimeMillis();
 	}
 
 	public Zone getZone() {
@@ -39,7 +44,7 @@ public abstract class MobileElement {
 	}
 
 	public int getConstructTime() {
-		return constructTime;
+		return constructionTime;
 	}
 
 	public Race getRace() {
@@ -50,6 +55,34 @@ public abstract class MobileElement {
 		pos.add(position);
 		Zone newZone=new Zone(pos);
 		zone=newZone;
+	}
+	
+	public boolean isUnderConstruction() {
+	    return underConstruction;
+	}
+
+	public void setUnderConstruction(boolean underConstruction) {
+	    this.underConstruction = underConstruction;
+	}
+
+	public long getConstructionStartTime() {
+	    return constructionStartTime;
+	}
+
+	public long getConstructionTime() {
+	    return constructionTime;
+	}
+
+	public float getConstructionProgress() {
+	    long timePassed = System.currentTimeMillis() - constructionStartTime;
+	    float progress = (float) timePassed/constructionTime;
+	    return Math.min(progress, 1.0f);
+	}
+
+	public int getRemainingConstructionTime() {
+	    long timePassed = System.currentTimeMillis() - constructionStartTime;
+	    long timeRemaining = constructionTime - timePassed;
+	    return (int) Math.max(0, Math.ceil(timeRemaining / 1000.0)); 
 	}
 	
 	

@@ -28,23 +28,27 @@ public class InfoPlayerPanel extends JPanel{
 	private JLabel magicOreLabel=new JLabel("Magic Ore :");
 	private JLabel magicOreValue=new JLabel("");
 	
+	private JLabel warningLabel=new JLabel("");
+	
 	
 	
 	public InfoPlayerPanel (Player mainPlayer) {
 		this.mainPlayer=mainPlayer;
 		
 		setLayout(new FlowLayout(FlowLayout.LEFT,100,10));
-		grid=new JPanel(new GridLayout(3,2,10,10));
+		grid=new JPanel(new GridLayout(2,4,10,10));
 		
 		raceNameValue.setText(mainPlayer.getRace().getName());
 		woodValue.setText(String.valueOf(mainPlayer.getWood()));
 		magicOreValue.setText(String.valueOf(mainPlayer.getMagicOre()));
+		warningLabel.setPreferredSize(new Dimension(300,warningLabel.getPreferredSize().height));
 		initStyle();
 		grid.add(raceNameLabel);
-		grid.add(raceNameValue);
 		grid.add(woodLabel);
-		grid.add(woodValue);
 		grid.add(magicOreLabel);
+		grid.add(warningLabel);
+		grid.add(raceNameValue);
+		grid.add(woodValue);
 		grid.add(magicOreValue);
 		add(grid); 
 		
@@ -61,9 +65,12 @@ public class InfoPlayerPanel extends JPanel{
 		 woodLabel.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
 		 woodLabel.setForeground(Color.WHITE);
 		 
+		 warningLabel.setFont(new Font("Nimbus Sans", Font.BOLD, 20));
+		 warningLabel.setForeground(Color.WHITE);
+		 
 		 woodValue.setFont(new Font("Nimbus Sans", Font.BOLD, 20));
 		 woodValue.setForeground(new Color(139, 69, 19));
-		 
+		  
 		 magicOreLabel.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
 		 magicOreLabel.setForeground(Color.WHITE);
 
@@ -81,5 +88,12 @@ public class InfoPlayerPanel extends JPanel{
 	    woodValue.setText(String.valueOf(mainPlayer.getWood()));
 	    magicOreValue.setText(String.valueOf(mainPlayer.getMagicOre()));
 	}
+
+
+	public void setWarningLabel(String warning) {
+		this.warningLabel.setText(warning);;
+	}
+	
+	
 
 }

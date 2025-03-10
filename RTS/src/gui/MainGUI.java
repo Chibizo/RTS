@@ -32,10 +32,12 @@ import config.GameConfiguration;
 import data.map.Map;
 import data.map.Position;
 import data.map.Zone;
+import data.mobile.Building;
 import data.mobile.Slave;
 import data.mobile.Unit;
 import engine.process.GameBuilder;
 import engine.process.MobileInterface;
+import engine.process.MouseUtility;
 
 
 
@@ -70,6 +72,9 @@ public class MainGUI extends JFrame implements Runnable {
 	private boolean placingUnit=false;
 	
 	private Container contentPane;
+	
+	private long warningTime = -1;
+
 	
 	private Point selectionStart = null;
 	private Point selectionEnd = null;
@@ -170,8 +175,13 @@ public class MainGUI extends JFrame implements Runnable {
 			} catch (InterruptedException e) {
 				System.out.println(e.getMessage());
 			}
+			manager.updateConstruction();
 			dashboard.repaint();
-			infoPlayerPanel.update();
+			infoPlayerPanel.update();	
+	        if (warningTime != -1 && System.currentTimeMillis() - warningTime >= 4000) {
+	            infoPlayerPanel.setWarningLabel("");
+	            warningTime = -1; 
+	        }
 			
 			// Pass selection rectangle to the dashboard for rendering
 			if (isDragging && selectionStart != null && selectionEnd != null) {
@@ -238,10 +248,10 @@ public class MainGUI extends JFrame implements Runnable {
 				
 				Position clickedPosition = map.getBlock(y, x);
 				
-				Unit clickedUnit = findUnitAtPosition(x, y);
+				Unit clickedUnit = MouseUtility.findUnitAtPosition(manager.getAllUnits(),x, y);
 				
 				
-				if (clickedUnit != null) {
+				if (clickedUnit != null && !clickedUnit.isUnderConstruction()) {
 				      for (Unit unit : manager.getAllUnits()) {
 				          unit.setSelected(false);
 				      }
@@ -271,7 +281,7 @@ public class MainGUI extends JFrame implements Runnable {
 				    }
 				}
 				
-				if (isInBaseZone(x, y)) {
+				if (MouseUtility.isInBaseZone(clickedPosition,mainPlayer.getStarterZone(),x, y)) {
 		            System.out.println("Clic sur la base du joueur principal !");
 		            BorderLayout layout = (BorderLayout) contentPane.getLayout();
 					Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
@@ -304,28 +314,6 @@ public class MainGUI extends JFrame implements Runnable {
 				}
 			}
 		}
-		
-		private boolean isInBaseZone(int x, int y) {
-		    Position clickedPosition = map.getBlock(y, x);
-		    Zone baseZone = mainPlayer.getStarterZone();
-		    
-		    for (Position position : baseZone.getPositions()) {
-		        if (position.equals(clickedPosition)) {
-		            return true;
-		        }
-		    }
-		    return false;
-		}
-		
-		public Unit findUnitAtPosition(int x, int y) {
-		    for (Unit unit : manager.getAllUnits()) {
-		        Position unitPos = unit.getZone().getPositions().get(0);
-		        if (unitPos.getColumn() == x && unitPos.getLine() == y) {
-		            return unit;
-		        }
-		    }
-		    return null;
-		}
 
 
 		@Override
@@ -339,9 +327,9 @@ public class MainGUI extends JFrame implements Runnable {
 			if (isDragging && selectionStart != null) {
 				selectionEnd = e.getPoint();
 				
-				Rectangle selectionRect = createSelectionRectangle(selectionStart, selectionEnd);
+				Rectangle selectionRect = MouseUtility.createSelectionRectangle(selectionStart, selectionEnd);
 				
-				selectUnitsInRectangle(selectionRect);
+				placingUnit=MouseUtility.selectUnitsInRectangle(manager.getAllUnits(),selectionRect);
 				
 				selectionStart = null;
 				selectionEnd = null;
@@ -350,36 +338,7 @@ public class MainGUI extends JFrame implements Runnable {
 				dashboard.repaint();
 			}
 		}
-		
-		public Rectangle createSelectionRectangle(Point start, Point end) {
-			int x = Math.min(start.x, end.x);
-			int y = Math.min(start.y, end.y);
-			int width = Math.abs(end.x - start.x);
-			int height = Math.abs(end.y - start.y);
-			return new Rectangle(x, y, width, height);
-		}
-		
-		private void selectUnitsInRectangle(Rectangle selectionRect) {
-			for (Unit unit : manager.getAllUnits()) {
-				unit.setSelected(false);
-			}
-			boolean unitsSelected = false;
-			for (Unit unit : manager.getAllUnits()) {
-				Position unitPos = unit.getZone().getPositions().get(0);
-				int unitX = unitPos.getColumn() * GameConfiguration.BLOCK_SIZE;
-				int unitY = unitPos.getLine() * GameConfiguration.BLOCK_SIZE;
-				
-				if (selectionRect.contains(unitX, unitY)) {
-					unit.setSelected(true);
-					unitsSelected = true;
-				}
-			}
-			
-			if (unitsSelected) {
-				placingUnit = true;
-			}
-		}
-
+	
 		@Override
 		public void mouseEntered(MouseEvent e) {
 
@@ -391,6 +350,11 @@ public class MainGUI extends JFrame implements Runnable {
 		}
 	}
 	
+
+	public void setPlacingUnit(boolean placingUnit) {
+		this.placingUnit = placingUnit;
+	}
+
 	private class PutBase implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
@@ -402,7 +366,13 @@ public class MainGUI extends JFrame implements Runnable {
 	private class PutBarracks implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if(mainPlayer.getWood()>=700) {
 				placingBuilding="barracks";
+			}
+			else {
+				infoPlayerPanel.setWarningLabel("you don't have enough wood");
+				warningTime = System.currentTimeMillis();
+			}
 		}
 		
 	}
@@ -429,14 +399,23 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private class SlaveButton implements ActionListener {
 		public void actionPerformed(ActionEvent e){
-			Position unitPosition = new Position(
-		            mainPlayer.getStarterZone().getPositions().get(0).getLine() + 3,
-		            mainPlayer.getStarterZone().getPositions().get(0).getColumn() + manager.getAllUnits().size() %15 -5 
-		        );
-			System.out.println(unitPosition);
-			manager.putSlave(unitPosition);
-			manager.selectMostRecentUnit();
-			placingUnit=true;
+			Building base = manager.getBuildings().get("base");
+			if(base.isUnderConstruction() && base!=null) {
+				infoPlayerPanel.setWarningLabel("Base is still under construction");
+	            warningTime = System.currentTimeMillis();
+	            return;
+			}
+			else if(mainPlayer.getWood()>=100) {
+				Position unitPosition = new Position(
+			            mainPlayer.getStarterZone().getPositions().get(0).getLine() + 3,
+			            mainPlayer.getStarterZone().getPositions().get(0).getColumn() + manager.getAllUnits().size() %15 -5 
+			        );
+				System.out.println(unitPosition);
+				manager.putSlave(unitPosition);
+				manager.selectMostRecentUnit();
+				placingUnit=true;
+				
+			}
 		}
 	}
 }

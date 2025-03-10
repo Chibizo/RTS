@@ -37,6 +37,8 @@ public interface MobileInterface {
 	public void putSlave(Zone zone);
 	public void putSlave(Position position);
 	
+	public void updateConstruction();
+	
 	public List<Unit> getSelectedUnits();
 
 }

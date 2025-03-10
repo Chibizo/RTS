@@ -1,5 +1,8 @@
 package gui;
 
+import java.awt.AlphaComposite;
+import java.awt.Composite;
+import java.awt.Font;
 import java.math.*;
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -84,90 +87,167 @@ public class PaintStrategy {
 	
 	
 	
-	public void paint(Building building,String type, Graphics2D g2) {
-		if(type=="base") {
-		    Position position = building.getZone().getPositions().get(0);
-		    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
-		    	position.getColumn() * GameConfiguration.BLOCK_SIZE+5,   
-		        position.getLine() * GameConfiguration.BLOCK_SIZE-22, 
+	public void paint(Building building, String type, Graphics2D g2) {
+	    Position position = building.getZone().getPositions().get(0);
+	    
+	    if (building.isUnderConstruction()) {
+	        float progress = building.getConstructionProgress();
+	        
+	        g2.setColor(new Color(80, 80, 80, 150));
+	        g2.fillRect(
+	            position.getColumn() * GameConfiguration.BLOCK_SIZE,
+	            position.getLine() * GameConfiguration.BLOCK_SIZE,
+	            GameConfiguration.BLOCK_SIZE * 2,
+	            GameConfiguration.BLOCK_SIZE * 2
+	        );
+	        
+	        int barWidth = GameConfiguration.BLOCK_SIZE * 2;
+	        int barHeight = 8;
+	        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE;
+	        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE - 15;
+	        
+	        g2.setColor(Color.GRAY);
+	        g2.fillRect(barX, barY, barWidth, barHeight);
+	        
+	        g2.setColor(Color.BLUE);
+	        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
+	        
+	        int remainingTime = building.getRemainingConstructionTime();
+	        String timeText = remainingTime + "s";
+	        g2.setColor(Color.WHITE);
+	        g2.setFont(new Font("Arial",Font.BOLD,12));
+	        g2.drawString(timeText, barX + barWidth/2 - 10, barY - 5);
+	        
+	        AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+	        Composite originalComposite = g2.getComposite();
+	        g2.setComposite(alphaComposite);
+	        
+	        if (type == "base") {
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
+	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
+	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
+	                imageSize, imageSize, null);
+	        } else if (type == "barracks") {
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
+	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
+	                position.getLine() * GameConfiguration.BLOCK_SIZE,
+	                imageSize, imageSize, null);
+	        }
+	        
+	        g2.setComposite(originalComposite);
+	    } else {
+	        if (type == "base") {
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
+	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
+	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
+	                imageSize, imageSize, null);
+	        } else if (type == "barracks") {
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
+	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
+	                position.getLine() * GameConfiguration.BLOCK_SIZE,
+	                imageSize, imageSize, null);
+	            
+	            for (Position pos : building.getZone().getPositions()) {
+	                g2.setColor(Color.GREEN);
+	                ((Graphics2D) g2).setStroke(new BasicStroke(2));
+	                g2.drawRect(
+	                    pos.getColumn() * GameConfiguration.BLOCK_SIZE,
+	                    pos.getLine() * GameConfiguration.BLOCK_SIZE,
+	                    GameConfiguration.BLOCK_SIZE + 10,
+	                    GameConfiguration.BLOCK_SIZE + 10);
+	            }
+	        }
+	    }
+	}
+	
+	public void paint(Slave unit, Graphics2D g2) {
+	    Position position = unit.getZone().getPositions().get(0);
+	    
+	    if (unit.isUnderConstruction()) {
+	        float progress = unit.getConstructionProgress();
+	        
+	        int barWidth = GameConfiguration.BLOCK_SIZE;
+	        int barHeight = 8;
+	        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE;
+	        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE - 15;
+	        
+	        g2.setColor(Color.GRAY);
+	        g2.fillRect(barX, barY, barWidth, barHeight);
+	        
+	        g2.setColor(Color.BLUE);
+	        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
+	        
+	        int remainingTime = unit.getRemainingConstructionTime();
+	        String timeText = remainingTime + "s";
+	        g2.setColor(Color.WHITE);
+	        g2.setFont(new Font("Arial", Font.BOLD, 12));
+	        g2.drawString(timeText, barX + barWidth/2 - 10, barY - 5);
+	        
+	        AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+	        Composite originalComposite = g2.getComposite();
+	        g2.setComposite(alphaComposite);
+	        
+	        g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_06.png"),
+	            position.getColumn() * GameConfiguration.BLOCK_SIZE - 20,
+	            position.getLine() * GameConfiguration.BLOCK_SIZE - 20,
+	            imageSize, imageSize, null);
+	        
+	        g2.setComposite(originalComposite);
+	    } else {
+	    	
+	        g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_06.png"),
+	            position.getColumn() * GameConfiguration.BLOCK_SIZE - 20,
+	            position.getLine() * GameConfiguration.BLOCK_SIZE - 20,
+	            imageSize, imageSize, null);
+		    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_06.png"),
+		    	position.getColumn() * GameConfiguration.BLOCK_SIZE-20,   
+		        position.getLine() * GameConfiguration.BLOCK_SIZE-20, 
 		        imageSize,
 		        imageSize,
 		        null);
-
 		    
-		}
-		else if (type=="barracks") {
-		    Position position = building.getZone().getPositions().get(0);
-		    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
-			    	position.getColumn() * GameConfiguration.BLOCK_SIZE-6,   
-			        position.getLine() * GameConfiguration.BLOCK_SIZE, 
-			        imageSize,
-			        imageSize,
-			        null);
-		    
-		    for (Position pos : building.getZone().getPositions()) {
-			    g2.setColor(Color.GREEN);
+		    if (unit.isSelected()) {
+		        g2.setColor(Color.GREEN);
 		        ((Graphics2D) g2).setStroke(new BasicStroke(2));
 		        g2.drawRect(
-		            pos.getColumn() * GameConfiguration.BLOCK_SIZE,
-		            pos.getLine() * GameConfiguration.BLOCK_SIZE,
+		            position.getColumn() * GameConfiguration.BLOCK_SIZE,
+		            position.getLine() * GameConfiguration.BLOCK_SIZE,
 		            GameConfiguration.BLOCK_SIZE + 10,
-		            GameConfiguration.BLOCK_SIZE + 10);
+		            GameConfiguration.BLOCK_SIZE + 10
+		        );
 		    }
-
-		}
-	    
-	}
-	
-	public void paint(Slave unit,Graphics g2) {
-		Position position = unit.getZone().getPositions().get(0);
-	    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_06.png"),
-	    	position.getColumn() * GameConfiguration.BLOCK_SIZE-20,   
-	        position.getLine() * GameConfiguration.BLOCK_SIZE-20, 
-	        imageSize,
-	        imageSize,
-	        null);
-	    
-	    if (unit.isSelected()) {
-	        g2.setColor(Color.GREEN);
-	        ((Graphics2D) g2).setStroke(new BasicStroke(2));
-	        g2.drawRect(
-	            position.getColumn() * GameConfiguration.BLOCK_SIZE,
-	            position.getLine() * GameConfiguration.BLOCK_SIZE,
-	            GameConfiguration.BLOCK_SIZE + 10,
-	            GameConfiguration.BLOCK_SIZE + 10
-	        );
-	    }
-	    
-	    int barWidth = GameConfiguration.BLOCK_SIZE;
-        int barHeight = 5;
-        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE+2;
-        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE -11;
-        
-        g2.setColor(Color.GRAY);
-        g2.fillRect(barX, barY, barWidth, barHeight);
-        
-        float progress = (float) unit.getCurrentHealth() / 100.0f;
-        g2.setColor(Color.red);
-        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
-	    
-	    if(((Slave)unit).isHarvesting()||((Slave)unit).isReturning() ) {
-            int barWidth2 = GameConfiguration.BLOCK_SIZE;
-            int barHeight2 = 5;
-            int barX2 = position.getColumn() * GameConfiguration.BLOCK_SIZE + 2;
-            int barY2 = position.getLine() * GameConfiguration.BLOCK_SIZE + 20;
-            
-            g2.setColor(Color.GRAY);
-            g2.fillRect(barX2, barY2, barWidth2, barHeight2);
-            
-            float progress2 = (float) ((Slave)unit).getResourceAmount() / 50.0f;
-            if (((Slave)unit).getHarvestingResourceType().equals("wood")) {
-            	g2.setColor(new Color(139, 69, 19));
-            } else {
-            	g2.setColor(new Color(0, 255, 255));
-            }
-            g2.fillRect(barX2, barY2, (int)(barWidth2 * progress2), barHeight2);
-            
+		    
+		    int barWidth = GameConfiguration.BLOCK_SIZE;
+	        int barHeight = 5;
+	        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE+2;
+	        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE -11;
+	        
+	        g2.setColor(Color.GRAY);
+	        g2.fillRect(barX, barY, barWidth, barHeight);
+	        
+	        float progress = (float) unit.getCurrentHealth() / 100.0f;
+	        g2.setColor(Color.red);
+	        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
+		    
+		    if(((Slave)unit).isHarvesting()||((Slave)unit).isReturning() ) {
+	            int barWidth2 = GameConfiguration.BLOCK_SIZE;
+	            int barHeight2 = 5;
+	            int barX2 = position.getColumn() * GameConfiguration.BLOCK_SIZE + 2;
+	            int barY2 = position.getLine() * GameConfiguration.BLOCK_SIZE + 20;
+	            
+	            g2.setColor(Color.GRAY);
+	            g2.fillRect(barX2, barY2, barWidth2, barHeight2);
+	            
+	            float progress2 = (float) ((Slave)unit).getResourceAmount() / 50.0f;
+	            if (((Slave)unit).getHarvestingResourceType().equals("wood")) {
+	            	g2.setColor(new Color(139, 69, 19));
+	            } else {
+	            	g2.setColor(new Color(0, 255, 255));
+	            }
+	            g2.fillRect(barX2, barY2, (int)(barWidth2 * progress2), barHeight2);
+	            
+		    }
+		 
 	    }
 	    
 	    
