@@ -3,6 +3,8 @@ package data.map;
 import java.util.List;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+
 import data.mobile.*;
 
 public class Map {
@@ -127,16 +129,21 @@ public class Map {
 		return false;
 	}
 	
-		public boolean isfullUnits(Position position) {
-			for(Zone zone : fullUnitsPosition) {
-				for(Position pos : zone.getPositions()) {
-					if(position.equals(pos)) {
-						return true;
+		public synchronized boolean isfullUnits(Position position) {
+			try {
+				for(Zone zone : fullUnitsPosition) {
+					for(Position pos : zone.getPositions()) {
+						if(position.equals(pos)) {
+							return true;
+						}
 					}
+					
 				}
-				
+				return false;
+			}catch(ConcurrentModificationException e) {
+				System.out.println("probleme de concurrence");
 			}
-			return false;
+			return true;
 		}
 	
 		
@@ -174,6 +181,14 @@ public class Map {
 	public Zone getMagicOreLocations() {
 		return magicOreLocations;
 	}
+	
+	public void setWoodLocations(Zone woodLocations) {
+		this.woodLocations = woodLocations;
+	}
+	public void setMagicOreLocations(Zone magicOreLocations) {
+		this.magicOreLocations = magicOreLocations;
+	}
+	
 	public List<Zone> getFullPosition() {
 		return fullPosition;
 	}

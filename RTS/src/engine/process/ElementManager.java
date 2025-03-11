@@ -130,7 +130,7 @@ public class ElementManager implements MobileInterface {
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		mainPlayer.setWood(mainPlayer.getWood()-100);
-		UnitStepper stepper = new UnitStepper(unit);
+		UnitStepper stepper = new UnitStepper(unit,map,this);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -153,7 +153,7 @@ public class ElementManager implements MobileInterface {
 		units.add(slave);
 		map.addFullUnitsPosition(zone);
 		mainPlayer.setWood(mainPlayer.getWood()-100);
-		UnitStepper stepper = new UnitStepper(slave,100);
+		UnitStepper stepper = new UnitStepper(slave,100,map,this);
 		unitSteppers.put(slave, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -188,7 +188,7 @@ public class ElementManager implements MobileInterface {
 	    } else if (currentPosition.getLine() > targetPosition.getLine()) {
 	    	newPosition.setLine(currentPosition.getLine() - 1);
 	    }
-	   if (!map.isfullUnits(newPosition)) {
+	   if (!map.isfullUnits(newPosition) || ((Slave)unit).isReturning() || ((Slave)unit).isHarvesting()) {
 	        currentPosition.setColumn(newPosition.getColumn());
 	        currentPosition.setLine(newPosition.getLine());
 	   }
@@ -260,71 +260,7 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	
-	private class UnitStepper implements Runnable {
-	    private Unit unit;
-	    private volatile boolean running = true;
-	    private int speed ;
-	    private long lastHarvestTime = 0;
-
-	    public UnitStepper(Unit unit,int speed) {
-	        this.unit = unit;
-	        this.speed=speed;
-	        
-	    }
-	    public UnitStepper(Unit unit) {
-	    	this(unit,100);
-	    }
-
-	    public void stop() {
-	        running = false;
-	    }
-
-	    @Override
-	    public void run() {
-	        while (running) {
-	            if (unit.isUnderConstruction()) {
-	                try {
-	                    Thread.sleep(speed);
-	                } catch (InterruptedException e) {
-	                    Thread.currentThread().interrupt();
-	                    return;
-	                }
-	                continue;
-	            }
-	            if (!correctPosition(unit)) {
-	                Position oldPosition = new Position(
-	                    unit.getZone().getPositions().get(0).getLine(),
-	                    unit.getZone().getPositions().get(0).getColumn()
-	                );
-	                
-	                moveUnitOneStep(unit);
-	                
-	                if (!oldPosition.equals(unit.getZone().getPositions().get(0))) {
-	                    map.removeFullUnitsPosition(oldPosition);
-	                    map.addFullUnitsPosition(unit.getZone());
-	                }
-	            }
-	            
-	            if(unit instanceof Slave) {
-	            	if(((Slave) unit).isHarvesting() || ((Slave) unit).isReturning()) {
-	            		long currentTime = System.currentTimeMillis();
-	            		if(currentTime - lastHarvestTime > GameConfiguration.HARVEST_TIME) {
-	            			harvestResource((Slave)unit);
-	            			lastHarvestTime=currentTime;
-	            		}
-	            	}
-	            	
-	            }
-	            
-	            try {
-	                Thread.sleep(speed); 
-                } catch (InterruptedException e) {
-	                Thread.currentThread().interrupt();
-	                return;
-	            }
-	        }
-	    }
-	}
+	
 	
 	
 	

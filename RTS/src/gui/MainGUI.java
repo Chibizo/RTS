@@ -183,7 +183,6 @@ public class MainGUI extends JFrame implements Runnable {
 	            warningTime = -1; 
 	        }
 			
-			// Pass selection rectangle to the dashboard for rendering
 			if (isDragging && selectionStart != null && selectionEnd != null) {
 				dashboard.setSelectionRectangle(selectionStart, selectionEnd);
 			} else {
@@ -273,6 +272,10 @@ public class MainGUI extends JFrame implements Runnable {
 				    } else if (!map.isfull(clickedPosition)) {
 				        for (Unit unit : selectedUnits) {
 				            unit.setTargetPosition(clickedPosition);
+				            if(unit instanceof Slave) {
+				            	((Slave) unit).setHarvesting(false);
+				            	((Slave) unit).setReturning(false);
+				            }
 				        }
 				    }
 
