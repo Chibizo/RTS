@@ -274,6 +274,7 @@ public class MainGUI extends JFrame implements Runnable {
 				            unit.setTargetPosition(clickedPosition);
 				            if(unit instanceof Slave) {
 				            	((Slave) unit).setHarvesting(false);
+				            	
 				            	((Slave) unit).setReturning(false);
 				            }
 				        }
