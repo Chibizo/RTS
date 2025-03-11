@@ -61,6 +61,8 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private BaseBuildingMenuPanel baseBuildingMenuPanel;
 	
+	private BarracksBuildingMenuPanel barracksBuildingMenuPanel;
+	
 	private InfoPlayerPanel infoPlayerPanel;
 	
 	private Player mainPlayer;
@@ -74,7 +76,10 @@ public class MainGUI extends JFrame implements Runnable {
 	private Container contentPane;
 	
 	private long warningTime = -1;
-
+	
+	private boolean showBuildingPreview = false;
+	private String previewBuildingType = "";
+	private Point mousePosition = new Point(0, 0);
 	
 	private Point selectionStart = null;
 	private Point selectionEnd = null;
@@ -121,6 +126,7 @@ public class MainGUI extends JFrame implements Runnable {
 		contentPane.add(panelInteraction,BorderLayout.EAST);
 		
 		baseBuildingMenuPanel=new BaseBuildingMenuPanel(mainPlayer);
+		barracksBuildingMenuPanel=new BarracksBuildingMenuPanel(mainPlayer);
 		
 		infoPlayerPanel=new InfoPlayerPanel(mainPlayer);
 		contentPane.add(infoPlayerPanel,BorderLayout.SOUTH);
@@ -137,7 +143,7 @@ public class MainGUI extends JFrame implements Runnable {
 	public Player initMainPlayer(String raceMainPlayer) {
 		ArrayList<Position> starterPositionBase=new ArrayList<Position>();
 			
-		for (int lineIndex = 50; lineIndex <= 51; lineIndex++) {
+		for (int lineIndex = 50; lineIndex <= 52; lineIndex++) {
 	        for (int columnIndex = 11; columnIndex <= 14; columnIndex++) {
 	            Position position = new Position(lineIndex,columnIndex);
 	            starterPositionBase.add(position);
@@ -165,6 +171,8 @@ public class MainGUI extends JFrame implements Runnable {
 		buildingPanel.getBarracksBuilding().addActionListener(new PutBarracks());
 		baseBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		baseBuildingMenuPanel.getUnitsButton().addActionListener(new SlaveButton());
+		barracksBuildingMenuPanel.getUnitsButton().addActionListener(new WarriorButton());
+		barracksBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 	}
 
 	@Override
@@ -187,6 +195,9 @@ public class MainGUI extends JFrame implements Runnable {
 				dashboard.setSelectionRectangle(selectionStart, selectionEnd);
 			} else {
 				dashboard.setSelectionRectangle(null, null);
+			}
+			if(showBuildingPreview) {
+				dashboard.setPreviewBuilding(previewBuildingType, mousePosition);
 			}
 		}
 	}
@@ -232,6 +243,10 @@ public class MainGUI extends JFrame implements Runnable {
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
+			mousePosition = e.getPoint();
+		    if (showBuildingPreview) {
+		        dashboard.repaint();
+		    }
 		}
 	}
 	
@@ -246,6 +261,7 @@ public class MainGUI extends JFrame implements Runnable {
 					x >= 0 && x < map.getColumnCount()-2) {
 				
 				Position clickedPosition = map.getBlock(y, x);
+				System.out.println(clickedPosition);
 				
 				Unit clickedUnit = MouseUtility.findUnitAtPosition(manager.getAllUnits(),x, y);
 				
@@ -262,6 +278,7 @@ public class MainGUI extends JFrame implements Runnable {
 				    List<Unit> selectedUnits = manager.getSelectedUnits();
 				    
 				    String resourceType = manager.getResourceTypeAt(clickedPosition);
+				    String buildingType = MouseUtility.checkBuilding(clickedPosition, mainPlayer);
 				    
 				    if (resourceType != null) {
 				        for (Unit unit : selectedUnits) {
@@ -269,12 +286,11 @@ public class MainGUI extends JFrame implements Runnable {
 				                manager.startHarvesting((Slave) unit, clickedPosition);
 				            }
 				        }
-				    } else if (!map.isfull(clickedPosition)) {
+				    } else if (!map.isfull(clickedPosition) && buildingType.isEmpty() ) {
 				        for (Unit unit : selectedUnits) {
 				            unit.setTargetPosition(clickedPosition);
 				            if(unit instanceof Slave) {
 				            	((Slave) unit).setHarvesting(false);
-				            	
 				            	((Slave) unit).setReturning(false);
 				            }
 				        }
@@ -285,7 +301,7 @@ public class MainGUI extends JFrame implements Runnable {
 				    }
 				}
 				
-				if (MouseUtility.isInBaseZone(clickedPosition,mainPlayer.getStarterZone(),x, y)) {
+				if (MouseUtility.checkBuilding(clickedPosition, mainPlayer)=="base") {
 		            System.out.println("Clic sur la base du joueur principal !");
 		            BorderLayout layout = (BorderLayout) contentPane.getLayout();
 					Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
@@ -296,6 +312,19 @@ public class MainGUI extends JFrame implements Runnable {
 				   
 		        }		
 				
+				if(MouseUtility.checkBuilding(clickedPosition, mainPlayer)=="barracks") {
+					Building barracks=manager.getBuildings().get("barracks");
+					if(!barracks.isUnderConstruction()) {
+						System.out.println("Clic sur la barracks du joueur principal !");
+			            BorderLayout layout = (BorderLayout) contentPane.getLayout();
+						Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
+						contentPane.remove(eastComponent);
+						contentPane.add(barracksBuildingMenuPanel,BorderLayout.EAST);
+					    barracksBuildingMenuPanel.revalidate();
+					    barracksBuildingMenuPanel.repaint();
+					}
+				}
+				
 				ArrayList<Position> listPosition= new ArrayList<Position>();
 				listPosition.add(map.getBlock(y, x));
 				listPosition.add(map.getBlock(y+1, x));
@@ -304,16 +333,18 @@ public class MainGUI extends JFrame implements Runnable {
 
 				Zone zone=new Zone(listPosition);		
 			
-				if(placingBuilding=="barracks" && !map.isfull(listPosition.get(0))) {
+				if(placingBuilding=="barracks" && !map.isfull(listPosition.get(0)) && (clickedPosition.getColumn()<=35 && clickedPosition.getLine()>=35)) {
 					
-						manager.putBuilding(zone,"barracks");
+						manager.putBuilding(zone,"barracks",mainPlayer);
 						infoPlayerPanel.update();
 						
 						for(Position position : listPosition){
 							System.out.println(position.getLine()+" "+position.getColumn());
 						}
-							System.out.println(x + " " + y);
+						System.out.println(x + " " + y);
 						placingBuilding="";
+						showBuildingPreview = false;
+					    previewBuildingType = "";
 					
 				}
 			}
@@ -370,8 +401,10 @@ public class MainGUI extends JFrame implements Runnable {
 	private class PutBarracks implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(mainPlayer.getWood()>=700) {
+			if(mainPlayer.getWood()>=800) {
 				placingBuilding="barracks";
+				showBuildingPreview = true;
+		        previewBuildingType = "barracks";
 			}
 			else {
 				infoPlayerPanel.setWarningLabel("you don't have enough wood");
@@ -419,7 +452,38 @@ public class MainGUI extends JFrame implements Runnable {
 				manager.selectMostRecentUnit();
 				placingUnit=true;
 				
+			}else {
+				infoPlayerPanel.setWarningLabel("you don't have enough wood");
+				warningTime = System.currentTimeMillis();
 			}
 		}
 	}
+	
+	private class WarriorButton implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			Building barracks = mainPlayer.getBuildings("barracks");
+			if(barracks.isUnderConstruction() && barracks!=null) {
+				infoPlayerPanel.setWarningLabel("Base is still under construction");
+	            warningTime = System.currentTimeMillis();
+	            return;
+			}
+			else if(mainPlayer.getWood()>=200) {
+				Position unitPosition = new Position(
+						barracks.getZone().getPositions().get(0).getLine()+3 ,
+						barracks.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
+			     
+			        );
+				System.out.println(unitPosition);
+				manager.putWarrior(unitPosition);
+				manager.selectMostRecentUnit();
+				placingUnit=true;
+				
+			}
+			else {
+				infoPlayerPanel.setWarningLabel("you don't have enough wood");
+				warningTime = System.currentTimeMillis();
+			}
+		}
+	}
+	
 }

@@ -10,8 +10,8 @@ public class Building extends MobileElement{
 	private Zone zone;
 	private int tier;
 	
-	public Building(Zone zone,int tier,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race) {
-		super(zone,maxHealth,currentHealth,wood,magicOre,constructTime,race);
+	public Building(Zone zone,int tier,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race,String name) {
+		super(zone,maxHealth,currentHealth,wood,magicOre,constructTime,race,name);
 		this.tier=tier;
 	}
 

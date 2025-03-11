@@ -9,10 +9,10 @@ import data.model.Player;
 public interface MobileInterface {
 
 	
-	void putBuilding(Zone zone,String type);
+	void putBuilding(Zone zone,String type,Player player);
 	
-	void putUnit(Zone zone);
-	void putUnit(Position position);
+	void putWarrior(Zone zone);
+	void putWarrior(Position position);
 	
 	HashMap<String,Building> getBuildings();
 	

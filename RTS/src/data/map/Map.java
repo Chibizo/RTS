@@ -2,6 +2,7 @@ package data.map;
 
 import java.util.List;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
 
@@ -129,38 +130,41 @@ public class Map {
 		return false;
 	}
 	
-		public synchronized boolean isfullUnits(Position position) {
-			try {
-				for(Zone zone : fullUnitsPosition) {
-					for(Position pos : zone.getPositions()) {
-						if(position.equals(pos)) {
-							return true;
-						}
+	public synchronized boolean isfullUnits(Position position) {
+		try {
+			for(Zone zone : fullUnitsPosition) {
+				for(Position pos : zone.getPositions()) {
+					if(position.equals(pos)) {
+						return true;
 					}
-					
 				}
-				return false;
-			}catch(ConcurrentModificationException e) {
-				System.out.println("probleme de concurrence");
+				
 			}
-			return true;
+			return false;
+		}catch(ConcurrentModificationException e) {
+			System.out.println("probleme de concurrence");
 		}
-	
-		
-	
-	public void removeFullPosition(Position position) {
-		for(Zone  zone : fullPosition ) {
-			for(Position pos : zone.getPositions()) {
-				if(pos.equals(position)) {
-					fullPosition.remove(zone);
-				}
-			}
-		}
+		return true;
 	}
-	public synchronized void removeFullUnitsPosition(Position position) {
+
+	
+
+	public void removeFullPosition(Position position) {
+	    Iterator<Zone> iterator = fullPosition.iterator();
+	    while (iterator.hasNext()) {
+	        Zone zone = iterator.next();
+	        for (Position pos : zone.getPositions()) {
+	            if (pos.equals(position)) {
+	                iterator.remove(); 
+	                break; 
+	            }
+	        }
+	    }
+	}
+	public void removeFullUnitsPosition(Position position) {
 	    List<Zone> zonesToRemove = new ArrayList<>();
 	    
-	    for (Zone zone : fullUnitsPosition) {
+	    for (Zone zone : fullPosition) {
 	        for (Position pos : zone.getPositions()) {
 	            if (pos.equals(position)) {
 	                zonesToRemove.add(zone);
@@ -169,7 +173,7 @@ public class Map {
 	        }
 	    }
 	    
-	    fullUnitsPosition.removeAll(zonesToRemove);
+	    fullPosition.removeAll(zonesToRemove);
 	}
 
 	public boolean isOnBorder(Position position) {

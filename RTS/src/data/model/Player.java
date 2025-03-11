@@ -2,6 +2,8 @@ package data.model;
 
 import data.map.*;
 import java.util.ArrayList;
+import java.util.List;
+
 import data.mobile.*;
 
 public class Player {
@@ -12,14 +14,14 @@ public class Player {
 	private Race race;
 	private Building base ;
 	private Zone starterZone;
-	private ArrayList<MobileElement> elements=new ArrayList<MobileElement>();
+	private List<Building> buildings=new ArrayList<Building>();
 	
 	public Player(int wood,int magicOre,Race race,Zone zone) {
 		 this.wood=wood;
 		 this.magicOre=magicOre;
 		 this.race=race;
 		 starterZone=zone;
-		 base=new Building(zone,0,0,0,0,0,0,race);
+		 base=new Building(zone,0,0,0,0,0,0,race,"base");
 	}
 	
 	
@@ -58,8 +60,23 @@ public class Player {
 	}
 
 
-	public ArrayList<MobileElement> getElements() {
-		return elements;
+	
+	
+	public List<Building> getBuildings() {
+		return buildings;
+	}
+	
+	public Building getBuildings(String name) {
+		for(Building build : buildings) {
+			if(name==build.getName()) {
+				return build;
+			}
+		}
+		return null;
+	}
+
+	public void addBuilding(Building building) {
+		buildings.add(building);
 	}
 
 
@@ -71,6 +88,8 @@ public class Player {
 	public void setMagicOre(int magicOre) {
 		this.magicOre = magicOre;
 	}
+	
+	
 	
 	
 	

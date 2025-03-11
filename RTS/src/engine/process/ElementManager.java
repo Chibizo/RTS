@@ -97,7 +97,7 @@ public class ElementManager implements MobileInterface {
  
      
 	
-	public void putBuilding(Zone zone,String type) {
+	public void putBuilding(Zone zone,String type,Player player) {
 		for(Position position : zone.getPositions()) {
 			if (map.isOnBorder(position)) {
 				return;
@@ -105,41 +105,44 @@ public class ElementManager implements MobileInterface {
 		}
 		Race race=new Race("temporaier");
 		if(type=="barracks") {
-			Building building=new Building(zone,1,250,250,0,0,45000,race);	
+			Building building=new Building(zone,1,250,250,0,0,30000,race,"barracks");	
 			buildings.put("barracks",building);
+			player.addBuilding(building);
 			map.addFullPosition(zone);
-			mainPlayer.setWood(mainPlayer.getWood()-700);
+			mainPlayer.setWood(mainPlayer.getWood()-800);
 		}
 		else if (type=="base") {
-			Building building=new Building(zone,1,1000,1000,0,0,0,race);	
+			Building building=new Building(zone,1,1000,1000,0,0,0,race,"base");	
 			buildings.put("base",building);
+			player.addBuilding(building);
 			map.addFullPosition(zone);
 		}
+		System.out.println(player.getBuildings());
 
 	}
 	
 	
-	public void putUnit(Zone zone) {
+	public void putWarrior(Zone zone) {
 		for(Position position : zone.getPositions()) {
 			if(map.isOnBorder(position) || map.isfull(position)) {
 				return; 
 			}
 		}
 		Race race=new Race("temp");
-		Unit unit=new Unit(zone,"temp",0,0,0,0,15000,race);
+		Unit unit=new Unit(zone,"temp",200,200,0,0,20000,race,"warrior");
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
-		mainPlayer.setWood(mainPlayer.getWood()-100);
+		mainPlayer.setWood(mainPlayer.getWood()-200);
 		UnitStepper stepper = new UnitStepper(unit,map,this);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
 		
 	}
-	public void putUnit(Position position) {
+	public void putWarrior(Position position) {
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
-		putUnit(new Zone(zone));
+		putWarrior(new Zone(zone));
 	}
 	
 	public void putSlave(Zone zone) {
@@ -149,7 +152,7 @@ public class ElementManager implements MobileInterface {
 			}
 		}
 		Race race=new Race("temp");
-		Slave slave=new Slave(zone,"temp",100,100,0,0,15000,race);
+		Slave slave=new Slave(zone,"temp",100,100,0,0,15000,race,"slave");
 		units.add(slave);
 		map.addFullUnitsPosition(zone);
 		mainPlayer.setWood(mainPlayer.getWood()-100);
@@ -188,7 +191,7 @@ public class ElementManager implements MobileInterface {
 	    } else if (currentPosition.getLine() > targetPosition.getLine()) {
 	    	newPosition.setLine(currentPosition.getLine() - 1);
 	    }
-	   if (!map.isfullUnits(newPosition) || ((Slave)unit).isReturning() || ((Slave)unit).isHarvesting()) {
+	   if (!map.isfullUnits(newPosition) || (unit instanceof Slave && ((Slave)unit).isReturning()) || (unit instanceof Slave && ((Slave)unit).isHarvesting())) {
 	        currentPosition.setColumn(newPosition.getColumn());
 	        currentPosition.setLine(newPosition.getLine());
 	   }

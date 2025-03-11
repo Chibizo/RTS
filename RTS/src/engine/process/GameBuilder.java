@@ -18,7 +18,7 @@ public class GameBuilder {
 	
 	public static MobileInterface buildInitMobile(Map map,Player mainPlayer) {
 		MobileInterface manager=new ElementManager(map,mainPlayer);
-		manager.putBuilding(manager.getMainPlayer().getStarterZone(),"base");
+		manager.putBuilding(manager.getMainPlayer().getStarterZone(),"base",manager.getMainPlayer());
 		return manager;
 	}
 	

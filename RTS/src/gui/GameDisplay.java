@@ -30,6 +30,8 @@ public class GameDisplay extends JPanel {
 	
  	private Point selectionStart = null;
 	private Point selectionEnd = null;
+	private String previewBuildingType = "";
+	private Point previewMousePosition = new Point(0, 0);
 
 	public GameDisplay(Map map, MobileInterface manager) {
 		this.map = map;
@@ -39,6 +41,11 @@ public class GameDisplay extends JPanel {
 	public void setSelectionRectangle(Point start, Point end) {
 		this.selectionStart = start;
 		this.selectionEnd = end;
+	}
+	
+	public void setPreviewBuilding(String type, Point mousePos) {
+	    this.previewBuildingType = type;
+	    this.previewMousePosition = mousePos;
 	}
 
 	@Override
@@ -58,11 +65,16 @@ public class GameDisplay extends JPanel {
 			}
 		}
 		
+		if(previewBuildingType != null && !previewBuildingType.isEmpty()) {
+			paintStrategy.paint(map,previewBuildingType,previewMousePosition, g2);
+		}
+		
 		for (Unit unit : manager.getAllUnits()) {
 			if(unit instanceof Slave) {
 				paintStrategy.paint((Slave)unit, g2);
 			}
-			else {
+			else if(unit.getName()=="warrior"){
+				paintStrategy.paint(unit,"warrior", g2);
 		   }
 		}
 		

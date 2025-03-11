@@ -6,6 +6,7 @@ import data.model.*;
 
 public abstract class MobileElement {
 	
+	private String name;
 	private Zone zone;
 	private int maxHealth;
 	private int currentHealth;
@@ -16,12 +17,13 @@ public abstract class MobileElement {
 	private boolean underConstruction = true;
 	private long constructionStartTime;
 
-	public MobileElement(Zone zone,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race) {
+	public MobileElement(Zone zone,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race,String name) {
 		this.cost=new Cost(wood,magicOre);
 		this.zone=zone;
 		this.maxHealth=maxHealth;
 		this.currentHealth=currentHealth;
 		this.race=race;
+		this.name=name;
 
 		this.constructionTime=constructTime;
 	    this.constructionStartTime = System.currentTimeMillis();
@@ -71,6 +73,10 @@ public abstract class MobileElement {
 
 	public long getConstructionTime() {
 	    return constructionTime;
+	}
+
+	public String getName() {
+		return name;
 	}
 
 	public float getConstructionProgress() {

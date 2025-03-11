@@ -7,7 +7,9 @@ import java.util.List;
 import config.GameConfiguration;
 import data.map.Position;
 import data.map.Zone;
+import data.mobile.Building;
 import data.mobile.Unit;
+import data.model.Player;
 
 public class MouseUtility {
 	
@@ -48,7 +50,22 @@ public class MouseUtility {
 		}
 	}
 	
-	public static boolean isInBaseZone(Position clickedPosition,Zone baseZone, int x, int y) {
+	public static String checkBuilding(Position clickedPosition,Player player) {
+		List<Building> builds=player.getBuildings();
+		if(isInBaseZone(clickedPosition,player.getStarterZone())) {
+			return "base";
+		}
+		for(Building build : builds) {
+			for(Position pos : build.getZone().getPositions()) {
+				if(pos.equals(clickedPosition)) {
+					return build.getName();
+				}
+			}
+		}
+		return "";
+	}
+	
+	public static boolean isInBaseZone(Position clickedPosition,Zone baseZone) {
 		
 	    for (Position position : baseZone.getPositions()) {
 	        if (position.equals(clickedPosition)) {
