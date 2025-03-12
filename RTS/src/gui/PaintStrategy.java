@@ -40,7 +40,7 @@ public class PaintStrategy {
 			for(int columnIndex=0 ;columnIndex<map.getColumnCount();columnIndex++) {
 				Position position=block[lineIndex][columnIndex];
 				if(map.isOnBorder(position) && (lineIndex+columnIndex)%3==0) {
-					g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalTile_48v2.png"),
+					g2.drawImage(GameBuilder.readImage("src/images/medievalTile_48v2.png"),
 							position.getColumn() * GameConfiguration.BLOCK_SIZE -(imageSize - GameConfiguration.BLOCK_SIZE)/2 ,
 							position.getLine() * GameConfiguration.BLOCK_SIZE -(imageSize - GameConfiguration.BLOCK_SIZE)/2,   
 							imageSize,
@@ -52,7 +52,7 @@ public class PaintStrategy {
 				 */
 				if((position.getLine() == 55 || position.getLine() == 56) && 
 					    (position.getColumn() == 22 || position.getColumn() == 23)) {
-	                g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalEnvironment_11.png"),
+	                g2.drawImage(GameBuilder.readImage("src/images/medievalEnvironment_11.png"),
 	                        position.getColumn() * GameConfiguration.BLOCK_SIZE -15,
 	                        position.getLine() * GameConfiguration.BLOCK_SIZE -30,
 	                        imageSize, imageSize, null);
@@ -63,13 +63,13 @@ public class PaintStrategy {
 				if((position.getLine() >= 44 && position.getLine() <= 46) && 
 					    (position.getColumn() >= 6 && position.getColumn() <= 8)) {
 					if ((position.getLine() + position.getColumn()) % 2 == 0) {
-						 g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalEnvironment_01.png"),
+						 g2.drawImage(GameBuilder.readImage("src/images/medievalEnvironment_01.png"),
 			                        position.getColumn() * GameConfiguration.BLOCK_SIZE -15,
 			                        position.getLine() * GameConfiguration.BLOCK_SIZE -30,
 			                        imageSize, imageSize, null);
 					}
 					else {
-							g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalEnvironment_02.png"),
+							g2.drawImage(GameBuilder.readImage("src/images/medievalEnvironment_02.png"),
 	                        position.getColumn() * GameConfiguration.BLOCK_SIZE -15,
 	                        position.getLine() * GameConfiguration.BLOCK_SIZE -30,
 	                        imageSize, imageSize, null);
@@ -114,7 +114,7 @@ public class PaintStrategy {
         
         if (previewBuildingType.equals("barracks")) {
             if (validPosition) {
-                g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
+                g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
                     x * GameConfiguration.BLOCK_SIZE - 6,
                     y * GameConfiguration.BLOCK_SIZE,
                     imageSize,imageSize, null);
@@ -156,12 +156,12 @@ public class PaintStrategy {
 	        g2.setComposite(alphaComposite);
 	        
 	        if (type == "base") {
-	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
+	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_02.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
 	                imageSize, imageSize, null);
 	        } else if (type == "barracks") {
-	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
+	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE,
 	                imageSize, imageSize, null);
@@ -171,13 +171,13 @@ public class PaintStrategy {
 	    } else {
 	        if (type == "base") {
 
-	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
+	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_02.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
 	                imageSize, imageSize, null);
 	            
 	        } else if (type == "barracks") {
-	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
+	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE,
 	                imageSize, imageSize, null);
@@ -224,7 +224,7 @@ public class PaintStrategy {
 		        g2.setComposite(alphaComposite);
 		        
 		        if(name=="warrior") {
-			        g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_08.png"),
+			        g2.drawImage(GameBuilder.readImage("src/images/medievalUnit_08.png"),
 			            position.getColumn() * GameConfiguration.BLOCK_SIZE - 20,
 			            position.getLine() * GameConfiguration.BLOCK_SIZE - 20,
 			            imageSize, imageSize, null);
@@ -232,7 +232,7 @@ public class PaintStrategy {
 		        g2.setComposite(originalComposite);
 		    } else {
 		    	if(name=="warrior") {
-			        g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_08.png"),
+			        g2.drawImage(GameBuilder.readImage("src/images/medievalUnit_08.png"),
 			            position.getColumn() * GameConfiguration.BLOCK_SIZE - 20,
 			            position.getLine() * GameConfiguration.BLOCK_SIZE - 20,
 			            imageSize, imageSize, null);
@@ -291,7 +291,7 @@ public class PaintStrategy {
 	        Composite originalComposite = g2.getComposite();
 	        g2.setComposite(alphaComposite);
 	        
-	        g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_06.png"),
+	        g2.drawImage(GameBuilder.readImage("src/images/medievalUnit_06.png"),
 	            position.getColumn() * GameConfiguration.BLOCK_SIZE - 20,
 	            position.getLine() * GameConfiguration.BLOCK_SIZE - 20,
 	            imageSize, imageSize, null);
@@ -300,7 +300,7 @@ public class PaintStrategy {
 	    } else {
 	    	
 	     
-		    g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalUnit_06.png"),
+		    g2.drawImage(GameBuilder.readImage("src/images/medievalUnit_06.png"),
 		    	position.getColumn() * GameConfiguration.BLOCK_SIZE-20,   
 		        position.getLine() * GameConfiguration.BLOCK_SIZE-20, 
 		        imageSize,
