@@ -16,4 +16,7 @@ public class GameConfiguration {
 	public static final int WOOD_HARVEST_AMOUNT = 5;
     public static final int MAGIC_ORE_HARVEST_AMOUNT = 3;
     public static final int HARVEST_TIME = 500;
+    
+    
+    public static final int BARRACKS_COST=800;
 }

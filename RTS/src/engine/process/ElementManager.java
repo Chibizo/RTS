@@ -103,16 +103,15 @@ public class ElementManager implements MobileInterface {
 				return;
 			}
 		}
-		Race race=new Race("temporaier");
 		if(type=="barracks") {
-			Building building=new Building(zone,1,250,250,0,0,30000,race,"barracks");	
+			Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,30000,player.getRace(),"barracks");	
 			buildings.put("barracks",building);
 			player.addBuilding(building);
 			map.addFullPosition(zone);
-			mainPlayer.setWood(mainPlayer.getWood()-800);
+			mainPlayer.setWood(mainPlayer.getWood()-building.getCost().getWood());
 		}
 		else if (type=="base") {
-			Building building=new Building(zone,1,1000,1000,0,0,0,race,"base");	
+			Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
 			buildings.put("base",building);
 			player.addBuilding(building);
 			map.addFullPosition(zone);
@@ -122,50 +121,48 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	
-	public void putWarrior(Zone zone) {
+	public void putWarrior(Zone zone,Player player) {
 		for(Position position : zone.getPositions()) {
 			if(map.isOnBorder(position) || map.isfull(position)) {
 				return; 
 			}
 		}
-		Race race=new Race("temp");
-		Unit unit=new Unit(zone,"temp",200,200,0,0,20000,race,"warrior");
+		Unit unit=new Unit(zone,"temp",200,200,200,0,20000,player.getRace(),"warrior");
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
-		mainPlayer.setWood(mainPlayer.getWood()-200);
+		mainPlayer.setWood(mainPlayer.getWood()-unit.getCost().getWood());
 		UnitStepper stepper = new UnitStepper(unit,map,this);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
 		
 	}
-	public void putWarrior(Position position) {
+	public void putWarrior(Position position,Player player) {
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
-		putWarrior(new Zone(zone));
+		putWarrior(new Zone(zone),player);
 	}
 	
-	public void putSlave(Zone zone) {
+	public void putSlave(Zone zone,Player player) {
 		for(Position position : zone.getPositions()) {
 			if(map.isOnBorder(position) || map.isfull(position)) {
 				return; 
 			}
 		}
-		Race race=new Race("temp");
-		Slave slave=new Slave(zone,"temp",100,100,0,0,15000,race,"slave");
+		Slave slave=new Slave(zone,"temp",100,100,100,0,15000,player.getRace(),"slave");
 		units.add(slave);
 		map.addFullUnitsPosition(zone);
-		mainPlayer.setWood(mainPlayer.getWood()-100);
+		mainPlayer.setWood(mainPlayer.getWood()-slave.getCost().getWood());
 		UnitStepper stepper = new UnitStepper(slave,100,map,this);
 		unitSteppers.put(slave, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
 		
 	}
-	public void putSlave(Position position) {
+	public void putSlave(Position position,Player player) {
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
-		putSlave(new Zone(zone));
+		putSlave(new Zone(zone),player);
 	}
 	
 	

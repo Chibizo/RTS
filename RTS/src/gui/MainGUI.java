@@ -401,7 +401,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class PutBarracks implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(mainPlayer.getWood()>=800) {
+			if(mainPlayer.getWood()>=GameConfiguration.BARRACKS_COST) {
 				placingBuilding="barracks";
 				showBuildingPreview = true;
 		        previewBuildingType = "barracks";
@@ -448,7 +448,7 @@ public class MainGUI extends JFrame implements Runnable {
 			            mainPlayer.getStarterZone().getPositions().get(0).getColumn() + manager.getAllUnits().size() %15 -5 
 			        );
 				System.out.println(unitPosition);
-				manager.putSlave(unitPosition);
+				manager.putSlave(unitPosition,mainPlayer);
 				manager.selectMostRecentUnit();
 				placingUnit=true;
 				
@@ -474,7 +474,7 @@ public class MainGUI extends JFrame implements Runnable {
 			     
 			        );
 				System.out.println(unitPosition);
-				manager.putWarrior(unitPosition);
+				manager.putWarrior(unitPosition,mainPlayer);
 				manager.selectMostRecentUnit();
 				placingUnit=true;
 				

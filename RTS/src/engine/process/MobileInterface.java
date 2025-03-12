@@ -11,8 +11,8 @@ public interface MobileInterface {
 	
 	void putBuilding(Zone zone,String type,Player player);
 	
-	void putWarrior(Zone zone);
-	void putWarrior(Position position);
+	void putWarrior(Zone zone,Player player);
+	void putWarrior(Position position,Player player);
 	
 	HashMap<String,Building> getBuildings();
 	
@@ -34,8 +34,8 @@ public interface MobileInterface {
 	
 	public void harvestResource(Slave slave);
 	
-	public void putSlave(Zone zone);
-	public void putSlave(Position position);
+	public void putSlave(Zone zone,Player player);
+	public void putSlave(Position position,Player player);
 	
 	public void updateConstruction();
 	
