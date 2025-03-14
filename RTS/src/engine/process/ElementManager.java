@@ -17,7 +17,9 @@ import data.model.*;
 public class ElementManager implements MobileInterface {
 	private Map map;
 	
-	private HashMap<String,Building> buildings=new HashMap<String,Building>();
+	private List<Building> buildings=new ArrayList<Building>();
+	private HashMap<String,Building> buildingsMainPlayer=new HashMap<String,Building>();
+	private HashMap<String,Building> buildingsAIPlayer=new HashMap<String,Building>();
 	private ArrayList<Unit> units = new ArrayList<Unit>(); 
 	private String raceMainPlayer;
 	private Player mainPlayer;
@@ -45,7 +47,7 @@ public class ElementManager implements MobileInterface {
         return null;
     }
 	
-	 public void startHarvesting(Slave slave, Position resourcePosition) {
+	 public void startHarvesting(Slave slave, Position resourcePosition,Player player) {
 		 
 		 	if(slave.isUnderConstruction()) {
 		 		return ;
@@ -60,11 +62,11 @@ public class ElementManager implements MobileInterface {
 	        slave.setHarvesting(true);
 	        slave.setHarvestingResourceType(resourceType);
 	        slave.setResourcePosition(resourcePosition);
-	        slave.setBasePosition(mainPlayer.getStarterZone().getPositions().get(0));
+	        slave.setBasePosition(player.getStarterZone().getPositions().get(0));
 	        slave.setTargetPosition(resourcePosition);
 	 }
 	 
-	 public void harvestResource(Slave slave) {
+	 public void harvestResource(Slave slave,Player player) {
         if (slave.isHarvesting() == true && 
             slave.getZone().getPositions().get(0).equals(slave.getResourcePosition())) {
             
@@ -83,9 +85,9 @@ public class ElementManager implements MobileInterface {
         if (slave.isReturning() && slave.getZone().getPositions().get(0).equals(slave.getBasePosition())) {
             
             if (slave.getHarvestingResourceType().equals("wood")) {
-                mainPlayer.setWood(mainPlayer.getWood() + slave.getResourceAmount());
+                player.setWood(player.getWood() + slave.getResourceAmount());
             } else if (slave.getHarvestingResourceType().equals("magicOre")) {
-                mainPlayer.setMagicOre(mainPlayer.getMagicOre() + slave.getResourceAmount());
+                player.setMagicOre(player.getMagicOre() + slave.getResourceAmount());
             }
             
             slave.setResourceAmount(0);
@@ -103,20 +105,44 @@ public class ElementManager implements MobileInterface {
 				return;
 			}
 		}
-		if(type=="barracks") {
-			Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,30000,player.getRace(),"barracks");	
-			buildings.put("barracks",building);
-			player.addBuilding(building);
-			map.addFullPosition(zone);
-			mainPlayer.setWood(mainPlayer.getWood()-building.getCost().getWood());
+		if(player.getClass().getSimpleName().equals("AIPlayer")) {
+
+			if(type=="barracks") {
+				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,30000,player.getRace(),"barracks");	
+				buildingsAIPlayer.put("barracks",building);
+				buildings.add(building);
+				player.addBuilding(building);
+				map.addFullPosition(zone);
+				player.setWood(player.getWood()-building.getCost().getWood());
+			}
+			else if (type=="base") {
+				Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
+				buildingsAIPlayer.put("base",building);
+				buildings.add(building);
+				player.addBuilding(building);
+				map.addFullPosition(zone);
+			}
+			System.out.println(getBuildingsAIPlayer());
+			
+		}else {
+			if(type=="barracks") {
+				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,30000,player.getRace(),"barracks");	
+				buildingsMainPlayer.put("barracks",building);
+				buildings.add(building);
+				player.addBuilding(building);
+				map.addFullPosition(zone);
+				player.setWood(player.getWood()-building.getCost().getWood());
+			}
+			else if (type=="base") {
+				Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
+				buildingsMainPlayer.put("base",building);
+				buildings.add(building);
+				player.addBuilding(building);
+				map.addFullPosition(zone);
+			}
+			System.out.println(getBuildingsMainPlayer());
+
 		}
-		else if (type=="base") {
-			Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
-			buildings.put("base",building);
-			player.addBuilding(building);
-			map.addFullPosition(zone);
-		}
-		System.out.println(player.getBuildings());
 
 	}
 	
@@ -127,11 +153,11 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"temp",200,200,200,0,20000,player.getRace(),"warrior");
+		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.WARRIOR_COST,0,20000,player.getRace(),"warrior",10);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
-		mainPlayer.setWood(mainPlayer.getWood()-unit.getCost().getWood());
-		UnitStepper stepper = new UnitStepper(unit,map,this);
+		player.setWood(player.getWood()-unit.getCost().getWood());
+		UnitStepper stepper = new UnitStepper(unit,map,this,player);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -149,11 +175,11 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Slave slave=new Slave(zone,"temp",100,100,100,0,15000,player.getRace(),"slave");
+		Slave slave=new Slave(zone,"temp",100,100,GameConfiguration.SLAVE_COST,0,15000,player.getRace(),"slave",10);
 		units.add(slave);
 		map.addFullUnitsPosition(zone);
-		mainPlayer.setWood(mainPlayer.getWood()-slave.getCost().getWood());
-		UnitStepper stepper = new UnitStepper(slave,100,map,this);
+		player.setWood(player.getWood()-slave.getCost().getWood());
+		UnitStepper stepper = new UnitStepper(slave,100,map,this,player);
 		unitSteppers.put(slave, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -188,7 +214,9 @@ public class ElementManager implements MobileInterface {
 	    } else if (currentPosition.getLine() > targetPosition.getLine()) {
 	    	newPosition.setLine(currentPosition.getLine() - 1);
 	    }
-	   if (!map.isfullUnits(newPosition) || (unit instanceof Slave && ((Slave)unit).isReturning()) || (unit instanceof Slave && ((Slave)unit).isHarvesting())) {
+	   
+	   
+	   if (!map.isfullUnits(newPosition) && !(map.isfull(newPosition)) || (unit instanceof Slave && ((Slave)unit).isReturning()) || (unit instanceof Slave && ((Slave)unit).isHarvesting())) {
 	        currentPosition.setColumn(newPosition.getColumn());
 	        currentPosition.setLine(newPosition.getLine());
 	   }
@@ -202,8 +230,16 @@ public class ElementManager implements MobileInterface {
 		return unit.getZone().getPositions().get(0).equals(unit.getTargetPosition());
 	}
 	
-	public HashMap<String,Building> getBuildings() {
+	public List<Building> getBuildings() {
 		return buildings;
+	}
+	
+	public HashMap<String,Building> getBuildingsMainPlayer() {
+		return buildingsMainPlayer;
+	}
+	
+	public HashMap<String,Building> getBuildingsAIPlayer() {
+		return buildingsAIPlayer;
 	}
 	
 	public Unit getUnit() {
@@ -242,7 +278,7 @@ public class ElementManager implements MobileInterface {
 	
 	
 	public void updateConstruction() {
-	    for (Building building : buildings.values()) {
+	    for (Building building : buildings) {
 	        if (building.isUnderConstruction()) {
 	            if (building.getConstructionProgress() >= 1.0f) {
 	                building.setUnderConstruction(false);
@@ -258,6 +294,80 @@ public class ElementManager implements MobileInterface {
 	        }
 	    }
 	}
+	
+	
+	
+	
+	
+	public boolean areUnitsClose(Unit unit1, Unit unit2) {
+	    Position pos1 = unit1.getZone().getPositions().get(0);
+	    Position pos2 = unit2.getZone().getPositions().get(0);
+	    
+	    // Distance de Manhattan
+	    int distance = Math.abs(pos1.getLine() - pos2.getLine()) + 
+	                   Math.abs(pos1.getColumn() - pos2.getColumn());
+	    
+	    // Vérifier si dans la portée d'attaque
+	    return distance <= unit1.getAttackRange();
+	}
+	
+	
+	public void checkCombat() {
+	    for (Unit unit : units) {
+	    	Position currentPosition = unit.getZone().getPositions().get(0);
+	    	List<Position> SurroundingPositions=new ArrayList<Position>();
+	    	
+	    	
+	    	int line = currentPosition.getLine();
+	        int column = currentPosition.getColumn();
+
+	        for (int i = -1; i <= 1; i++) {
+	            for (int j = -1; j <= 1; j++) {
+	                if (!(i == 0 && j == 0)) {
+	                	SurroundingPositions.add(new Position(line + i, column + j));
+	                	Unit enemy=MouseUtility.findEnemyAtPosition(getAllUnits(),line+i, column+i,mainPlayer);
+	                   if(enemy!=null) {
+	                	   System.out.println("enemy non null");
+	                	   attack(unit,enemy);
+	                   }
+	                }
+	            }
+	        }
+	        
+	        
+	     
+	    	
+	    }
+	    
+	    
+	        
+	    
+	}
+	
+	public void attack(Unit attacker, Unit defender) {
+	   
+		long currentTime = System.currentTimeMillis();
+	    if (currentTime - attacker.getLastAttackTime() < 1000) { 
+	        return;
+	    }
+		
+	    defender.setCurrentHealth(defender.getCurrentHealth() - attacker.getAttackDamage());
+	    
+	    if (defender.getCurrentHealth() <= 0) {
+	        removeUnit(defender);
+	    }
+	    
+	    attacker.setLastAttackTime(System.currentTimeMillis());
+	}
+	
+	
+	public void removeUnit(Unit unit) {
+	    map.removeFullUnitsPosition(unit.getZone().getPositions().get(0));
+	    units.remove(unit);
+	    unitSteppers.remove(unit);
+	}
+	
+	
 	
 	
 	

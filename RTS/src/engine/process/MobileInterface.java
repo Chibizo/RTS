@@ -14,7 +14,10 @@ public interface MobileInterface {
 	void putWarrior(Zone zone,Player player);
 	void putWarrior(Position position,Player player);
 	
-	HashMap<String,Building> getBuildings();
+	public List<Building> getBuildings();
+	
+	public HashMap<String,Building> getBuildingsMainPlayer();
+	public HashMap<String,Building> getBuildingsAIPlayer();
 	
 	Unit getUnit();
 		
@@ -30,9 +33,9 @@ public interface MobileInterface {
 	
 	public String getResourceTypeAt(Position position);
 	
-	public void startHarvesting(Slave slave, Position resourcePosition);
+	public void startHarvesting(Slave slave, Position resourcePosition,Player player);
 	
-	public void harvestResource(Slave slave);
+	public void harvestResource(Slave slave,Player player);
 	
 	public void putSlave(Zone zone,Player player);
 	public void putSlave(Position position,Player player);
@@ -40,5 +43,13 @@ public interface MobileInterface {
 	public void updateConstruction();
 	
 	public List<Unit> getSelectedUnits();
+	
+	public void checkCombat();
+	
+	public boolean areUnitsClose(Unit unit1, Unit unit2);
+	
+	public void attack(Unit attacker, Unit defender);
+	
+	public void removeUnit(Unit unit);
 
 }

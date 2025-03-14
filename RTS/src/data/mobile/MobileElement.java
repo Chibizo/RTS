@@ -90,6 +90,12 @@ public abstract class MobileElement {
 	    long timeRemaining = constructionTime - timePassed;
 	    return (int) Math.max(0, Math.ceil(timeRemaining / 1000.0)); 
 	}
+
+	public void setCurrentHealth(int currentHealth) {
+		this.currentHealth = currentHealth;
+	}
+	
+	
 	
 	
 }

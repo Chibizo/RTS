@@ -19,4 +19,8 @@ public class GameConfiguration {
     
     
     public static final int BARRACKS_COST=800;
+    public static final int SLAVE_COST=100;
+    public static final int WARRIOR_COST=200;
+    
+    
 }

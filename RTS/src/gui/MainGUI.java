@@ -25,7 +25,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-
+import data.model.AIPlayer;
 import data.model.Player;
 import data.model.Race;
 import config.GameConfiguration;
@@ -35,6 +35,7 @@ import data.map.Zone;
 import data.mobile.Building;
 import data.mobile.Slave;
 import data.mobile.Unit;
+import engine.process.AIManager;
 import engine.process.GameBuilder;
 import engine.process.MobileInterface;
 import engine.process.MouseUtility;
@@ -66,6 +67,9 @@ public class MainGUI extends JFrame implements Runnable {
 	private InfoPlayerPanel infoPlayerPanel;
 	
 	private Player mainPlayer;
+	
+	private AIPlayer enemyPlayer;
+	private AIManager aiManager;
 	
 	private JButton buildingButton=new JButton("Building");
 	
@@ -107,6 +111,7 @@ public class MainGUI extends JFrame implements Runnable {
 		
 		mainPlayer=initMainPlayer(raceMainPlayer);
 		
+		
 		manager= GameBuilder.buildInitMobile(map,mainPlayer);
 		
 		dashboard = new GameDisplay(map,manager);
@@ -131,13 +136,33 @@ public class MainGUI extends JFrame implements Runnable {
 		infoPlayerPanel=new InfoPlayerPanel(mainPlayer);
 		contentPane.add(infoPlayerPanel,BorderLayout.SOUTH);
 
-
+		initAIPlayer();
+		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		pack();
 		setVisible(true);
 		
 		this.setLocationRelativeTo(null);
 		setResizable(false);
+	}
+	
+	public void initAIPlayer() {
+		ArrayList<Position> enemyStarterPosition = new ArrayList<Position>();
+	    for (int lineIndex = 6; lineIndex <= 8; lineIndex++) {
+	        for (int columnIndex = 105; columnIndex <= 108; columnIndex++) {
+	            Position position = new Position(lineIndex, columnIndex);
+	            enemyStarterPosition.add(position);
+	        }
+	    }
+	    
+	    
+	    String enemyRace ="elf";
+	    enemyPlayer = new AIPlayer(550, 500, new Race(enemyRace), new Zone(enemyStarterPosition));
+	    
+	    manager.putBuilding(enemyPlayer.getStarterZone(), "base", enemyPlayer);
+	    
+	    aiManager = new AIManager(enemyPlayer, manager, map);
+	    
 	}
 	
 	public Player initMainPlayer(String raceMainPlayer) {
@@ -183,7 +208,9 @@ public class MainGUI extends JFrame implements Runnable {
 			} catch (InterruptedException e) {
 				System.out.println(e.getMessage());
 			}
+			aiManager.update();
 			manager.updateConstruction();
+			manager.checkCombat();
 			dashboard.repaint();
 			infoPlayerPanel.update();	
 	        if (warningTime != -1 && System.currentTimeMillis() - warningTime >= 4000) {
@@ -259,12 +286,13 @@ public class MainGUI extends JFrame implements Runnable {
 			
 			if(y >= 2 && y < map.getLineCount()-2 && 
 					x >= 0 && x < map.getColumnCount()-2) {
-				
+			
 				Position clickedPosition = map.getBlock(y, x);
 				System.out.println(clickedPosition);
 				
-				Unit clickedUnit = MouseUtility.findUnitAtPosition(manager.getAllUnits(),x, y);
+				Unit clickedUnit = MouseUtility.findUnitAtPosition(manager.getAllUnits(),x, y,mainPlayer);
 				
+				Unit clickedAttack = MouseUtility.findUnitAtPosition(manager.getAllUnits(),x, y,enemyPlayer);
 				
 				if (clickedUnit != null && !clickedUnit.isUnderConstruction()) {
 				      for (Unit unit : manager.getAllUnits()) {
@@ -283,10 +311,10 @@ public class MainGUI extends JFrame implements Runnable {
 				    if (resourceType != null) {
 				        for (Unit unit : selectedUnits) {
 				            if (unit instanceof Slave) {
-				                manager.startHarvesting((Slave) unit, clickedPosition);
+				                manager.startHarvesting((Slave) unit, clickedPosition,mainPlayer);
 				            }
 				        }
-				    } else if (!map.isfull(clickedPosition) && buildingType.isEmpty() ) {
+				    } else if ((!map.isfull(clickedPosition) && buildingType.isEmpty()) || map.isfullUnits(clickedPosition)) {
 				        for (Unit unit : selectedUnits) {
 				            unit.setTargetPosition(clickedPosition);
 				            if(unit instanceof Slave) {
@@ -313,7 +341,7 @@ public class MainGUI extends JFrame implements Runnable {
 		        }		
 				
 				if(MouseUtility.checkBuilding(clickedPosition, mainPlayer)=="barracks") {
-					Building barracks=manager.getBuildings().get("barracks");
+					Building barracks=manager.getBuildingsMainPlayer().get("barracks");
 					if(!barracks.isUnderConstruction()) {
 						System.out.println("Clic sur la barracks du joueur principal !");
 			            BorderLayout layout = (BorderLayout) contentPane.getLayout();
@@ -364,7 +392,7 @@ public class MainGUI extends JFrame implements Runnable {
 				
 				Rectangle selectionRect = MouseUtility.createSelectionRectangle(selectionStart, selectionEnd);
 				
-				placingUnit=MouseUtility.selectUnitsInRectangle(manager.getAllUnits(),selectionRect);
+				placingUnit=MouseUtility.selectUnitsInRectangle(manager.getAllUnits(),selectionRect,mainPlayer);
 				
 				selectionStart = null;
 				selectionEnd = null;
@@ -436,13 +464,13 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private class SlaveButton implements ActionListener {
 		public void actionPerformed(ActionEvent e){
-			Building base = manager.getBuildings().get("base");
+			Building base = manager.getBuildingsMainPlayer().get("base");
 			if(base.isUnderConstruction() && base!=null) {
 				infoPlayerPanel.setWarningLabel("Base is still under construction");
 	            warningTime = System.currentTimeMillis();
 	            return;
 			}
-			else if(mainPlayer.getWood()>=100) {
+			else if(mainPlayer.getWood()>=GameConfiguration.SLAVE_COST) {
 				Position unitPosition = new Position(
 			            mainPlayer.getStarterZone().getPositions().get(0).getLine() + 3,
 			            mainPlayer.getStarterZone().getPositions().get(0).getColumn() + manager.getAllUnits().size() %15 -5 
@@ -467,7 +495,7 @@ public class MainGUI extends JFrame implements Runnable {
 	            warningTime = System.currentTimeMillis();
 	            return;
 			}
-			else if(mainPlayer.getWood()>=200) {
+			else if(mainPlayer.getWood()>=GameConfiguration.WARRIOR_COST) {
 				Position unitPosition = new Position(
 						barracks.getZone().getPositions().get(0).getLine()+3 ,
 						barracks.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 

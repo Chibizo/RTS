@@ -30,6 +30,7 @@ public class Map {
 			}
 		}
 		intiRessources();
+
 	}	
 	public void init(int lineCount,int columnCount) {
 		this.lineCount=lineCount;
@@ -46,6 +47,11 @@ public class Map {
 		magicOrePositions.add(new Position(56, 24)); 
 		magicOrePositions.add(new Position(55, 23));
 		magicOrePositions.add(new Position(56, 23));
+		//IAPlayer magicore
+		magicOrePositions.add(new Position(5, 93)); 
+		magicOrePositions.add(new Position(6, 93)); 
+		magicOrePositions.add(new Position(5, 92));
+		magicOrePositions.add(new Position(6, 92));
 	    magicOreLocations=new Zone(magicOrePositions);
 	    
 		
@@ -56,11 +62,19 @@ public class Map {
 		            woodPositions.add(position);
 		        }
 		 }
+		 for (int lineIndex = 15; lineIndex <= 17; lineIndex++) {
+		        for (int columnIndex = 112; columnIndex <= 114; columnIndex++) {
+		            Position position = block[lineIndex][columnIndex];
+		            woodPositions.add(position);
+		        }
+		 }
 		woodLocations=new Zone(woodPositions);
 		fullPosition.add(magicOreLocations);
 		fullPosition.add(woodLocations);
 		
 	}
+	
+		
 		
 	
 	public void addFullPosition(Zone zone) {
@@ -173,7 +187,7 @@ public class Map {
 	        }
 	    }
 	    
-	    fullPosition.removeAll(zonesToRemove);
+	    fullUnitsPosition.removeAll(zonesToRemove);
 	}
 
 	public boolean isOnBorder(Position position) {

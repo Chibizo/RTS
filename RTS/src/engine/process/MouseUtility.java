@@ -24,13 +24,13 @@ public class MouseUtility {
 		return new Rectangle(x, y, width, height);
 	}
 	
-	public static boolean selectUnitsInRectangle(List<Unit> units,Rectangle selectionRect) {
+	public static boolean selectUnitsInRectangle(List<Unit> units,Rectangle selectionRect,Player player) {
 		for (Unit unit : units) {
 			unit.setSelected(false);
 		}
 		boolean unitsSelected = false;
 		for (Unit unit : units) {
-			if(!unit.isUnderConstruction()) {
+			if(!unit.isUnderConstruction() && unit.getRace().getName()==player.getRace().getName()) {
 				Position unitPos = unit.getZone().getPositions().get(0);
 				int unitX = unitPos.getColumn() * GameConfiguration.BLOCK_SIZE;
 				int unitY = unitPos.getLine() * GameConfiguration.BLOCK_SIZE;
@@ -76,10 +76,19 @@ public class MouseUtility {
 	}
 	
 	
-	public static Unit findUnitAtPosition(List<Unit> units,int x, int y) {
+	public static Unit findUnitAtPosition(List<Unit> units,int x, int y,Player player) {
 	    for (Unit unit : units) {
 	        Position unitPos = unit.getZone().getPositions().get(0);
-	        if (unitPos.getColumn() == x && unitPos.getLine() == y) {
+	        if (unitPos.getColumn() == x && unitPos.getLine() == y && unit.getRace().getName()==player.getRace().getName()) {
+	            return unit;
+	        }
+	    }
+	    return null;
+	}
+	public static Unit findEnemyAtPosition(List<Unit> units,int x, int y,Player player) {
+	    for (Unit unit : units) {
+	        Position unitPos = unit.getZone().getPositions().get(0);
+	        if (unitPos.getColumn() == x && unitPos.getLine() == y && (unit.getRace().getName()!=player.getRace().getName())) {
 	            return unit;
 	        }
 	    }
