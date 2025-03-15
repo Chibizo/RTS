@@ -185,7 +185,7 @@ public class AIManager {
         }
         
         // Attribuer certains esclaves au bois et d'autres au minerai
-        if(idleSlaves.size()==6) {
+        if(idleSlaves.size()==5) {
 	        for (int i = 0; i < idleSlaves.size(); i++) {
 	            Slave slave = idleSlaves.get(i);
 	            if (i % 2 == 0 ) {

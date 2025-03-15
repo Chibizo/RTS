@@ -112,7 +112,7 @@ public class MainGUI extends JFrame implements Runnable {
 		mainPlayer=initMainPlayer(raceMainPlayer);
 		
 		
-		manager= GameBuilder.buildInitMobile(map,mainPlayer);
+		manager= GameBuilder.buildInitMobile(map,mainPlayer,enemyPlayer);
 		
 		dashboard = new GameDisplay(map,manager);
 		MouseControls mouseControls = new MouseControls();

@@ -16,8 +16,8 @@ public class GameBuilder {
 		return new Map(GameConfiguration.LINE_COUNT, GameConfiguration.COLUMN_COUNT);
 	}
 	
-	public static MobileInterface buildInitMobile(Map map,Player mainPlayer) {
-		MobileInterface manager=new ElementManager(map,mainPlayer);
+	public static MobileInterface buildInitMobile(Map map,Player mainPlayer,Player enemyPlayer) {
+		MobileInterface manager=new ElementManager(map,mainPlayer,enemyPlayer);
 		manager.putBuilding(manager.getMainPlayer().getStarterZone(),"base",manager.getMainPlayer());
 		return manager;
 	}

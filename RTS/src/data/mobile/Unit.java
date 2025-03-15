@@ -21,6 +21,7 @@ public class Unit extends MobileElement{
 		super(zone,maxHealth,currentHealth,wood,magicOre,constructTime,race,name);
 		this.type=type;
 		this.targetPosition=zone.getPositions().get(0);
+		this.attackDamage=attackDamage;
 	}
 	
 	public Zone getZone() {

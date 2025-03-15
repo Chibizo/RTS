@@ -11,8 +11,8 @@ public interface MobileInterface {
 	
 	void putBuilding(Zone zone,String type,Player player);
 	
-	void putWarrior(Zone zone,Player player);
-	void putWarrior(Position position,Player player);
+	public void  putWarrior(Zone zone,Player player);
+	public void  putWarrior(Position position,Player player);
 	
 	public List<Building> getBuildings();
 	
@@ -37,8 +37,8 @@ public interface MobileInterface {
 	
 	public void harvestResource(Slave slave,Player player);
 	
-	public void putSlave(Zone zone,Player player);
-	public void putSlave(Position position,Player player);
+	public  void putSlave(Zone zone,Player player);
+	public  void putSlave(Position position,Player player);
 	
 	public void updateConstruction();
 	
@@ -48,7 +48,7 @@ public interface MobileInterface {
 	
 	public boolean areUnitsClose(Unit unit1, Unit unit2);
 	
-	public void attack(Unit attacker, Unit defender);
+	public boolean attack(Unit attacker, Unit defender);
 	
 	public void removeUnit(Unit unit);
 

@@ -85,15 +85,21 @@ public class MouseUtility {
 	    }
 	    return null;
 	}
-	public static Unit findEnemyAtPosition(List<Unit> units,int x, int y,Player player) {
-	    for (Unit unit : units) {
-	        Position unitPos = unit.getZone().getPositions().get(0);
-	        if (unitPos.getColumn() == x && unitPos.getLine() == y && (unit.getRace().getName()!=player.getRace().getName())) {
-	            return unit;
+	
+	public static Unit findEnemyAt(List<Unit> unitList, int line, int column, Unit currentUnit) {
+	    for (Unit potentialEnemy : unitList) {
+	        if (potentialEnemy != currentUnit) { 
+	        
+		        Position enemyPos = potentialEnemy.getZone().getPositions().get(0);
+		        if (enemyPos.getLine() == line && 
+		            enemyPos.getColumn() == column && 
+		            !potentialEnemy.getRace().getName().equals(currentUnit.getRace().getName())) {
+		            return potentialEnemy;
+		        }
 	        }
 	    }
 	    return null;
 	}
-
+	
 	
 }

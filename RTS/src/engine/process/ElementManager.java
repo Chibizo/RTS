@@ -23,12 +23,14 @@ public class ElementManager implements MobileInterface {
 	private ArrayList<Unit> units = new ArrayList<Unit>(); 
 	private String raceMainPlayer;
 	private Player mainPlayer;
+	private Player enemyPlayer;
 	private HashMap<Unit, UnitStepper> unitSteppers = new HashMap<>();
 	
 	
-	public ElementManager(Map map,Player mainPlayer) {
+	public ElementManager(Map map,Player mainPlayer,Player enemyPlayer) {
 		this.map=map;
 		this.mainPlayer=mainPlayer;	
+		this.enemyPlayer=enemyPlayer;
 				
 	}
 	
@@ -147,7 +149,7 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	
-	public void putWarrior(Zone zone,Player player) {
+	public synchronized void putWarrior(Zone zone,Player player) {
 		for(Position position : zone.getPositions()) {
 			if(map.isOnBorder(position) || map.isfull(position)) {
 				return; 
@@ -163,13 +165,13 @@ public class ElementManager implements MobileInterface {
 		thread.start();
 		
 	}
-	public void putWarrior(Position position,Player player) {
+	public synchronized void putWarrior(Position position,Player player) {
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
 		putWarrior(new Zone(zone),player);
 	}
 	
-	public void putSlave(Zone zone,Player player) {
+	public synchronized void putSlave(Zone zone,Player player) {
 		for(Position position : zone.getPositions()) {
 			if(map.isOnBorder(position) || map.isfull(position)) {
 				return; 
@@ -183,9 +185,10 @@ public class ElementManager implements MobileInterface {
 		unitSteppers.put(slave, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
+		System.out.println(map.getFullUnitsPosition());
 		
 	}
-	public void putSlave(Position position,Player player) {
+	public synchronized void putSlave(Position position,Player player) {
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
 		putSlave(new Zone(zone),player);
@@ -313,58 +316,80 @@ public class ElementManager implements MobileInterface {
 	
 	
 	public void checkCombat() {
-	    for (Unit unit : units) {
-	    	Position currentPosition = unit.getZone().getPositions().get(0);
-	    	List<Position> SurroundingPositions=new ArrayList<Position>();
-	    	
-	    	
-	    	int line = currentPosition.getLine();
-	        int column = currentPosition.getColumn();
-
-	        for (int i = -1; i <= 1; i++) {
-	            for (int j = -1; j <= 1; j++) {
-	                if (!(i == 0 && j == 0)) {
-	                	SurroundingPositions.add(new Position(line + i, column + j));
-	                	Unit enemy=MouseUtility.findEnemyAtPosition(getAllUnits(),line+i, column+i,mainPlayer);
-	                   if(enemy!=null) {
-	                	   System.out.println("enemy non null");
-	                	   attack(unit,enemy);
-	                   }
-	                }
-	            }
-	        }
-	        
-	        
-	     
-	    	
+	    List<Unit> unitsToRemove = new ArrayList<>();
+	    
+	    List<Unit> unitsCopy;
+	    synchronized(this) {
+	        unitsCopy = new ArrayList<>(units);
 	    }
 	    
-	    
-	        
-	    
-	}
+	    for (Unit unit : unitsCopy) {
+	        if (!unit.isUnderConstruction()) {
+		        
+		        Position currentPosition = unit.getZone().getPositions().get(0);
+		        int line = currentPosition.getLine();
+		        int column = currentPosition.getColumn();
 	
-	public void attack(Unit attacker, Unit defender) {
-	   
-		long currentTime = System.currentTimeMillis();
-	    if (currentTime - attacker.getLastAttackTime() < 1000) { 
-	        return;
+		        for (int i = -1; i <= 1; i++) {
+		            for (int j = -1; j <= 1; j++) {
+		                if (i != 0 && j != 0) {
+			                
+			                int checkLine = line + i;
+			                int checkColumn = column + j;
+			                
+			                if (checkLine >= 0 && checkLine < map.getLineCount() && 
+			                    checkColumn >= 0 && checkColumn < map.getColumnCount()) {
+			                    
+			                    Unit enemy = MouseUtility.findEnemyAt(unitsCopy, checkLine, checkColumn, unit);
+			                    
+			                    if (enemy != null) {
+			                        boolean killed = attack(unit, enemy);
+			                        if (killed && !unitsToRemove.contains(enemy)) {
+			                            unitsToRemove.add(enemy);
+			                        }
+			                    }
+		                }
+		                }
+		            }
+	        }
+	        }
 	    }
-		
-	    defender.setCurrentHealth(defender.getCurrentHealth() - attacker.getAttackDamage());
 	    
-	    if (defender.getCurrentHealth() <= 0) {
-	        removeUnit(defender);
+	    synchronized(this) {
+	        for (Unit deadUnit : unitsToRemove) {
+	            removeUnit(deadUnit);
+	        }
 	    }
+	}
+
+	
+	public boolean attack(Unit attacker, Unit defender) {
+	    long currentTime = System.currentTimeMillis();
+	    if (currentTime - attacker.getLastAttackTime() < 1000) { 
+	        return false;
+	    }
+	    
+	    int damageAmount = attacker.getAttackDamage();
+	    
+	    
+	    
+	    int oldHealth = defender.getCurrentHealth();
+	    defender.setCurrentHealth(oldHealth - damageAmount);
+	    int newHealth = defender.getCurrentHealth();
+	    
+	   
 	    
 	    attacker.setLastAttackTime(System.currentTimeMillis());
+	    
+	    return defender.getCurrentHealth() <= 0;
 	}
 	
-	
 	public void removeUnit(Unit unit) {
-	    map.removeFullUnitsPosition(unit.getZone().getPositions().get(0));
+	    map.removeFullUnitsPosition(unit.getZone().getPositions().getFirst());
 	    units.remove(unit);
+	    unitSteppers.get(unit).stop();
 	    unitSteppers.remove(unit);
+	    System.out.println(map.getFullUnitsPosition());
 	}
 	
 	

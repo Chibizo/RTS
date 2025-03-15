@@ -157,28 +157,18 @@ public class Map {
 			return false;
 		}catch(ConcurrentModificationException e) {
 			System.out.println("probleme de concurrence");
+			
 		}
 		return true;
 	}
 
 	
 
-	public void removeFullPosition(Position position) {
-	    Iterator<Zone> iterator = fullPosition.iterator();
-	    while (iterator.hasNext()) {
-	        Zone zone = iterator.next();
-	        for (Position pos : zone.getPositions()) {
-	            if (pos.equals(position)) {
-	                iterator.remove(); 
-	                break; 
-	            }
-	        }
-	    }
-	}
-	public void removeFullUnitsPosition(Position position) {
+	
+	public synchronized void removeFullUnitsPosition(Position position) {
 	    List<Zone> zonesToRemove = new ArrayList<>();
 	    
-	    for (Zone zone : fullPosition) {
+	    for (Zone zone : fullUnitsPosition) {
 	        for (Position pos : zone.getPositions()) {
 	            if (pos.equals(position)) {
 	                zonesToRemove.add(zone);
