@@ -80,6 +80,8 @@ public class MainGUI extends JFrame implements Runnable {
 	private Container contentPane;
 	
 	private long warningTime = -1;
+	private String valueInfo ="";
+	private String lastInfo="";
 	
 	private boolean showBuildingPreview = false;
 	private String previewBuildingType = "";
@@ -133,7 +135,7 @@ public class MainGUI extends JFrame implements Runnable {
 		baseBuildingMenuPanel=new BaseBuildingMenuPanel(mainPlayer);
 		barracksBuildingMenuPanel=new BarracksBuildingMenuPanel(mainPlayer);
 		
-		infoPlayerPanel=new InfoPlayerPanel(mainPlayer);
+		infoPlayerPanel=new InfoPlayerPanel(mainPlayer,this);
 		contentPane.add(infoPlayerPanel,BorderLayout.SOUTH);
 
 		initAIPlayer();
@@ -199,6 +201,10 @@ public class MainGUI extends JFrame implements Runnable {
 		barracksBuildingMenuPanel.getUnitsButton().addActionListener(new WarriorButton());
 		barracksBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 	}
+	
+	public String getValueInfo() {
+		return valueInfo;
+	}
 
 	@Override
 	public void run() {
@@ -214,7 +220,8 @@ public class MainGUI extends JFrame implements Runnable {
 			dashboard.repaint();
 			infoPlayerPanel.update();	
 	        if (warningTime != -1 && System.currentTimeMillis() - warningTime >= 4000) {
-	            infoPlayerPanel.setWarningLabel("");
+	        	valueInfo=lastInfo;
+	            infoPlayerPanel.setinfoLabel(valueInfo);
 	            warningTime = -1; 
 	        }
 			
@@ -330,11 +337,14 @@ public class MainGUI extends JFrame implements Runnable {
 				}
 				
 				if (MouseUtility.checkBuilding(clickedPosition, mainPlayer)=="base") {
+					Building base=manager.getBuildingsMainPlayer().get("base");
 		            System.out.println("Clic sur la base du joueur principal !");
 		            BorderLayout layout = (BorderLayout) contentPane.getLayout();
 					Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
 					contentPane.remove(eastComponent);
 					contentPane.add(baseBuildingMenuPanel,BorderLayout.EAST);
+					valueInfo="base";
+					infoPlayerPanel.setinfoLabel(valueInfo);
 				    baseBuildingMenuPanel.revalidate();
 				    baseBuildingMenuPanel.repaint();
 				   
@@ -342,12 +352,14 @@ public class MainGUI extends JFrame implements Runnable {
 				
 				if(MouseUtility.checkBuilding(clickedPosition, mainPlayer)=="barracks") {
 					Building barracks=manager.getBuildingsMainPlayer().get("barracks");
-					if(!barracks.isUnderConstruction()) {
+					if(!barracks.isUnderConstruction() && barracks!=null ) {
 						System.out.println("Clic sur la barracks du joueur principal !");
 			            BorderLayout layout = (BorderLayout) contentPane.getLayout();
 						Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
 						contentPane.remove(eastComponent);
 						contentPane.add(barracksBuildingMenuPanel,BorderLayout.EAST);
+						valueInfo="barracks";
+						infoPlayerPanel.setinfoLabel(valueInfo);
 					    barracksBuildingMenuPanel.revalidate();
 					    barracksBuildingMenuPanel.repaint();
 					}
@@ -435,7 +447,11 @@ public class MainGUI extends JFrame implements Runnable {
 		        previewBuildingType = "barracks";
 			}
 			else {
-				infoPlayerPanel.setWarningLabel("you don't have enough wood");
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
 		}
@@ -457,6 +473,11 @@ public class MainGUI extends JFrame implements Runnable {
 			Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
 			contentPane.remove(eastComponent);
 			contentPane.add(panelInteraction,BorderLayout.EAST);
+			if(lastInfo!=valueInfo) {
+				lastInfo=valueInfo;
+			}
+			valueInfo="";
+			infoPlayerPanel.setinfoLabel(valueInfo);
 		    panelInteraction.revalidate();
 		    panelInteraction.repaint();
 		}
@@ -466,7 +487,11 @@ public class MainGUI extends JFrame implements Runnable {
 		public void actionPerformed(ActionEvent e){
 			Building base = manager.getBuildingsMainPlayer().get("base");
 			if(base.isUnderConstruction() && base!=null) {
-				infoPlayerPanel.setWarningLabel("Base is still under construction");
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="Base is still under construction";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
 	            warningTime = System.currentTimeMillis();
 	            return;
 			}
@@ -481,7 +506,11 @@ public class MainGUI extends JFrame implements Runnable {
 				placingUnit=true;
 				
 			}else {
-				infoPlayerPanel.setWarningLabel("you don't have enough wood");
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
 		}
@@ -491,7 +520,11 @@ public class MainGUI extends JFrame implements Runnable {
 		public void actionPerformed(ActionEvent e){
 			Building barracks = mainPlayer.getBuildings("barracks");
 			if(barracks.isUnderConstruction() && barracks!=null) {
-				infoPlayerPanel.setWarningLabel("Base is still under construction");
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="Base is still under construction";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
 	            warningTime = System.currentTimeMillis();
 	            return;
 			}
@@ -508,7 +541,11 @@ public class MainGUI extends JFrame implements Runnable {
 				
 			}
 			else {
-				infoPlayerPanel.setWarningLabel("you don't have enough wood");
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
 		}

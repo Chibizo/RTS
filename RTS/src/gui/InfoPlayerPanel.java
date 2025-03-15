@@ -1,5 +1,6 @@
 package gui;
 
+import data.mobile.Building;
 import data.model.Player;
 import java.awt.Button;
 import java.awt.Color;
@@ -14,6 +15,7 @@ import javax.swing.JPanel;
 public class InfoPlayerPanel extends JPanel{
 	
 	private Player mainPlayer;
+	private MainGUI mainGui;
 	
 	private JPanel grid;
 	
@@ -28,12 +30,13 @@ public class InfoPlayerPanel extends JPanel{
 	private JLabel magicOreLabel=new JLabel("Magic Ore :");
 	private JLabel magicOreValue=new JLabel("");
 	
-	private JLabel warningLabel=new JLabel("");
+	private JLabel infoLabel=new JLabel("");
 	
 	
 	
-	public InfoPlayerPanel (Player mainPlayer) {
+	public InfoPlayerPanel (Player mainPlayer,MainGUI mainGui) {
 		this.mainPlayer=mainPlayer;
+		this.mainGui=mainGui;
 		
 		setLayout(new FlowLayout(FlowLayout.LEFT,100,10));
 		grid=new JPanel(new GridLayout(2,4,10,10));
@@ -41,12 +44,12 @@ public class InfoPlayerPanel extends JPanel{
 		raceNameValue.setText(mainPlayer.getRace().getName());
 		woodValue.setText(String.valueOf(mainPlayer.getWood()));
 		magicOreValue.setText(String.valueOf(mainPlayer.getMagicOre()));
-		warningLabel.setPreferredSize(new Dimension(300,warningLabel.getPreferredSize().height));
+		infoLabel.setPreferredSize(new Dimension(300,infoLabel.getPreferredSize().height));
 		initStyle();
 		grid.add(raceNameLabel);
 		grid.add(woodLabel);
 		grid.add(magicOreLabel);
-		grid.add(warningLabel);
+		grid.add(infoLabel);
 		grid.add(raceNameValue);
 		grid.add(woodValue);
 		grid.add(magicOreValue);
@@ -65,8 +68,8 @@ public class InfoPlayerPanel extends JPanel{
 		 woodLabel.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
 		 woodLabel.setForeground(Color.WHITE);
 		 
-		 warningLabel.setFont(new Font("Nimbus Sans", Font.BOLD, 20));
-		 warningLabel.setForeground(Color.WHITE);
+		 infoLabel.setFont(new Font("Nimbus Sans", Font.BOLD, 20));
+		 infoLabel.setForeground(Color.WHITE);
 		 
 		 woodValue.setFont(new Font("Nimbus Sans", Font.BOLD, 20));
 		 woodValue.setForeground(new Color(139, 69, 19));
@@ -87,11 +90,24 @@ public class InfoPlayerPanel extends JPanel{
 	public void update() {
 	    woodValue.setText(String.valueOf(mainPlayer.getWood()));
 	    magicOreValue.setText(String.valueOf(mainPlayer.getMagicOre()));
+	    if (mainGui.getValueInfo().equals("base")|| mainGui.getValueInfo().equals("barracks")) {
+	    	for(Building building : mainPlayer.getBuildings()) {
+	    		if(building.getName().equals("base")&& mainGui.getValueInfo().equals("base")) {
+	    			infoLabel.setText("PV : "+String.valueOf(building.getCurrentHealth()));
+	    			System.out.println("A");
+	    		}
+	    		else if(building.getName().equals("barracks")&& mainGui.getValueInfo().equals("barracks")) {
+	    			infoLabel.setText("PV : "+String.valueOf(building.getCurrentHealth()));
+	    			System.out.println("B");
+
+	    		}
+	    	}
+	    }
 	}
 
 
-	public void setWarningLabel(String warning) {
-		this.warningLabel.setText(warning);;
+	public void setinfoLabel(String warning) {
+		this.infoLabel.setText(warning);
 	}
 	
 	

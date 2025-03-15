@@ -3,6 +3,7 @@ package engine.process;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -317,6 +318,7 @@ public class ElementManager implements MobileInterface {
 	
 	public void checkCombat() {
 	    List<Unit> unitsToRemove = new ArrayList<>();
+	    List<Building> buildingsToRemove = new ArrayList<>();
 	    
 	    List<Unit> unitsCopy;
 	    synchronized(this) {
@@ -332,7 +334,7 @@ public class ElementManager implements MobileInterface {
 	
 		        for (int i = -1; i <= 1; i++) {
 		            for (int j = -1; j <= 1; j++) {
-		                if (i != 0 && j != 0) {
+		                if (i != 0 || j != 0) {
 			                
 			                int checkLine = line + i;
 			                int checkColumn = column + j;
@@ -348,16 +350,31 @@ public class ElementManager implements MobileInterface {
 			                            unitsToRemove.add(enemy);
 			                        }
 			                    }
+			                    
+			                    Building enemyBuild = MouseUtility.findEnemyBuildingAt(buildings,checkLine,checkColumn,unit);
+			                    
+			                    if(enemyBuild!=null) {
+			                    		boolean killed = attackBuilding(unit,enemyBuild);
+			                    		if(killed && !buildingsToRemove.contains(enemyBuild))
+			                    			buildingsToRemove.add(enemyBuild);
+			                    		}
+		                        }
+			                    
 		                }
 		                }
 		            }
 	        }
 	        }
-	    }
+	    
 	    
 	    synchronized(this) {
 	        for (Unit deadUnit : unitsToRemove) {
 	            removeUnit(deadUnit);
+	        }
+	    }
+	    synchronized(this) {
+	        for (Building deadBuilding : buildingsToRemove) {
+	            removeBuilding(deadBuilding);
 	        }
 	    }
 	}
@@ -384,12 +401,65 @@ public class ElementManager implements MobileInterface {
 	    return defender.getCurrentHealth() <= 0;
 	}
 	
+	public boolean attackBuilding(Unit attacker,Building building) {
+		
+		long currentTime = System.currentTimeMillis();
+	    if (currentTime - attacker.getLastAttackTime() < 1000) { 
+	        return false;
+	    }
+	   
+	    building.setCurrentHealth(building.getCurrentHealth() - attacker.getAttackDamage());
+
+	    
+	    attacker.setLastAttackTime(System.currentTimeMillis());
+	    
+	    return building.getCurrentHealth() <= 0;
+
+	}
+
+	
+	
 	public void removeUnit(Unit unit) {
 	    map.removeFullUnitsPosition(unit.getZone().getPositions().getFirst());
 	    units.remove(unit);
 	    unitSteppers.get(unit).stop();
 	    unitSteppers.remove(unit);
 	    System.out.println(map.getFullUnitsPosition());
+	}
+	
+	public void removeBuilding(Building building) {
+	    System.out.println("Building removed: " + building.getName());
+	    map.removeFullPosition(building.getZone());
+	    
+	    // Remove from the main buildings list
+	    buildings.remove(building);  // Direct removal is cleaner
+	    
+	    // Determine which player owns this building and remove from their HashMap
+	    String buildingType = building.getName();
+	    
+	    // Check in mainPlayer buildings
+	    if (buildingsMainPlayer.containsValue(building)) {
+	        // Find the key for this building
+	        for (String key : buildingsMainPlayer.keySet()) {
+	            if (buildingsMainPlayer.get(key) == building) {
+	                buildingsMainPlayer.remove(key);
+	                System.out.println("Removed " + key + " from main player buildings");
+	                break;
+	            }
+	        }
+	    }
+	    
+	    // Check in AIPlayer buildings
+	    if (buildingsAIPlayer.containsValue(building)) {
+	        // Find the key for this building
+	        for (String key : buildingsAIPlayer.keySet()) {
+	            if (buildingsAIPlayer.get(key) == building) {
+	                buildingsAIPlayer.remove(key);
+	                System.out.println("Removed " + key + " from AI player buildings");
+	                break;
+	            }
+	        }
+	    }
 	}
 	
 	

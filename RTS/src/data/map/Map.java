@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
+import data.mobile.*;
 import java.util.ConcurrentModificationException;
 
-import data.mobile.*;
 
 public class Map {
 
@@ -178,6 +178,10 @@ public class Map {
 	    }
 	    
 	    fullUnitsPosition.removeAll(zonesToRemove);
+	}
+	public synchronized void removeFullPosition(Zone zone) {
+    	
+	    fullPosition.remove(zone);
 	}
 
 	public boolean isOnBorder(Position position) {

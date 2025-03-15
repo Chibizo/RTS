@@ -57,22 +57,27 @@ public class GameDisplay extends JPanel {
 		
 		HashMap<String,Building> buildings = manager.getBuildingsMainPlayer();
 		for (String typeBuilding : buildings.keySet()) {
-			if(typeBuilding=="barracks") {
-				paintStrategy.paint(buildings.get(typeBuilding),"barracks", g2);
-			} 
-			else if (typeBuilding=="base") {
-				paintStrategy.paint(buildings.get(typeBuilding),"base", g2);
-			}
+		    Building building = buildings.get(typeBuilding);
+		    if (building != null) {  
+		        if(typeBuilding=="barracks") {
+		            paintStrategy.paint(building, "barracks", g2);
+		        } 
+		        else if (typeBuilding=="base") {
+		            paintStrategy.paint(building, "base", g2);
+		        }
+		    }
 		}
 		HashMap<String,Building> buildings2 = manager.getBuildingsAIPlayer();
 		for (String typeBuilding : buildings2.keySet()) {
-
-			if(typeBuilding=="barracks") {
-				paintStrategy.paint(buildings2.get(typeBuilding),"barracks", g2);
-			} 
-			else if (typeBuilding=="base") {
-				paintStrategy.paint(buildings2.get(typeBuilding),"base", g2);
-			}
+		    Building building = buildings2.get(typeBuilding);
+		    if (building != null) { 
+		        if(typeBuilding=="barracks") {
+		            paintStrategy.paint(building, "barracks", g2);
+		        } 
+		        else if (typeBuilding=="base") {
+		            paintStrategy.paint(building, "base", g2);
+		        }
+		    }
 		}
 		
 		if(previewBuildingType != null && !previewBuildingType.isEmpty()) {

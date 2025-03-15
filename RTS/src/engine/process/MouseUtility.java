@@ -65,6 +65,21 @@ public class MouseUtility {
 		return "";
 	}
 	
+	public static Building findEnemyBuildingAt(List<Building> buildings,int line,int column,Unit unit) {
+		for (Building potentialEnemyBuilding : buildings) {	        
+	        Zone enemyBuildingZone = potentialEnemyBuilding.getZone();
+	        for(Position pos : enemyBuildingZone.getPositions()) {
+		        if (pos.getLine() == line && 
+		            pos.getColumn() == column && 
+		            !potentialEnemyBuilding.getRace().getName().equals(unit.getRace().getName())) {
+		            return potentialEnemyBuilding;
+		        }
+        
+	        }
+		}
+	    return null;
+	}
+	
 	public static boolean isInBaseZone(Position clickedPosition,Zone baseZone) {
 		
 	    for (Position position : baseZone.getPositions()) {
