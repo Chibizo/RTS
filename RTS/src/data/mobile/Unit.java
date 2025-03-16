@@ -14,7 +14,11 @@ public class Unit extends MobileElement{
 	private boolean selected = false;
 	private long attackCooldown;
 	private long lastAttackTime;
+	private Unit targetUnit;
+	private Building targetBuilding;
 
+	
+	
 	
 	
 	public Unit (Zone zone,String type,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race,String name,int attackDamage) {
@@ -22,11 +26,30 @@ public class Unit extends MobileElement{
 		this.type=type;
 		this.targetPosition=zone.getPositions().get(0);
 		this.attackDamage=attackDamage;
+		
+		
 	}
 	
 	public Zone getZone() {
 		return super.getZone();
 	}
+	
+	public Unit getTargetUnit() {
+	    return targetUnit;
+	}
+
+	public void setTargetUnit(Unit targetUnit) {
+	    this.targetUnit = targetUnit;
+	}
+
+	public Building getTargetBuilding() {
+	    return targetBuilding;
+	}
+
+	public void setTargetBuilding(Building targetBuilding) {
+	    this.targetBuilding = targetBuilding;
+	}
+	
 	
 	public boolean isSelected() {
 	    return selected;

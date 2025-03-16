@@ -94,11 +94,9 @@ public class InfoPlayerPanel extends JPanel{
 	    	for(Building building : mainPlayer.getBuildings()) {
 	    		if(building.getName().equals("base")&& mainGui.getValueInfo().equals("base")) {
 	    			infoLabel.setText("PV : "+String.valueOf(building.getCurrentHealth()));
-	    			System.out.println("A");
 	    		}
 	    		else if(building.getName().equals("barracks")&& mainGui.getValueInfo().equals("barracks")) {
 	    			infoLabel.setText("PV : "+String.valueOf(building.getCurrentHealth()));
-	    			System.out.println("B");
 
 	    		}
 	    	}

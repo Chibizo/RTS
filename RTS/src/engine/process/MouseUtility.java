@@ -13,9 +13,6 @@ import data.model.Player;
 
 public class MouseUtility {
 	
-
-	
-	
 	public static Rectangle createSelectionRectangle(Point start, Point end) {
 		int x = Math.min(start.x, end.x);
 		int y = Math.min(start.y, end.y);
@@ -27,6 +24,7 @@ public class MouseUtility {
 	public static boolean selectUnitsInRectangle(List<Unit> units,Rectangle selectionRect,Player player) {
 		for (Unit unit : units) {
 			unit.setSelected(false);
+			unit.setTargeted(false); // Reset targeting as well
 		}
 		boolean unitsSelected = false;
 		for (Unit unit : units) {
@@ -111,6 +109,29 @@ public class MouseUtility {
 		            !potentialEnemy.getRace().getName().equals(currentUnit.getRace().getName())) {
 		            return potentialEnemy;
 		        }
+	        }
+	    }
+	    return null;
+	}
+	
+	public static Unit findEnemyUnitAtPosition(List<Unit> units, int x, int y, Player currentPlayer) {
+	    for (Unit unit : units) {
+	        Position unitPos = unit.getZone().getPositions().get(0);
+	        if (unitPos.getColumn() == x && unitPos.getLine() == y && 
+	            unit.getRace().getName() != currentPlayer.getRace().getName()) {
+	            return unit;
+	        }
+	    }
+	    return null;
+	}
+	
+	public static Building findEnemyBuildingAtPosition(List<Building> buildings, int x, int y, Player currentPlayer) {
+	    for (Building building : buildings) {
+	        for (Position pos : building.getZone().getPositions()) {
+	            if (pos.getColumn() == x && pos.getLine() == y && 
+	                building.getRace().getName() != currentPlayer.getRace().getName()) {
+	                return building;
+	            }
 	        }
 	    }
 	    return null;

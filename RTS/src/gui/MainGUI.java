@@ -214,6 +214,10 @@ public class MainGUI extends JFrame implements Runnable {
 			} catch (InterruptedException e) {
 				System.out.println(e.getMessage());
 			}
+			if(manager.getMainPlayer().getBuildings().isEmpty() || manager.getBuildingsAIPlayer().isEmpty()) {
+				this.dispose();
+			}
+			
 			aiManager.update();
 			manager.updateConstruction();
 			manager.checkCombat();
@@ -300,6 +304,21 @@ public class MainGUI extends JFrame implements Runnable {
 				Unit clickedUnit = MouseUtility.findUnitAtPosition(manager.getAllUnits(),x, y,mainPlayer);
 				
 				Unit clickedAttack = MouseUtility.findUnitAtPosition(manager.getAllUnits(),x, y,enemyPlayer);
+				
+				Building clickedEnemyBuilding=MouseUtility.findEnemyBuildingAtPosition(manager.getBuildings(), x, y, mainPlayer);
+				
+				manager.clearPreviousTargeting();
+				
+				if(clickedAttack != null && !clickedAttack.isUnderConstruction()) {
+				    clickedAttack.setTargeted(true);
+				    manager.attackWithSelectedUnits(clickedAttack.getZone().getPositions().get(0), clickedAttack, null);
+				} else if(clickedEnemyBuilding != null && !clickedEnemyBuilding.isUnderConstruction()) {
+				    clickedEnemyBuilding.setTargeted(true);
+				    manager.attackWithSelectedUnits(clickedEnemyBuilding.getZone().getPositions().get(0), null, clickedEnemyBuilding);
+				} else {
+				    manager.attackWithSelectedUnits(clickedPosition, null, null);
+				}
+				
 				
 				if (clickedUnit != null && !clickedUnit.isUnderConstruction()) {
 				      for (Unit unit : manager.getAllUnits()) {
@@ -550,5 +569,7 @@ public class MainGUI extends JFrame implements Runnable {
 			}
 		}
 	}
+	
+	
 	
 }

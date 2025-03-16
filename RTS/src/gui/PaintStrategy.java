@@ -220,6 +220,18 @@ public class PaintStrategy {
 	            }
 	            **/
 	        }
+	        if (building.isTargeted()) {
+	            g2.setColor(Color.RED);
+	            ((Graphics2D) g2).setStroke(new BasicStroke(2));
+	            for (Position pos : building.getZone().getPositions()) {
+	                g2.drawRect(
+	                    pos.getColumn() * GameConfiguration.BLOCK_SIZE,
+	                    pos.getLine() * GameConfiguration.BLOCK_SIZE,
+	                    GameConfiguration.BLOCK_SIZE,
+	                    GameConfiguration.BLOCK_SIZE
+	                );
+	            }
+	        }
 	    }
 	}
 	
@@ -279,6 +291,19 @@ public class PaintStrategy {
 			            GameConfiguration.BLOCK_SIZE + 10
 			        );
 			    }
+			    
+			    if (unit.isTargeted()) {
+		            g2.setColor(Color.RED);
+		            ((Graphics2D) g2).setStroke(new BasicStroke(2));
+		            g2.drawRect(
+		                position.getColumn() * GameConfiguration.BLOCK_SIZE,
+		                position.getLine() * GameConfiguration.BLOCK_SIZE,
+		                GameConfiguration.BLOCK_SIZE + 10,
+		                GameConfiguration.BLOCK_SIZE + 10
+		            );
+		        }
+			    
+			    
 			    int barWidth = GameConfiguration.BLOCK_SIZE;
 		        int barHeight = 5;
 		        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE+2;
@@ -351,6 +376,16 @@ public class PaintStrategy {
 		            GameConfiguration.BLOCK_SIZE + 10
 		        );
 		    }
+		    if (unit.isTargeted()) {
+	            g2.setColor(Color.RED);
+	            ((Graphics2D) g2).setStroke(new BasicStroke(2));
+	            g2.drawRect(
+	                position.getColumn() * GameConfiguration.BLOCK_SIZE,
+	                position.getLine() * GameConfiguration.BLOCK_SIZE,
+	                GameConfiguration.BLOCK_SIZE + 10,
+	                GameConfiguration.BLOCK_SIZE + 10
+	            );
+	        }
 		    
 		    int barWidth = GameConfiguration.BLOCK_SIZE;
 	        int barHeight = 5;

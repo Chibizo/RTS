@@ -26,13 +26,16 @@ public class ElementManager implements MobileInterface {
 	private Player mainPlayer;
 	private Player enemyPlayer;
 	private HashMap<Unit, UnitStepper> unitSteppers = new HashMap<>();
+	private MovementManager movementManager;
+
 	
 	
 	public ElementManager(Map map,Player mainPlayer,Player enemyPlayer) {
 		this.map=map;
 		this.mainPlayer=mainPlayer;	
 		this.enemyPlayer=enemyPlayer;
-				
+	    this.movementManager = new MovementManager(map);
+			
 	}
 	
 	public String getResourceTypeAt(Position position) {
@@ -151,6 +154,9 @@ public class ElementManager implements MobileInterface {
 	
 	
 	public synchronized void putWarrior(Zone zone,Player player) {
+		if(player.getBuildings("barracks")==null) {
+			return;
+		}
 		for(Position position : zone.getPositions()) {
 			if(map.isOnBorder(position) || map.isfull(position)) {
 				return; 
@@ -173,6 +179,9 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	public synchronized void putSlave(Zone zone,Player player) {
+		if(player.getBuildings("base")==null) {
+			return;
+		}
 		for(Position position : zone.getPositions()) {
 			if(map.isOnBorder(position) || map.isfull(position)) {
 				return; 
@@ -198,33 +207,44 @@ public class ElementManager implements MobileInterface {
 	
 	
 	public synchronized void moveUnitOneStep(Unit unit) {
-		
-		if(unit.isUnderConstruction()) {
-			return;
-		}
-		
+	    if (unit.isUnderConstruction()) {
+	        return;
+	    }
+	    
 	    Position currentPosition = unit.getZone().getPositions().get(0);
 	    Position targetPosition = unit.getTargetPosition();
-	    Position newPosition = new Position(currentPosition.getLine(), currentPosition.getColumn());
 	    
-	    if (currentPosition.getColumn() < targetPosition.getColumn()) {
-	        newPosition.setColumn(currentPosition.getColumn() + 1);
-	    } else if (currentPosition.getColumn() > targetPosition.getColumn()) {
-	    	newPosition.setColumn(currentPosition.getColumn() - 1);
+	    if (unit.getTargetUnit() != null && !unit.getTargetUnit().isUnderConstruction()) {
+	        if (units.contains(unit.getTargetUnit())) {
+	            targetPosition = unit.getTargetUnit().getZone().getPositions().get(0);
+	            unit.setTargetPosition(targetPosition);
+	        } else {
+	            unit.setTargetUnit(null);
+	        }
+	    } else if (unit.getTargetBuilding() != null && !unit.getTargetBuilding().isUnderConstruction()) {
+	        if (buildings.contains(unit.getTargetBuilding())) {
+	            targetPosition = unit.getTargetBuilding().getZone().getPositions().get(0);
+	            unit.setTargetPosition(targetPosition);
+	        } else {
+	            unit.setTargetBuilding(null);
+	        }
 	    }
 	    
-	   if (currentPosition.getLine() < targetPosition.getLine()) {
-		   newPosition.setLine(currentPosition.getLine() + 1);
-	    } else if (currentPosition.getLine() > targetPosition.getLine()) {
-	    	newPosition.setLine(currentPosition.getLine() - 1);
+	    if (currentPosition.equals(targetPosition)) {
+	        return;
 	    }
-	   
-	   
-	   if (!map.isfullUnits(newPosition) && !(map.isfull(newPosition)) || (unit instanceof Slave && ((Slave)unit).isReturning()) || (unit instanceof Slave && ((Slave)unit).isHarvesting())) {
-	        currentPosition.setColumn(newPosition.getColumn());
-	        currentPosition.setLine(newPosition.getLine());
-	   }
-	 
+	    
+	    Position nextPosition = movementManager.calculateNextStep(unit, currentPosition, targetPosition);
+	    
+	    if (!nextPosition.equals(currentPosition)) {
+	        boolean canMove = !map.isfullUnits(nextPosition) && !map.isfull(nextPosition) || 
+	                          (unit instanceof Slave && (((Slave)unit).isReturning() || ((Slave)unit).isHarvesting()));
+	        
+	        if (canMove) {
+	            currentPosition.setColumn(nextPosition.getColumn());
+	            currentPosition.setLine(nextPosition.getLine());
+	        }
+	    }
 	}
 	
 	public boolean correctPosition(Unit unit) {
@@ -303,17 +323,7 @@ public class ElementManager implements MobileInterface {
 	
 	
 	
-	public boolean areUnitsClose(Unit unit1, Unit unit2) {
-	    Position pos1 = unit1.getZone().getPositions().get(0);
-	    Position pos2 = unit2.getZone().getPositions().get(0);
-	    
-	    // Distance de Manhattan
-	    int distance = Math.abs(pos1.getLine() - pos2.getLine()) + 
-	                   Math.abs(pos1.getColumn() - pos2.getColumn());
-	    
-	    // Vérifier si dans la portée d'attaque
-	    return distance <= unit1.getAttackRange();
-	}
+	
 	
 	
 	public void checkCombat() {
@@ -431,15 +441,11 @@ public class ElementManager implements MobileInterface {
 	    System.out.println("Building removed: " + building.getName());
 	    map.removeFullPosition(building.getZone());
 	    
-	    // Remove from the main buildings list
-	    buildings.remove(building);  // Direct removal is cleaner
+	    buildings.remove(building);  
 	    
-	    // Determine which player owns this building and remove from their HashMap
 	    String buildingType = building.getName();
 	    
-	    // Check in mainPlayer buildings
 	    if (buildingsMainPlayer.containsValue(building)) {
-	        // Find the key for this building
 	        for (String key : buildingsMainPlayer.keySet()) {
 	            if (buildingsMainPlayer.get(key) == building) {
 	                buildingsMainPlayer.remove(key);
@@ -449,14 +455,37 @@ public class ElementManager implements MobileInterface {
 	        }
 	    }
 	    
-	    // Check in AIPlayer buildings
 	    if (buildingsAIPlayer.containsValue(building)) {
-	        // Find the key for this building
 	        for (String key : buildingsAIPlayer.keySet()) {
 	            if (buildingsAIPlayer.get(key) == building) {
 	                buildingsAIPlayer.remove(key);
 	                System.out.println("Removed " + key + " from AI player buildings");
 	                break;
+	            }
+	        }
+	    }
+	}
+	
+	public void clearPreviousTargeting() {
+	    for(Unit unit : getAllUnits()) {
+	        unit.setTargeted(false);
+	    }
+	    
+	    for(Building building : getBuildings()) {
+	        building.setTargeted(false);
+	    }
+	}
+	
+	public void attackWithSelectedUnits(Position targetPosition, Unit targetUnit, Building targetBuilding) {
+	    List<Unit> selectedUnits = getSelectedUnits();
+	    if(!selectedUnits.isEmpty()) {
+	        for(Unit unit : selectedUnits) {
+	            unit.setTargetPosition(targetPosition);
+	            unit.setTargetUnit(targetUnit);
+	            unit.setTargetBuilding(targetBuilding);
+	            if(unit instanceof Slave) {
+	                ((Slave) unit).setHarvesting(false);
+	                ((Slave) unit).setReturning(false);
 	            }
 	        }
 	    }

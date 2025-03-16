@@ -45,11 +45,12 @@ public interface MobileInterface {
 	public List<Unit> getSelectedUnits();
 	
 	public void checkCombat();
-	
-	public boolean areUnitsClose(Unit unit1, Unit unit2);
-	
+		
 	public boolean attack(Unit attacker, Unit defender);
 	
 	public void removeUnit(Unit unit);
-
+	
+	public void clearPreviousTargeting();
+	
+	public void attackWithSelectedUnits(Position targetPosition, Unit targetUnit, Building targetBuilding);
 }

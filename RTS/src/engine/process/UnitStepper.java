@@ -57,7 +57,8 @@ public class UnitStepper implements Runnable {
             unit.getZone().getPositions().get(0).getLine(),
             unit.getZone().getPositions().get(0).getColumn()
         );
-
+        
+        
         elementManager.moveUnitOneStep(unit);
 
         if (!oldPosition.equals(unit.getZone().getPositions().get(0))) {

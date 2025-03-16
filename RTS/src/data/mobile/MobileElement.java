@@ -16,6 +16,10 @@ public abstract class MobileElement {
 	private int constructionTime;
 	private boolean underConstruction = true;
 	private long constructionStartTime;
+	
+	private boolean targeted;
+	
+
 
 	public MobileElement(Zone zone,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race,String name) {
 		this.cost=new Cost(wood,magicOre);
@@ -32,6 +36,14 @@ public abstract class MobileElement {
 	public Zone getZone() {
 		return zone;
 	}
+	
+	public boolean isTargeted() {
+        return targeted;
+    }
+    
+    public void setTargeted(boolean targeted) {
+        this.targeted = targeted;
+    }
 
 	public int getMaxHealth() {
 		return maxHealth;
