@@ -10,7 +10,7 @@ public class Player {
 	private int wood;
 	private int magicOre;
 	private int slave;
-	private int maxSlaves;
+	private final int maxSlaves = 4 ;
 	private Race race;
 	private Building base ;
 	private Zone starterZone;
@@ -27,6 +27,13 @@ public class Player {
 	
 	public Zone getStarterZone() {
 		return starterZone;
+	}
+	
+	
+
+
+	public void setSlave(int slave) {
+		this.slave = slave;
 	}
 
 

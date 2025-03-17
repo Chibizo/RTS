@@ -31,6 +31,7 @@ public class InfoPlayerPanel extends JPanel{
 	private JLabel magicOreValue=new JLabel("");
 	
 	private JLabel infoLabel=new JLabel("");
+	private JLabel infoLabel2=new JLabel("");
 	
 	
 	
@@ -53,6 +54,7 @@ public class InfoPlayerPanel extends JPanel{
 		grid.add(raceNameValue);
 		grid.add(woodValue);
 		grid.add(magicOreValue);
+		grid.add(infoLabel2);
 		add(grid); 
 		
 		
@@ -71,6 +73,9 @@ public class InfoPlayerPanel extends JPanel{
 		 infoLabel.setFont(new Font("Nimbus Sans", Font.BOLD, 20));
 		 infoLabel.setForeground(Color.WHITE);
 		 
+		 infoLabel2.setFont(new Font("Nimbus Sans", Font.BOLD, 20));
+		 infoLabel2.setForeground(Color.WHITE);
+		 
 		 woodValue.setFont(new Font("Nimbus Sans", Font.BOLD, 20));
 		 woodValue.setForeground(new Color(139, 69, 19));
 		  
@@ -88,12 +93,15 @@ public class InfoPlayerPanel extends JPanel{
 	}
 	
 	public void update() {
+		infoLabel2.setText("");
 	    woodValue.setText(String.valueOf(mainPlayer.getWood()));
 	    magicOreValue.setText(String.valueOf(mainPlayer.getMagicOre()));
 	    if (mainGui.getValueInfo().equals("base")|| mainGui.getValueInfo().equals("barracks")) {
 	    	for(Building building : mainPlayer.getBuildings()) {
 	    		if(building.getName().equals("base")&& mainGui.getValueInfo().equals("base")) {
 	    			infoLabel.setText("PV : "+String.valueOf(building.getCurrentHealth()));
+	    			infoLabel.setForeground(Color.GREEN);
+	    			infoLabel2.setText("Slaves : "+String.valueOf(mainPlayer.getSlave())+"/"+String.valueOf(mainPlayer.getMaxSlaves()));
 	    		}
 	    		else if(building.getName().equals("barracks")&& mainGui.getValueInfo().equals("barracks")) {
 	    			infoLabel.setText("PV : "+String.valueOf(building.getCurrentHealth()));
@@ -107,6 +115,8 @@ public class InfoPlayerPanel extends JPanel{
 	public void setinfoLabel(String warning) {
 		this.infoLabel.setText(warning);
 	}
+	
+	
 	
 	
 

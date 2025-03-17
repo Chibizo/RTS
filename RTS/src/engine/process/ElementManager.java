@@ -191,6 +191,8 @@ public class ElementManager implements MobileInterface {
 		units.add(slave);
 		map.addFullUnitsPosition(zone);
 		player.setWood(player.getWood()-slave.getCost().getWood());
+		player.setSlave(player.getSlave()+1);
+		System.out.println(player.getSlave());
 		UnitStepper stepper = new UnitStepper(slave,100,map,this,player);
 		unitSteppers.put(slave, stepper);
 		Thread thread = new Thread(stepper);

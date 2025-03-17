@@ -38,7 +38,7 @@ public class AIManager {
    
     
     private void makeHardDecisions() {
-    	if (countUnitType("slave") < 5 && aiPlayer.getWood() >= GameConfiguration.SLAVE_COST) {
+    	if (countUnitType("slave") < 4 && aiPlayer.getWood() >= GameConfiguration.SLAVE_COST) {
     		buildSlave();
     	}
     	else if (!hasBarracks() && aiPlayer.getWood() >= GameConfiguration.BARRACKS_COST) {
@@ -158,7 +158,7 @@ public class AIManager {
             }
         }
         
-        if(idleSlaves.size()==5) {
+        if(idleSlaves.size()==4) {
 	        for (int i = 0; i < idleSlaves.size(); i++) {
 	            Slave slave = idleSlaves.get(i);
 	            if (i % 2 == 0 ) {

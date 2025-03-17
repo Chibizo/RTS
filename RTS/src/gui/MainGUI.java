@@ -505,7 +505,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class SlaveButton implements ActionListener {
 		public void actionPerformed(ActionEvent e){
 			Building base = manager.getBuildingsMainPlayer().get("base");
-			if(base.isUnderConstruction() && base!=null) {
+			if(base.isUnderConstruction() && base!=null ) {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
@@ -514,7 +514,7 @@ public class MainGUI extends JFrame implements Runnable {
 	            warningTime = System.currentTimeMillis();
 	            return;
 			}
-			else if(mainPlayer.getWood()>=GameConfiguration.SLAVE_COST) {
+			else if(mainPlayer.getWood()>=GameConfiguration.SLAVE_COST && (mainPlayer.getSlave() < mainPlayer.getMaxSlaves())) {
 				Position unitPosition = new Position(
 			            mainPlayer.getStarterZone().getPositions().get(0).getLine() + 3,
 			            mainPlayer.getStarterZone().getPositions().get(0).getColumn() + manager.getAllUnits().size() %15 -5 
@@ -528,9 +528,15 @@ public class MainGUI extends JFrame implements Runnable {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
-	            valueInfo="you don't have enough wood";
-	            infoPlayerPanel.setinfoLabel(valueInfo);
-				warningTime = System.currentTimeMillis();
+				if(mainPlayer.getWood()<=100) {
+		            valueInfo="you don't have enough wood";
+		            infoPlayerPanel.setinfoLabel(valueInfo);
+					warningTime = System.currentTimeMillis();
+				}else {
+					valueInfo="maximum slave reached";
+		            infoPlayerPanel.setinfoLabel(valueInfo);
+					warningTime = System.currentTimeMillis();
+				}
 			}
 		}
 	}
