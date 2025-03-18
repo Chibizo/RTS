@@ -16,6 +16,7 @@ public class Unit extends MobileElement{
 	private long lastAttackTime;
 	private Unit targetUnit;
 	private Building targetBuilding;
+	private boolean manuallyCommanded = false;
 
 	
 	
@@ -32,6 +33,14 @@ public class Unit extends MobileElement{
 	
 	public Zone getZone() {
 		return super.getZone();
+	}
+	
+	public boolean isManuallyCommanded() {
+	    return manuallyCommanded;
+	}
+
+	public void setManuallyCommanded(boolean manuallyCommanded) {
+	    this.manuallyCommanded = manuallyCommanded;
 	}
 	
 	public Unit getTargetUnit() {

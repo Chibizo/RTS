@@ -322,10 +322,60 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	
+	public int calculateDistance(Position p1, Position p2) {
+        return Math.abs(p1.getLine() - p2.getLine()) + Math.abs(p1.getColumn() - p2.getColumn());
+    }
 	
-	
-	
-	
+	public void checkCloseEnemy() {
+	    int detectionRadius = 5; 
+	    
+	    
+	    List<Unit> unitsCopy;
+	    synchronized(this) {
+	        unitsCopy = new ArrayList<>(units);
+	    }
+	    
+	    for (Unit unit : unitsCopy) {
+	        if (!unit.isUnderConstruction() && unit.getTargetUnit() == null && !unit.isManuallyCommanded()) {
+	        	if(unit.getName().equals("warrior")) {
+	        		detectionRadius=12;
+	        	}else {
+	        		detectionRadius=5;
+	        	}
+		        
+		        Position unitPosition = unit.getZone().getPositions().get(0);
+		        
+		        Unit closestEnemy = null;
+		        int closestDistance = Integer.MAX_VALUE;
+		        
+		        for (Unit potentialEnemy : unitsCopy) {
+		            if (!potentialEnemy.getRace().getName().equals(unit.getRace().getName()) && 
+			                !potentialEnemy.isUnderConstruction()) {
+			              
+			            
+			            Position enemyPosition = potentialEnemy.getZone().getPositions().get(0);
+			            int distance = calculateDistance(unitPosition, enemyPosition);
+			            
+			            if (distance <= detectionRadius && distance < closestDistance) {
+			                closestEnemy = potentialEnemy;
+			                closestDistance = distance;
+			            }
+		            }
+		        }
+		        
+		        if (closestEnemy != null) {
+		            unit.setTargetUnit(closestEnemy);
+		            unit.setTargetBuilding(null);
+		            unit.setTargetPosition(closestEnemy.getZone().getPositions().get(0));
+		            
+		            if (unit instanceof Slave) {
+		                ((Slave) unit).setHarvesting(false);
+		                ((Slave) unit).setReturning(false);
+		            }
+		        }
+	        }
+	    }
+	}
 	
 	
 	public void checkCombat() {
@@ -485,11 +535,18 @@ public class ElementManager implements MobileInterface {
 	            unit.setTargetPosition(targetPosition);
 	            unit.setTargetUnit(targetUnit);
 	            unit.setTargetBuilding(targetBuilding);
+	            unit.setManuallyCommanded(true);
 	            if(unit instanceof Slave) {
 	                ((Slave) unit).setHarvesting(false);
 	                ((Slave) unit).setReturning(false);
 	            }
 	        }
+	    }
+	}
+	
+	public void checkUnitReachedDestination(Unit unit) {
+	    if (unit.isManuallyCommanded() && correctPosition(unit)) {
+	        unit.setManuallyCommanded(false);
 	    }
 	}
 	

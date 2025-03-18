@@ -43,6 +43,8 @@ public class UnitStepper implements Runnable {
 
             if (!elementManager.correctPosition(unit)) {
                 moveUnit();
+            }else {
+            	elementManager.checkUnitReachedDestination(unit);
             }
             if (unit instanceof Slave) {
                 handleHarvesting((Slave) unit);

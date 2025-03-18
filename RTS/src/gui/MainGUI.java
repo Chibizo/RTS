@@ -105,8 +105,8 @@ public class MainGUI extends JFrame implements Runnable {
 		contentPane.setLayout(new BorderLayout());
 
 		KeyControls keyControls = new KeyControls();
-		JTextField textField = new JTextField();
 		this.addKeyListener(keyControls);
+		
 		
 		
 		map=GameBuilder.buildMap();
@@ -221,6 +221,7 @@ public class MainGUI extends JFrame implements Runnable {
 			aiManager.update();
 			manager.updateConstruction();
 			manager.checkCombat();
+			manager.checkCloseEnemy();
 			dashboard.repaint();
 			infoPlayerPanel.update();	
 	        if (warningTime != -1 && System.currentTimeMillis() - warningTime >= 4000) {

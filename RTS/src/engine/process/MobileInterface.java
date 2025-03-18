@@ -45,6 +45,10 @@ public interface MobileInterface {
 	public List<Unit> getSelectedUnits();
 	
 	public void checkCombat();
+	
+	public void checkCloseEnemy();
+	
+	public int calculateDistance(Position p1, Position p2);
 		
 	public boolean attack(Unit attacker, Unit defender);
 	
@@ -53,4 +57,6 @@ public interface MobileInterface {
 	public void clearPreviousTargeting();
 	
 	public void attackWithSelectedUnits(Position targetPosition, Unit targetUnit, Building targetBuilding);
+	
+	public void checkUnitReachedDestination(Unit unit);
 }

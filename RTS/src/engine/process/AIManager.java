@@ -145,9 +145,7 @@ public class AIManager {
     
   
     
-    private int calculateDistance(Position p1, Position p2) {
-        return Math.abs(p1.getLine() - p2.getLine()) + Math.abs(p1.getColumn() - p2.getColumn());
-    }
+    
     
     private void assignHarvesters() {
        List<Slave> idleSlaves = new ArrayList<>();
