@@ -156,15 +156,17 @@ public class AIManager {
             }
         }
         
-        if(idleSlaves.size()==4) {
-	        for (int i = 0; i < idleSlaves.size(); i++) {
-	            Slave slave = idleSlaves.get(i);
-	            if (i % 2 == 0 ) {
-	                mobileManager.startHarvesting(slave, map.getWoodLocations().getPositions().getLast(),aiPlayer);
-	            } else  {
-	                mobileManager.startHarvesting(slave, map.getMagicOreLocations().getPositions().getLast(),aiPlayer);
-	            }
-	        }
+        if (idleSlaves.size() == 4) {
+            for (int i = 0; i < idleSlaves.size(); i++) {
+                Slave slave = idleSlaves.get(i);
+                if (i % 2 == 0) {
+                    List<Position> woodPositions = map.getWoodLocations().getPositions();
+                    mobileManager.startHarvesting(slave, woodPositions.get(woodPositions.size() - 1), aiPlayer);
+                } else {
+                    List<Position> magicOrePositions = map.getMagicOreLocations().getPositions();
+                    mobileManager.startHarvesting(slave, magicOrePositions.get(magicOrePositions.size() - 1), aiPlayer);
+                }
+            }
         }
     }
     

@@ -1,10 +1,15 @@
 package data.map;
 
 import java.util.List;
+
+import org.apache.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.ArrayList;
 import data.mobile.*;
+import log.LoggerUtility;
+
 import java.util.ConcurrentModificationException;
 
 
@@ -20,9 +25,13 @@ public class Map {
 	private List<Zone> fullPosition=new ArrayList<Zone>();
 	private List<Zone> fullUnitsPosition=new ArrayList<Zone>();
 	
+	private static Logger logger = LoggerUtility.getLogger(Map.class, "html");
+
+	
 	
 	public Map(int lineCount,int columnCount ) {
 		System.out.println("Création de la carte avec dimensions : " + lineCount + "x" + columnCount);
+		logger.info("Création de la carte avec dimensions : " + lineCount + "x" + columnCount);
 		init(lineCount,columnCount);
 		for(int lineIndex=0; lineIndex<lineCount;lineIndex++) {
 			for(int columnIndex=0;columnIndex<columnCount;columnIndex++) {

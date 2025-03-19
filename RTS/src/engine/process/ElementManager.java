@@ -482,7 +482,7 @@ public class ElementManager implements MobileInterface {
 	
 	
 	public void removeUnit(Unit unit) {
-	    map.removeFullUnitsPosition(unit.getZone().getPositions().getFirst());
+	    map.removeFullUnitsPosition(unit.getZone().getPositions().get(0));
 	    units.remove(unit);
 	    unitSteppers.get(unit).stop();
 	    unitSteppers.remove(unit);
