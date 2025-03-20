@@ -165,7 +165,7 @@ public class Map {
 			}
 			return false;
 		}catch(ConcurrentModificationException e) {
-			System.out.println("probleme de concurrence");
+			logger.warn("Attention problème de concurrence");
 			
 		}
 		return true;

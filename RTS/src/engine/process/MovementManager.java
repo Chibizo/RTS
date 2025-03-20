@@ -1,8 +1,12 @@
 package engine.process;
 
+import org.apache.log4j.Logger;
+
 import data.map.Map;
 import data.map.Position;
 import data.mobile.Unit;
+import log.LoggerUtility;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,12 +14,22 @@ public class MovementManager {
     
     private Map map;
     
+    private static Logger logger = LoggerUtility.getLogger(MovementManager.class, "html");
+
+    
     public MovementManager(Map map) {
         this.map = map;
+        logger.info("Gestionnaire de mouvement initialisé");
+
     }
     
     public Position calculateNextStep(Unit unit, Position currentPosition, Position targetPosition) {
+    	
+    	logger.debug("Calcul du prochain pas pour " + unit.getName() + 
+    	        " de " + currentPosition + " vers " + targetPosition);
+    	
         if (isCloseToTarget(currentPosition, targetPosition, 1)) {
+            logger.debug(unit.getName() + " est proche de sa cible");
             return targetPosition;
         }
         
@@ -27,10 +41,11 @@ public class MovementManager {
         List<Position> validMoves = filterValidMoves(possibleMoves, unit);
         
         if (validMoves.isEmpty()) {
+            logger.debug("Chemin bloqué pour " + unit.getName() + ", recherche d'alternatives");
             return handleBlockedPath(unit, currentPosition, targetPosition);
         }
         
-        
+        logger.debug("Prochaine position pour " + unit.getName() + ": " + validMoves.get(0));
         return validMoves.get(0);
     }
     
@@ -122,9 +137,10 @@ public class MovementManager {
         }
         
         if (!alternativeMoves.isEmpty()) {
+            logger.debug("Mouvement alternatif trouvé pour " + unit.getName() + ": " + alternativeMoves.get(0));
             return alternativeMoves.get(0);
         }
-        
+        logger.debug("Aucun mouvement alternatif trouvé pour " + unit.getName() + ", reste en place");
         return current;
     }
     

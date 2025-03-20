@@ -1,9 +1,19 @@
 package engine.process;
 
+import org.apache.log4j.Logger;
+
+import data.map.Map;
+import data.map.Position;
+import data.mobile.Unit;
+import log.LoggerUtility;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import data.mobile.Slave;
 import data.mobile.Unit;
 import data.model.Player;
+import log.LoggerUtility;
 import data.map.Map;
 import data.map.Position;
 import config.GameConfiguration;
@@ -16,6 +26,9 @@ public class UnitStepper implements Runnable {
     private Map map;
     private ElementManager elementManager;
     private Player player;
+    
+    private static Logger logger = LoggerUtility.getLogger(UnitStepper.class, "html");
+
 
     public UnitStepper(Unit unit, int speed, Map map, ElementManager elementManager,Player player) {
         this.unit = unit;
@@ -23,6 +36,8 @@ public class UnitStepper implements Runnable {
         this.map = map;
         this.elementManager = elementManager;
         this.player=player;
+        logger.debug("Stepper créé pour " + unit.getName() + " du joueur " + player.getRace().getName());
+
     }
 
     public UnitStepper(Unit unit, Map map, ElementManager elementManager,Player player) {
@@ -30,11 +45,13 @@ public class UnitStepper implements Runnable {
     }
 
     public void stop() {
+        logger.debug("Arrêt du thread pour " + unit.getName());
         running = false;
     }
 
     @Override
     public void run() {
+        logger.debug("Thread démarré pour " + unit.getName());
         while (running) {
             if (unit.isUnderConstruction()) {
                 sleep();
@@ -52,6 +69,7 @@ public class UnitStepper implements Runnable {
 
             sleep();
         }
+        logger.debug("Thread arrêté pour " + unit.getName());
     }
 
     public void moveUnit() {
@@ -64,6 +82,8 @@ public class UnitStepper implements Runnable {
         elementManager.moveUnitOneStep(unit);
 
         if (!oldPosition.equals(unit.getZone().getPositions().get(0))) {
+        	logger.debug(unit.getName() + " s'est déplacé de " + oldPosition + 
+                    " à " + unit.getZone().getPositions().get(0));
             map.removeFullUnitsPosition(oldPosition);
             map.addFullUnitsPosition(unit.getZone());
         }
@@ -73,6 +93,7 @@ public class UnitStepper implements Runnable {
         if (slave.isHarvesting() || slave.isReturning()) {
             long currentTime = System.currentTimeMillis();
             if (currentTime - lastHarvestTime > GameConfiguration.HARVEST_TIME) {
+                logger.debug("Esclave récolte des ressources");
                 elementManager.harvestResource(slave,player);
                 lastHarvestTime = currentTime;
             }

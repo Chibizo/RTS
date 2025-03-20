@@ -1,5 +1,7 @@
 package engine.process;
 
+import org.apache.log4j.Logger;
+
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.util.List;
@@ -10,8 +12,12 @@ import data.map.Zone;
 import data.mobile.Building;
 import data.mobile.Unit;
 import data.model.Player;
+import log.LoggerUtility;
 
 public class MouseUtility {
+	
+	private static Logger logger = LoggerUtility.getLogger(MouseUtility.class, "html");
+
 	
 	public static Rectangle createSelectionRectangle(Point start, Point end) {
 		int x = Math.min(start.x, end.x);
@@ -22,6 +28,7 @@ public class MouseUtility {
 	}
 	
 	public static boolean selectUnitsInRectangle(List<Unit> units,Rectangle selectionRect,Player player) {
+	    logger.debug("Sélection d'unités dans le rectangle: " + selectionRect);
 		for (Unit unit : units) {
 			unit.setSelected(false);
 			unit.setTargeted(false); // Reset targeting as well
@@ -41,9 +48,11 @@ public class MouseUtility {
 		}
 		
 		if (unitsSelected) {
+	        logger.debug("Unités sélectionnées pour " + player.getRace().getName());
 			return true;
 		}
 		else {
+	        logger.debug("Aucune unité sélectionnée pour " + player.getRace().getName());
 			return false;
 		}
 	}
@@ -107,6 +116,7 @@ public class MouseUtility {
 		        if (enemyPos.getLine() == line && 
 		            enemyPos.getColumn() == column && 
 		            !potentialEnemy.getRace().getName().equals(currentUnit.getRace().getName())) {
+		            logger.debug("Ennemi trouvé à la position [" + line + "," + column + "]: " + potentialEnemy.getName());
 		            return potentialEnemy;
 		        }
 	        }

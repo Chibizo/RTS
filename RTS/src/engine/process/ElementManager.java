@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 
 import config.GameConfiguration;
 import data.map.Map;
@@ -13,6 +14,7 @@ import data.map.Position;
 import data.map.Zone;
 import data.mobile.*;
 import data.model.*;
+import log.LoggerUtility;
 
 
 public class ElementManager implements MobileInterface {
@@ -27,6 +29,9 @@ public class ElementManager implements MobileInterface {
 	private Player enemyPlayer;
 	private HashMap<Unit, UnitStepper> unitSteppers = new HashMap<>();
 	private MovementManager movementManager;
+	
+	private static Logger logger = LoggerUtility.getLogger(Map.class, "html");
+
 
 	
 	
@@ -35,6 +40,7 @@ public class ElementManager implements MobileInterface {
 		this.mainPlayer=mainPlayer;	
 		this.enemyPlayer=enemyPlayer;
 	    this.movementManager = new MovementManager(map);
+	    logger.info("Gestionnaire d'éléments initialisé avec joueur principal: " + mainPlayer.getRace().getName());
 			
 	}
 	
@@ -108,12 +114,14 @@ public class ElementManager implements MobileInterface {
 	public void putBuilding(Zone zone,String type,Player player) {
 		for(Position position : zone.getPositions()) {
 			if (map.isOnBorder(position)) {
+	            logger.warn("Tentative de construction sur une bordure de carte rejetée");
 				return;
 			}
 		}
 		if(player.getClass().getSimpleName().equals("AIPlayer")) {
 
 			if(type=="barracks") {
+	            logger.info("Caserne construite par l'IA à la position: " + zone.getPositions().get(0));
 				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,30000,player.getRace(),"barracks");	
 				buildingsAIPlayer.put("barracks",building);
 				buildings.add(building);
@@ -132,6 +140,7 @@ public class ElementManager implements MobileInterface {
 			
 		}else {
 			if(type=="barracks") {
+	            logger.info("Caserne construite par le joueur principal à la position: " + zone.getPositions().get(0));
 				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,30000,player.getRace(),"barracks");	
 				buildingsMainPlayer.put("barracks",building);
 				buildings.add(building);
@@ -173,6 +182,7 @@ public class ElementManager implements MobileInterface {
 		
 	}
 	public synchronized void putWarrior(Position position,Player player) {
+	    logger.debug("Tentative de création d'un guerrier à la position: " + position);
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
 		putWarrior(new Zone(zone),player);
@@ -201,6 +211,7 @@ public class ElementManager implements MobileInterface {
 		
 	}
 	public synchronized void putSlave(Position position,Player player) {
+	    logger.debug("Tentative de création d'un esclave à la position: " + position);
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
 		putSlave(new Zone(zone),player);
@@ -243,8 +254,11 @@ public class ElementManager implements MobileInterface {
 	                          (unit instanceof Slave && (((Slave)unit).isReturning() || ((Slave)unit).isHarvesting()));
 	        
 	        if (canMove) {
+	            logger.debug(unit.getName() + " se déplace de " + currentPosition + " vers " + nextPosition);
 	            currentPosition.setColumn(nextPosition.getColumn());
 	            currentPosition.setLine(nextPosition.getLine());
+	        }else {
+	            logger.debug(unit.getName() + " ne peut pas se déplacer vers " + nextPosition + " (case occupée)");
 	        }
 	    }
 	}
@@ -409,6 +423,7 @@ public class ElementManager implements MobileInterface {
 			                    if (enemy != null) {
 			                        boolean killed = attack(unit, enemy);
 			                        if (killed && !unitsToRemove.contains(enemy)) {
+			                            logger.info(unit.getName() + " a tué " + enemy.getName());
 			                            unitsToRemove.add(enemy);
 			                        }
 			                    }
@@ -418,6 +433,7 @@ public class ElementManager implements MobileInterface {
 			                    if(enemyBuild!=null) {
 			                    		boolean killed = attackBuilding(unit,enemyBuild);
 			                    		if(killed && !buildingsToRemove.contains(enemyBuild))
+			                                logger.info(unit.getName() + " a détruit " + enemyBuild.getName());
 			                    			buildingsToRemove.add(enemyBuild);
 			                    		}
 		                        }
@@ -482,6 +498,7 @@ public class ElementManager implements MobileInterface {
 	
 	
 	public void removeUnit(Unit unit) {
+	    logger.info("Unité supprimée: " + unit.getName() + " à la position " + unit.getZone().getPositions().get(0));
 	    map.removeFullUnitsPosition(unit.getZone().getPositions().get(0));
 	    units.remove(unit);
 	    unitSteppers.get(unit).stop();
@@ -490,6 +507,7 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	public void removeBuilding(Building building) {
+	    logger.info("Bâtiment supprimé: " + building.getName() + " à la position " + building.getZone().getPositions().get(0));
 	    System.out.println("Building removed: " + building.getName());
 	    map.removeFullPosition(building.getZone());
 	    

@@ -8,11 +8,14 @@ import data.mobile.Slave;
 import data.mobile.Unit;
 import data.model.AIPlayer;
 import data.model.Player;
+import log.LoggerUtility;
 import config.GameConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+
+import org.apache.log4j.Logger;
 
 public class AIManager {
     
@@ -21,10 +24,14 @@ public class AIManager {
     private Map map;
     private Random random = new Random();
     
+	private static Logger logger = LoggerUtility.getLogger(Map.class, "html");
+
+    
     public AIManager(AIPlayer aiPlayer, MobileInterface mobileManager, Map map) {
         this.aiPlayer = aiPlayer;
         this.mobileManager = mobileManager;
         this.map = map;
+        logger.info("Gestionnaire IA initialisé pour le joueur: " + aiPlayer.getRace().getName());
     }
     
     public void update() {
@@ -32,6 +39,7 @@ public class AIManager {
             return;
         }
         makeHardDecisions();
+        logger.debug("L'IA prend une décision...");
      
     }
     
@@ -40,17 +48,21 @@ public class AIManager {
     private void makeHardDecisions() {
     	if (countUnitType("slave") < 4 && aiPlayer.getWood() >= GameConfiguration.SLAVE_COST) {
     		buildSlave();
+    		logger.info("L'IA décide de construire un esclave");
     	}
     	else if (!hasBarracks() && aiPlayer.getWood() >= GameConfiguration.BARRACKS_COST) {
             buildBarracks();
+            logger.info("L'IA décide de construire une caserne");
         } else if (hasBarracks() && aiPlayer.getWood() >= GameConfiguration.WARRIOR_COST) {
             buildWarrior();
+            logger.info("L'IA décide de construire un guerrier");
         }
         
         assignHarvesters();
         
         if (countUnitType("warrior") >= 3) {
             coordinatedAttack();
+            logger.info("L'IA lance une attaque coordonnée avec " + countUnitType("warrior") + " guerriers");
         }
     }
     
@@ -194,6 +206,8 @@ public class AIManager {
                 targetUnit = playerUnits.get(0);
                 targetPos = targetUnit.getZone().getPositions().get(0);
                 
+                logger.info("L'IA cible une unité ennemie à la position: " + targetPos);
+                
                 for (Unit warrior : warriors) {
                     warrior.setTargetPosition(targetPos);
                     warrior.setTargetUnit(targetUnit);
@@ -210,6 +224,7 @@ public class AIManager {
                 for (Building building : mobileManager.getBuildings()) {
                     if (!building.getRace().getName().equals(aiPlayer.getRace().getName())) {
                         targetBuilding = building;
+                        logger.info("L'IA cible un bâtiment ennemi: " + targetBuilding.getName());
                         break;
                     }
                 }
