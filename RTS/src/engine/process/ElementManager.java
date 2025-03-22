@@ -403,47 +403,44 @@ public class ElementManager implements MobileInterface {
 	    
 	    for (Unit unit : unitsCopy) {
 	        if (!unit.isUnderConstruction()) {
-		        
-		        Position currentPosition = unit.getZone().getPositions().get(0);
-		        int line = currentPosition.getLine();
-		        int column = currentPosition.getColumn();
-	
-		        for (int i = -1; i <= 1; i++) {
-		            for (int j = -1; j <= 1; j++) {
-		                if (i != 0 || j != 0) {
-			                
-			                int checkLine = line + i;
-			                int checkColumn = column + j;
-			                
-			                if (checkLine >= 0 && checkLine < map.getLineCount() && 
-			                    checkColumn >= 0 && checkColumn < map.getColumnCount()) {
-			                    
-			                    Unit enemy = MouseUtility.findEnemyAt(unitsCopy, checkLine, checkColumn, unit);
-			                    
-			                    if (enemy != null) {
-			                        boolean killed = attack(unit, enemy);
-			                        if (killed && !unitsToRemove.contains(enemy)) {
-			                            logger.info(unit.getName() + " a tué " + enemy.getName());
-			                            unitsToRemove.add(enemy);
-			                        }
-			                    }
-			                    
-			                    Building enemyBuild = MouseUtility.findEnemyBuildingAt(buildings,checkLine,checkColumn,unit);
-			                    
-			                    if(enemyBuild!=null) {
-			                    		boolean killed = attackBuilding(unit,enemyBuild);
-			                    		if(killed && !buildingsToRemove.contains(enemyBuild))
-			                                logger.info(unit.getName() + " a détruit " + enemyBuild.getName());
-			                    			buildingsToRemove.add(enemyBuild);
-			                    		}
-		                        }
-			                    
-		                }
-		                }
-		            }
+	            Position currentPosition = unit.getZone().getPositions().get(0);
+	            int line = currentPosition.getLine();
+	            int column = currentPosition.getColumn();
+
+	            for (int i = -1; i <= 1; i++) {
+	                for (int j = -1; j <= 1; j++) {
+	                    if (i != 0 || j != 0) {
+	                        int checkLine = line + i;
+	                        int checkColumn = column + j;
+	                        
+	                        if (checkLine >= 0 && checkLine < map.getLineCount() && 
+	                            checkColumn >= 0 && checkColumn < map.getColumnCount()) {
+	                            
+	                            Unit enemy = MouseUtility.findEnemyAt(unitsCopy, checkLine, checkColumn, unit);
+	                            
+	                            if (enemy != null) {
+	                                boolean killed = attack(unit, enemy);
+	                                if (killed && !unitsToRemove.contains(enemy)) {
+	                                    logger.info(unit.getName() + " a tué " + enemy.getName());
+	                                    unitsToRemove.add(enemy);
+	                                }
+	                            }
+	                            
+	                            Building enemyBuild = MouseUtility.findEnemyBuildingAt(buildings, checkLine, checkColumn, unit);
+	                            
+	                            if (enemyBuild != null) {
+	                                boolean killed = attackBuilding(unit, enemyBuild);
+	                                if (killed && !buildingsToRemove.contains(enemyBuild)) {
+	                                    logger.info(unit.getName() + " a détruit " + enemyBuild.getName());
+	                                    buildingsToRemove.add(enemyBuild);
+	                                }
+	                            }
+	                        }
+	                    }
+	                }
+	            }
 	        }
-	        }
-	    
+	    }
 	    
 	    synchronized(this) {
 	        for (Unit deadUnit : unitsToRemove) {
@@ -479,20 +476,17 @@ public class ElementManager implements MobileInterface {
 	    return defender.getCurrentHealth() <= 0;
 	}
 	
-	public boolean attackBuilding(Unit attacker,Building building) {
-		
-		long currentTime = System.currentTimeMillis();
+	public boolean attackBuilding(Unit attacker, Building building) {
+	    long currentTime = System.currentTimeMillis();
 	    if (currentTime - attacker.getLastAttackTime() < 1000) { 
 	        return false;
 	    }
 	   
 	    building.setCurrentHealth(building.getCurrentHealth() - attacker.getAttackDamage());
 
-	    
 	    attacker.setLastAttackTime(System.currentTimeMillis());
 	    
 	    return building.getCurrentHealth() <= 0;
-
 	}
 
 	
@@ -500,6 +494,9 @@ public class ElementManager implements MobileInterface {
 	public void removeUnit(Unit unit) {
 	    logger.info("Unité supprimée: " + unit.getName() + " à la position " + unit.getZone().getPositions().get(0));
 	    map.removeFullUnitsPosition(unit.getZone().getPositions().get(0));
+	    if(unit.getRace().getName().equals(mainPlayer.getRace().getName()) && (unit instanceof Slave)) {
+	    	mainPlayer.setSlave(mainPlayer.getSlave()-1);
+	    }
 	    units.remove(unit);
 	    unitSteppers.get(unit).stop();
 	    unitSteppers.remove(unit);

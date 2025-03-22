@@ -37,13 +37,13 @@ public class PaintStrategy {
 		
 		
 		if(!images.containsKey("src/images/medievalTile_48v2.png")) {
-			images.put("src/images/medievalTile_48v2.png",GameBuilder.readImage("RTS/src/images/medievalTile_48v2.png"));
+			images.put("src/images/medievalTile_48v2.png",GameBuilder.readImage("src/images/medievalTile_48v2.png"));
 		}if(!images.containsKey("src/images/medievalEnvironment_11.png")) {
-			images.put("src/images/medievalEnvironment_11.png",GameBuilder.readImage("RTS/src/images/medievalEnvironment_11.png"));
+			images.put("src/images/medievalEnvironment_11.png",GameBuilder.readImage("src/images/medievalEnvironment_11.png"));
 		}if(!images.containsKey("src/images/medievalEnvironment_01.png")) {
-			images.put("src/images/medievalEnvironment_01.png",GameBuilder.readImage("RTS/src/images/medievalEnvironment_01.png"));
+			images.put("src/images/medievalEnvironment_01.png",GameBuilder.readImage("src/images/medievalEnvironment_01.png"));
 		}if(!images.containsKey("src/images/medievalEnvironment_02.png")) {
-			images.put("src/images/medievalEnvironment_02.png",GameBuilder.readImage("RTS/src/images/medievalEnvironment_02.png"));
+			images.put("src/images/medievalEnvironment_02.png",GameBuilder.readImage("src/images/medievalEnvironment_02.png"));
 		}
 		
 		
@@ -155,12 +155,6 @@ public class PaintStrategy {
 	public void paint(Building building, String type, Graphics2D g2) {
 
 		
-		if(!images.containsKey("src/images/medievalStructure_02.png")) {
-			images.put("src/images/medievalStructure_02.png",GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"));
-		}if(!images.containsKey("src/images/medievalStructure_05.png")) {
-			images.put("src/images/medievalStructure_05.png",GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"));
-		}
-		
 		
 		
 	    Position position = building.getZone().getPositions().get(0);
@@ -191,12 +185,12 @@ public class PaintStrategy {
 	        g2.setComposite(alphaComposite);
 	        
 	        if (type == "base") {
-	            g2.drawImage(images.get("src/images/medievalStructure_02.png"),
+	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_02.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
 	                imageSize, imageSize, null);
 	        } else if (type == "barracks") {
-	            g2.drawImage(images.get("src/images/medievalStructure_05.png"),
+	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE,
 	                imageSize, imageSize, null);
@@ -206,13 +200,13 @@ public class PaintStrategy {
 	    } else {
 	        if (type == "base") {
 
-	            g2.drawImage(images.get("src/images/medievalStructure_02.png"),
+	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_02.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
 	                imageSize, imageSize, null);
 	            
 	        } else if (type == "barracks") {
-	            g2.drawImage(images.get("src/images/medievalStructure_05.png"),
+	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE,
 	                imageSize, imageSize, null);
@@ -245,7 +239,7 @@ public class PaintStrategy {
 	
 	public void paint(Unit unit,String name, Graphics2D g2) {
 		if(!images.containsKey("src/images/medievalUnit_08.png")) {
-			images.put("src/images/medievalUnit_08.png", GameBuilder.readImage("RTS/src/images/medievalUnit_08.png"));
+			images.put("src/images/medievalUnit_08.png", GameBuilder.readImage("src/images/medievalUnit_08.png"));
 		}
 		
 		 Position position = unit.getZone().getPositions().get(0);
@@ -330,7 +324,7 @@ public class PaintStrategy {
 	
 	public void paint(Slave unit, Graphics2D g2) {
 		if(!images.containsKey("src/images/medievalUnit_06.png")) {
-			images.put("src/images/medievalUnit_06.png", GameBuilder.readImage("RTS/src/images/medievalUnit_06.png"));
+			images.put("src/images/medievalUnit_06.png", GameBuilder.readImage("src/images/medievalUnit_06.png"));
 		}
 	    Position position = unit.getZone().getPositions().get(0);
 	    

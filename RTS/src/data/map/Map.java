@@ -78,8 +78,7 @@ public class Map {
 		        }
 		 }
 		woodLocations=new Zone(woodPositions);
-		fullPosition.add(magicOreLocations);
-		fullPosition.add(woodLocations);
+		
 		
 	}
 	
