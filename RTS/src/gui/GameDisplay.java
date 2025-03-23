@@ -56,41 +56,52 @@ public class GameDisplay extends JPanel {
 		paintStrategy.paint(map, g, g2);
 		
 		HashMap<String,Building> buildings = manager.getBuildingsMainPlayer();
-		for (String typeBuilding : buildings.keySet()) {
+		List<String> buildingKeys = new ArrayList<>(buildings.keySet());
+		
+		for (String typeBuilding : buildingKeys) {
 		    Building building = buildings.get(typeBuilding);
 		    if (building != null) {  
 		        if(typeBuilding=="barracks") {
 		            paintStrategy.paint(building, "barracks", g2);
-		        } 
-		        else if (typeBuilding=="base") {
+		        }else if(typeBuilding=="runway") {
+		        	paintStrategy.paint(building,"runway", g2);
+		        
+		        }else if (typeBuilding=="base") {
 		            paintStrategy.paint(building, "base", g2);
 		        }
 		    }
 		}
 		HashMap<String,Building> buildings2 = manager.getBuildingsAIPlayer();
-		for (String typeBuilding : buildings2.keySet()) {
+		List<String> buildingKeys2 = new ArrayList<>(buildings2.keySet());
+		
+		for (String typeBuilding : buildingKeys2) {
 		    Building building = buildings2.get(typeBuilding);
-		    if (building != null) { 
+		    if (building != null) { 	
 		        if(typeBuilding=="barracks") {
 		            paintStrategy.paint(building, "barracks", g2);
-		        } 
-		        else if (typeBuilding=="base") {
+		        }else if(typeBuilding=="runway") {
+		        	paintStrategy.paint(building,"runway", g2);
+		        	
+		    	}else if (typeBuilding=="base") {
 		            paintStrategy.paint(building, "base", g2);
 		        }
 		    }
 		}
-		
 		if(previewBuildingType != null && !previewBuildingType.isEmpty()) {
 			paintStrategy.paint(map,previewBuildingType,previewMousePosition, g2);
 		}
 		
-		for (Unit unit : manager.getAllUnits()) {
+		List<Unit> allUnits = new ArrayList<>(manager.getAllUnits());
+		
+		for (Unit unit : allUnits) {
 			if(unit instanceof Slave) {
 				paintStrategy.paint((Slave)unit, g2);
 			}
 			else if(unit.getName()=="warrior"){
-				paintStrategy.paint(unit,"warrior", g2);
-		   }
+				paintStrategy.paint(unit, "warrior", g2);
+		    }else if(unit.getName()=="wizard") {
+		    	paintStrategy.paint(unit,"wizard", g2);
+		    }
 		}
 		
 		if (selectionStart != null && selectionEnd != null) {

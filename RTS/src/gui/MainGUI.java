@@ -64,6 +64,8 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private BarracksBuildingMenuPanel barracksBuildingMenuPanel;
 	
+	private RunwayBuildingMenuPanel runwayBuildingMenuPanel;
+	
 	private InfoPlayerPanel infoPlayerPanel;
 	
 	private Player mainPlayer;
@@ -134,6 +136,7 @@ public class MainGUI extends JFrame implements Runnable {
 		
 		baseBuildingMenuPanel=new BaseBuildingMenuPanel(mainPlayer);
 		barracksBuildingMenuPanel=new BarracksBuildingMenuPanel(mainPlayer);
+		runwayBuildingMenuPanel=new RunwayBuildingMenuPanel(mainPlayer);
 		
 		infoPlayerPanel=new InfoPlayerPanel(mainPlayer,this);
 		contentPane.add(infoPlayerPanel,BorderLayout.SOUTH);
@@ -194,12 +197,15 @@ public class MainGUI extends JFrame implements Runnable {
 	private void initAction() {
 		buildingButton.addActionListener(new SwapBuilding());
 		buildingPanel.getBackButton().addActionListener(new BackAction());
-		buildingPanel.getRunWayBuilding().addActionListener(new PutBase());
+		buildingPanel.getRunWayBuilding().addActionListener(new PutRunway());
 		buildingPanel.getBarracksBuilding().addActionListener(new PutBarracks());
 		baseBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		baseBuildingMenuPanel.getUnitsButton().addActionListener(new SlaveButton());
 		barracksBuildingMenuPanel.getUnitsButton().addActionListener(new WarriorButton());
 		barracksBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
+		runwayBuildingMenuPanel.getUnitsButton().addActionListener(new WizardAction());
+		runwayBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
+		
 	}
 	
 	public String getValueInfo() {
@@ -215,7 +221,8 @@ public class MainGUI extends JFrame implements Runnable {
 				System.out.println(e.getMessage());
 			}
 			if(manager.getMainPlayer().getBuildings().isEmpty() || manager.getBuildingsAIPlayer().isEmpty()) {
-				this.dispose();
+			    manager.terminateGame();
+			    this.dispose();
 			}
 			
 			aiManager.update();
@@ -385,6 +392,21 @@ public class MainGUI extends JFrame implements Runnable {
 					}
 				}
 				
+				if(MouseUtility.checkBuilding(clickedPosition, mainPlayer)=="runway") {
+					Building runway=manager.getBuildingsMainPlayer().get("runway");
+					if(!runway.isUnderConstruction() && runway!=null ) {
+						System.out.println("Clic sur la runway du joueur principal !");
+			            BorderLayout layout = (BorderLayout) contentPane.getLayout();
+						Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
+						contentPane.remove(eastComponent);
+						contentPane.add(runwayBuildingMenuPanel,BorderLayout.EAST);
+						valueInfo="runway";
+						infoPlayerPanel.setinfoLabel(valueInfo);
+					    runwayBuildingMenuPanel.revalidate();
+					    runwayBuildingMenuPanel.repaint();
+					}
+				}
+								
 				ArrayList<Position> listPosition= new ArrayList<Position>();
 				listPosition.add(map.getBlock(y, x));
 				listPosition.add(map.getBlock(y+1, x));
@@ -393,9 +415,9 @@ public class MainGUI extends JFrame implements Runnable {
 
 				Zone zone=new Zone(listPosition);		
 			
-				if(placingBuilding=="barracks" && !map.isfull(listPosition.get(0)) && (clickedPosition.getColumn()<=35 && clickedPosition.getLine()>=35)) {
+				if((placingBuilding=="barracks" || placingBuilding=="runway") && !map.isfull(listPosition.get(0)) && (clickedPosition.getColumn()<=35 && clickedPosition.getLine()>=35)) {
 					
-						manager.putBuilding(zone,"barracks",mainPlayer);
+						manager.putBuilding(zone,placingBuilding,mainPlayer);
 						infoPlayerPanel.update();
 						
 						for(Position position : listPosition){
@@ -465,6 +487,26 @@ public class MainGUI extends JFrame implements Runnable {
 				placingBuilding="barracks";
 				showBuildingPreview = true;
 		        previewBuildingType = "barracks";
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+		
+	}
+	
+	private class PutRunway implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(mainPlayer.getWood()>=GameConfiguration.RUNWAY_COST) {
+				placingBuilding="runway";
+				showBuildingPreview = true;
+		        previewBuildingType = "runway";
 			}
 			else {
 				if(warningTime == -1) {
@@ -562,6 +604,41 @@ public class MainGUI extends JFrame implements Runnable {
 			        );
 				System.out.println(unitPosition);
 				manager.putWarrior(unitPosition,mainPlayer);
+				manager.selectMostRecentUnit();
+				placingUnit=true;
+				
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+	}
+	
+	private class WizardAction implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			Building runway = mainPlayer.getBuildings("runway");
+			if(runway.isUnderConstruction() && runway!=null) {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="Runway is still under construction";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+	            warningTime = System.currentTimeMillis();
+	            return;
+			}
+			else if(mainPlayer.getWood()>=GameConfiguration.WIZARD_COST) {
+				Position unitPosition = new Position(
+						runway.getZone().getPositions().get(0).getLine()+4 ,
+						runway.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
+			     
+			        );
+				System.out.println(unitPosition);
+				manager.putWizard(unitPosition,mainPlayer);
 				manager.selectMostRecentUnit();
 				placingUnit=true;
 				

@@ -31,7 +31,7 @@ public class GameBuilder {
 	
 	public static Image readImage(String filePath) {
 		try {
-	        logger.debug("Chargement de l'image: " + filePath);
+	        /**logger.debug("Chargement de l'image: " + filePath);**/
 			return ImageIO.read(new File(filePath));
 		} catch (IOException e) {
 	        logger.error("Impossible de lire le fichier image: " + filePath, e);

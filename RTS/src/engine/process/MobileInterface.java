@@ -14,6 +14,9 @@ public interface MobileInterface {
 	public void  putWarrior(Zone zone,Player player);
 	public void  putWarrior(Position position,Player player);
 	
+	public void  putWizard(Zone zone,Player player);
+	public void  putWizard(Position position,Player player);
+	
 	public List<Building> getBuildings();
 	
 	public HashMap<String,Building> getBuildingsMainPlayer();
@@ -59,4 +62,6 @@ public interface MobileInterface {
 	public void attackWithSelectedUnits(Position targetPosition, Unit targetUnit, Building targetBuilding);
 	
 	public void checkUnitReachedDestination(Unit unit);
+	
+	public void terminateGame() ;
 }

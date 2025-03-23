@@ -128,6 +128,12 @@ public class ElementManager implements MobileInterface {
 				player.addBuilding(building);
 				map.addFullPosition(zone);
 				player.setWood(player.getWood()-building.getCost().getWood());
+			}else if (type=="runway") {
+				Building building=new Building(zone,1,750,750,0,0,50000,player.getRace(),"runway");	
+				buildingsAIPlayer.put("runway",building);
+				buildings.add(building);
+				player.addBuilding(building);
+				map.addFullPosition(zone);
 			}
 			else if (type=="base") {
 				Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
@@ -147,6 +153,12 @@ public class ElementManager implements MobileInterface {
 				player.addBuilding(building);
 				map.addFullPosition(zone);
 				player.setWood(player.getWood()-building.getCost().getWood());
+			}else if (type=="runway") {
+				Building building=new Building(zone,1,750,750,0,0,50000,player.getRace(),"runway");	
+				buildingsMainPlayer.put("runway",building);
+				buildings.add(building);
+				player.addBuilding(building);
+				map.addFullPosition(zone);
 			}
 			else if (type=="base") {
 				Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
@@ -186,6 +198,33 @@ public class ElementManager implements MobileInterface {
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
 		putWarrior(new Zone(zone),player);
+	}
+	
+	
+	public synchronized void putWizard(Zone zone,Player player) {
+		if(player.getBuildings("runway")==null) {
+			return;
+		}
+		for(Position position : zone.getPositions()) {
+			if(map.isOnBorder(position) || map.isfull(position)) {
+				return; 
+			}
+		}
+		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.WIZARD_COST,0,10000,player.getRace(),"wizard",10);
+		units.add(unit);
+		map.addFullUnitsPosition(unit.getZone());
+		player.setWood(player.getWood()-unit.getCost().getWood());
+		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		unitSteppers.put(unit, stepper);
+		Thread thread = new Thread(stepper);
+		thread.start();
+		
+	}
+	public synchronized void putWizard(Position position,Player player) {
+	    logger.debug("Tentative de création d'un magicien à la position: " + position);
+		ArrayList<Position> zone=new ArrayList<Position>();
+		zone.add(position);
+		putWizard(new Zone(zone),player);
 	}
 	
 	public synchronized void putSlave(Zone zone,Player player) {
@@ -565,6 +604,28 @@ public class ElementManager implements MobileInterface {
 	    }
 	}
 	
+	
+	public void terminateGame() {
+	    logger.info("Début de la procédure de terminaison du jeu...");
+	    
+	    logger.info("Arrêt des " + unitSteppers.size() + " threads d'unités en cours...");
+	    for (UnitStepper stepper : unitSteppers.values()) {
+	        stepper.stop();
+	    }
+	    
+	    unitSteppers.clear();
+	    units.clear();
+	    buildings.clear();
+	    buildingsMainPlayer.clear();
+	    buildingsAIPlayer.clear();
+	    
+	    map = null;
+	    mainPlayer = null;
+	    enemyPlayer = null;
+	    movementManager = null;
+	    
+	    logger.info("Jeu terminé correctement.");
+	}
 	
 	
 	
