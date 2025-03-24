@@ -32,7 +32,7 @@ public class PaintStrategy {
 	
 	private final  int imageSize = GameConfiguration.BLOCK_SIZE*4;
 	private HashMap<String,Image> images=new HashMap<String,Image>();
-	private HashMap<String,Image> imagesbuilding=new HashMap<String,Image>();
+	
 	
 	
 	public void paint(Map map, Graphics graphics, Graphics2D g2) {
@@ -163,13 +163,7 @@ public class PaintStrategy {
 	
 	public void paint(Building building, String type, Graphics2D g2) {
 
-		if(!imagesbuilding.containsKey("src/images/medievalStructure_02.png")) {
-			imagesbuilding.put("src/images/medievalStructure_02.png",GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"));
-		}if(!imagesbuilding.containsKey("src/images/medievalStructure_05.png")) {
-			imagesbuilding.put("src/images/medievalStructure_05.png",GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"));
-		}if(!imagesbuilding.containsKey("src/images/medievalStructure_16.png")) {
-			imagesbuilding.put("src/images/medievalStructure_16.png",GameBuilder.readImage("RTS/src/images/medievalStructure_16.png"));
-		}
+		
 		
 		
 	    Position position = building.getZone().getPositions().get(0);
@@ -200,17 +194,17 @@ public class PaintStrategy {
 	        g2.setComposite(alphaComposite);
 	        
 	        if (type == "base") {
-	            g2.drawImage(imagesbuilding.get("src/images/medievalStructure_02.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
 	                imageSize, imageSize, null);
 	        } else if (type == "barracks") {
-	            g2.drawImage(imagesbuilding.get("src/images/medievalStructure_05.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE,
 	                imageSize, imageSize, null);
 	        }else if (type == "runway" ) {
-	        	g2.drawImage(imagesbuilding.get("src/images/medievalStructure_05.png"),
+	        	g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_16.png"),
 		                position.getColumn() * GameConfiguration.BLOCK_SIZE -10,
 		                position.getLine() * GameConfiguration.BLOCK_SIZE-15,
 		                imageSize, imageSize, null);
@@ -220,13 +214,13 @@ public class PaintStrategy {
 	    } else {
 	        if (type == "base") {
 
-	            g2.drawImage(imagesbuilding.get("src/images/medievalStructure_02.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
 	                imageSize, imageSize, null);
 	            
 	        } else if (type == "barracks") {
-	            g2.drawImage(imagesbuilding.get("src/images/medievalStructure_02.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE,
 	                imageSize, imageSize, null);
@@ -242,7 +236,7 @@ public class PaintStrategy {
 	            }
 	            **/
 	        } else if (type == "runway") {
-	            g2.drawImage(imagesbuilding.get("src/images/medievalStructure_05.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_16.png"),
 		                position.getColumn() * GameConfiguration.BLOCK_SIZE -10,
 		                position.getLine() * GameConfiguration.BLOCK_SIZE-15,
 		                imageSize, imageSize, null);
