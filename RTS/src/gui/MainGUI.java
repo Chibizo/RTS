@@ -92,6 +92,8 @@ public class MainGUI extends JFrame implements Runnable {
 	private Point selectionStart = null;
 	private Point selectionEnd = null;
 	private boolean isDragging = false;
+	
+	private volatile boolean running = true;
 
 	public MainGUI(String title,String race) {
 		super(title);
@@ -214,14 +216,15 @@ public class MainGUI extends JFrame implements Runnable {
 
 	@Override
 	public void run() {
-		while (true) {
+		while (running) {
 			try {
 				Thread.sleep(GameConfiguration.GAME_SPEED);
 			} catch (InterruptedException e) {
 				System.out.println(e.getMessage());
 			}
-			if(manager.getMainPlayer().getBuildings().isEmpty() || manager.getBuildingsAIPlayer().isEmpty()) {
+			if(manager.getBuildingsMainPlayer().isEmpty() || manager.getBuildingsAIPlayer().isEmpty()) {
 			    manager.terminateGame();
+			    running=false;
 			    this.dispose();
 			}
 			

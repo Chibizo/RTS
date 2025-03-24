@@ -543,6 +543,8 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	public void removeBuilding(Building building) {
+		System.out.println(buildingsMainPlayer);
+		System.out.println(buildingsAIPlayer);
 	    logger.info("Bâtiment supprimé: " + building.getName() + " à la position " + building.getZone().getPositions().get(0));
 	    System.out.println("Building removed: " + building.getName());
 	    map.removeFullPosition(building.getZone());

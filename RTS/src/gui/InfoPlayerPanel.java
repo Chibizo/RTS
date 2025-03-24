@@ -110,11 +110,10 @@ public class InfoPlayerPanel extends JPanel{
 	    		}else if(building.getName().equals("runway")&& mainGui.getValueInfo().equals("runway")) {
 	    			infoLabel.setText("PV : "+String.valueOf(building.getCurrentHealth()));
 	    			infoLabel.setForeground(Color.GREEN);
-	    		}else {
-	    			infoLabel.setForeground(Color.WHITE);
-
 	    		}
 	    	}
+	    }else {
+	    	infoLabel.setForeground(Color.WHITE);
 	    }
 	}
 
