@@ -66,6 +66,8 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private RunwayBuildingMenuPanel runwayBuildingMenuPanel;
 	
+	private ArcheryBuildingMenuPanel archeryBuildingMenuPanel;
+	
 	private InfoPlayerPanel infoPlayerPanel;
 	
 	private Player mainPlayer;
@@ -139,6 +141,7 @@ public class MainGUI extends JFrame implements Runnable {
 		baseBuildingMenuPanel=new BaseBuildingMenuPanel(mainPlayer);
 		barracksBuildingMenuPanel=new BarracksBuildingMenuPanel(mainPlayer);
 		runwayBuildingMenuPanel=new RunwayBuildingMenuPanel(mainPlayer);
+		archeryBuildingMenuPanel=new ArcheryBuildingMenuPanel(mainPlayer);
 		
 		infoPlayerPanel=new InfoPlayerPanel(mainPlayer,this);
 		contentPane.add(infoPlayerPanel,BorderLayout.SOUTH);
@@ -201,12 +204,15 @@ public class MainGUI extends JFrame implements Runnable {
 		buildingPanel.getBackButton().addActionListener(new BackAction());
 		buildingPanel.getRunWayBuilding().addActionListener(new PutRunway());
 		buildingPanel.getBarracksBuilding().addActionListener(new PutBarracks());
+		buildingPanel.getArcheryBuilding().addActionListener(new PutArchery());
 		baseBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		baseBuildingMenuPanel.getUnitsButton().addActionListener(new SlaveButton());
 		barracksBuildingMenuPanel.getUnitsButton().addActionListener(new WarriorButton());
 		barracksBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		runwayBuildingMenuPanel.getUnitsButton().addActionListener(new WizardAction());
 		runwayBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
+		archeryBuildingMenuPanel.getUnitsButton().addActionListener(new BowmanAction());
+		archeryBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		
 	}
 	
@@ -225,9 +231,15 @@ public class MainGUI extends JFrame implements Runnable {
 			if(manager.getBuildingsMainPlayer().isEmpty() || manager.getBuildingsAIPlayer().isEmpty()) {
 			    manager.terminateGame();
 			    running=false;
-			    this.dispose();
+			    this.dispose();	
+			    if(manager.getBuildingsMainPlayer().isEmpty()) {
+			    	EndWindow endWindow= new EndWindow("FIN DE PARTIE",manager,mainPlayer,enemyPlayer);
+
+			    }else {
+			    	EndWindow endWindow= new EndWindow("FIN DE PARTIE",manager,enemyPlayer,mainPlayer);
+			    }
 			}
-			
+
 			aiManager.update();
 			manager.updateConstruction();
 			manager.checkCombat();
@@ -409,6 +421,20 @@ public class MainGUI extends JFrame implements Runnable {
 					    runwayBuildingMenuPanel.repaint();
 					}
 				}
+				if(MouseUtility.checkBuilding(clickedPosition, mainPlayer)=="archery") {
+					Building archery=manager.getBuildingsMainPlayer().get("archery");
+					if(!archery.isUnderConstruction() && archery!=null ) {
+						System.out.println("Clic sur la runway du joueur principal !");
+			            BorderLayout layout = (BorderLayout) contentPane.getLayout();
+						Component eastComponent = layout.getLayoutComponent(BorderLayout.EAST);
+						contentPane.remove(eastComponent);
+						contentPane.add(archeryBuildingMenuPanel,BorderLayout.EAST);
+						valueInfo="runway";
+						infoPlayerPanel.setinfoLabel(valueInfo);
+					    archeryBuildingMenuPanel.revalidate();
+					    archeryBuildingMenuPanel.repaint();
+					}
+				}
 								
 				ArrayList<Position> listPosition= new ArrayList<Position>();
 				listPosition.add(map.getBlock(y, x));
@@ -418,7 +444,7 @@ public class MainGUI extends JFrame implements Runnable {
 
 				Zone zone=new Zone(listPosition);		
 			
-				if((placingBuilding=="barracks" || placingBuilding=="runway") && !map.isfull(listPosition.get(0)) && (clickedPosition.getColumn()<=35 && clickedPosition.getLine()>=35)) {
+				if((placingBuilding=="barracks" || placingBuilding=="runway" || placingBuilding=="archery") && !map.isfull(listPosition.get(0)) && (clickedPosition.getColumn()<=35 && clickedPosition.getLine()>=35)) {
 					
 						manager.putBuilding(zone,placingBuilding,mainPlayer);
 						infoPlayerPanel.update();
@@ -510,6 +536,25 @@ public class MainGUI extends JFrame implements Runnable {
 				placingBuilding="runway";
 				showBuildingPreview = true;
 		        previewBuildingType = "runway";
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+		
+	}
+	private class PutArchery implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(mainPlayer.getWood()>=GameConfiguration.ARCHERY_COST) {
+				placingBuilding="archery";
+				showBuildingPreview = true;
+		        previewBuildingType = "archery";
 			}
 			else {
 				if(warningTime == -1) {
@@ -642,6 +687,41 @@ public class MainGUI extends JFrame implements Runnable {
 			        );
 				System.out.println(unitPosition);
 				manager.putWizard(unitPosition,mainPlayer);
+				manager.selectMostRecentUnit();
+				placingUnit=true;
+				
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+	}
+	
+	private class BowmanAction implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			Building archery = mainPlayer.getBuildings("archery");
+			if(archery.isUnderConstruction() && archery!=null) {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="Archery is still under construction";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+	            warningTime = System.currentTimeMillis();
+	            return;
+			}
+			else if(mainPlayer.getWood()>=GameConfiguration.WIZARD_COST) {
+				Position unitPosition = new Position(
+						archery.getZone().getPositions().get(0).getLine()+4 ,
+						archery.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
+			     
+			        );
+				System.out.println(unitPosition);
+				manager.putArchery(unitPosition,mainPlayer);
 				manager.selectMostRecentUnit();
 				placingUnit=true;
 				
