@@ -10,15 +10,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import data.model.Player;
+import engine.process.MobileInterface;
 
 public class BarracksBuildingMenuPanel extends JPanel{
 	
-	private JLabel barracksLabel= new JLabel("Barracks", JLabel.CENTER);;
+	private MobileInterface manager;
+	
+	private JLabel barracksLabel= new JLabel("<html>Barracks <br>tier : 1 </html>", JLabel.CENTER);;
 	private JButton unitsButton=new JButton("warrior"); ;
 	private JButton  upgradeButton= new JButton("Upgrade Base");;
 	private JButton backButton= new JButton("Back"); ;
 	
-	public BarracksBuildingMenuPanel(Player mainPlayer) {
+	public BarracksBuildingMenuPanel(Player mainPlayer,MobileInterface manager) {
+		this.manager=manager;
 		setLayout(new GridLayout(4,1,10,10));
 		initStyle();
 		add(barracksLabel);
@@ -26,6 +30,14 @@ public class BarracksBuildingMenuPanel extends JPanel{
         add(upgradeButton);
         add(backButton);
 		
+	}
+	public void updateBarracksTier() {
+		barracksLabel.setText(getBarracksLabelText());
+	}
+	
+	private String getBarracksLabelText() {
+		int tier = manager.getBuildingsMainPlayer().get("barracks").getTier();
+		return "<html>Barracks <br>tier : "+tier+"</html>";
 	}
 	
 	public void initStyle() {

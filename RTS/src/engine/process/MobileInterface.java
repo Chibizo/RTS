@@ -66,5 +66,7 @@ public interface MobileInterface {
 	
 	public void checkUnitReachedDestination(Unit unit);
 	
+	public void upgradeBuilding(Building building,Player player);
+	
 	public void terminateGame() ;
 }

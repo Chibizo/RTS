@@ -129,8 +129,14 @@ public class ElementManager implements MobileInterface {
 				map.addFullPosition(zone);
 				player.setWood(player.getWood()-building.getCost().getWood());
 			}else if (type=="runway") {
-				Building building=new Building(zone,1,750,750,0,0,50000,player.getRace(),"runway");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST,0,50000,player.getRace(),"runway");	
 				buildingsAIPlayer.put("runway",building);
+				buildings.add(building);
+				player.addBuilding(building);
+				map.addFullPosition(zone);
+			}else if (type=="archery") {
+				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST,0,50000,player.getRace(),"archery");	
+				buildingsAIPlayer.put("archery",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
@@ -154,17 +160,20 @@ public class ElementManager implements MobileInterface {
 				map.addFullPosition(zone);
 				player.setWood(player.getWood()-building.getCost().getWood());
 			}else if (type=="runway") {
-				Building building=new Building(zone,1,750,750,0,0,50000,player.getRace(),"runway");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST,0,50000,player.getRace(),"runway");	
 				buildingsMainPlayer.put("runway",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
+				player.setWood(player.getWood()-building.getCost().getWood());
 			}else if (type=="archery") {
-				Building building=new Building(zone,1,750,750,0,0,50000,player.getRace(),"archery");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST,0,50000,player.getRace(),"archery");	
 				buildingsMainPlayer.put("archery",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
+				player.setWood(player.getWood()-building.getCost().getWood());
+
 			
 			}else if (type=="base") {
 				Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
@@ -179,6 +188,42 @@ public class ElementManager implements MobileInterface {
 
 	}
 	
+	
+	public void upgradeBuilding(Building building,Player player) {
+		if(building.getName().equals("base") && building.getTier()<2) {
+			building.setTier(2);
+			building.setUnderConstruction(true);
+			building.setConstructionStartTime(System.currentTimeMillis());
+			building.setConstructionTime(60000);
+			building.setMaxHealth(2000);
+			building.setCurrentHealth(2000);
+			player.setWood(player.getWood()-GameConfiguration.BASE_UPGRADE);
+		}else if(building.getName().equals("barracks") && buildingsMainPlayer.get("base").getTier()>1) {
+			building.setTier(2);
+			building.setUnderConstruction(true);
+			building.setConstructionStartTime(System.currentTimeMillis());
+			building.setConstructionTime(60000);
+			building.setMaxHealth(1000);
+			building.setCurrentHealth(1000);
+			player.setWood(player.getWood()-GameConfiguration.BARRACKS_COST);
+		}else if(building.getName().equals("runway") && buildingsMainPlayer.get("base").getTier()>1) {
+			building.setTier(2);
+			building.setUnderConstruction(true);
+			building.setConstructionStartTime(System.currentTimeMillis());
+			building.setConstructionTime(60000);
+			building.setMaxHealth(1700);
+			building.setCurrentHealth(1700);
+			player.setWood(player.getWood()-GameConfiguration.RUNWAY_UPGRADE);
+		}else if(building.getName().equals("archery") && buildingsMainPlayer.get("base").getTier()>1) {
+			building.setTier(2);
+			building.setUnderConstruction(true);
+			building.setConstructionStartTime(System.currentTimeMillis());
+			building.setConstructionTime(60000);
+			building.setMaxHealth(1800);
+			building.setCurrentHealth(1800);
+			player.setWood(player.getWood()-GameConfiguration.ARCHERY_UPGRADE);
+		}
+	}
 	
 	public synchronized void putWarrior(Zone zone,Player player) {
 		if(player.getBuildings("barracks")==null) {

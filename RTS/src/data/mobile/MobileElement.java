@@ -74,6 +74,36 @@ public abstract class MobileElement {
 	public boolean isUnderConstruction() {
 	    return underConstruction;
 	}
+	
+	
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setZone(Zone zone) {
+		this.zone = zone;
+	}
+
+	public void setMaxHealth(int maxHealth) {
+		this.maxHealth = maxHealth;
+	}
+
+	public void setCost(Cost cost) {
+		this.cost = cost;
+	}
+
+	public void setRace(Race race) {
+		this.race = race;
+	}
+
+	public void setConstructionTime(int constructionTime) {
+		this.constructionTime = constructionTime;
+	}
+
+	public void setConstructionStartTime(long constructionStartTime) {
+		this.constructionStartTime = constructionStartTime;
+	}
 
 	public void setUnderConstruction(boolean underConstruction) {
 	    this.underConstruction = underConstruction;

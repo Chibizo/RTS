@@ -21,9 +21,9 @@ public class BuildingPanel extends JPanel{
 		setLayout(new GridLayout(5,1,10,10));
 		initStyle();
 		add(sectionName);
-		add(runwayBuilding);
 		add(barracksBuilding);
 		add(archeryBuilding);
+		add(runwayBuilding);
 		add(backButton);
 		
 	}
