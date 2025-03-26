@@ -17,7 +17,7 @@ public class RunwayBuildingMenuPanel extends JPanel{
 	private MobileInterface manager;
 
 	private JLabel runwayLabel= new JLabel("<html>Archery <br>tier : 1 </html>", JLabel.CENTER);;
-	private JButton unitsButton=new JButton("wizard"); ;
+	private JButton unitsButton=new JButton("Wizard"); ;
 	private JButton  upgradeButton= new JButton("Upgrade Base");;
 	private JButton backButton= new JButton("Back"); ;
 	
@@ -34,6 +34,7 @@ public class RunwayBuildingMenuPanel extends JPanel{
 	
 	public void updateRunwayTier() {
 		runwayLabel.setText(getRunwayLabelText());
+		upgradeButton.setText("airship");
 	}
 	
 	private String getRunwayLabelText() {

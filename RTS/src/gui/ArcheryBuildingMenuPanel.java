@@ -59,6 +59,7 @@ public class ArcheryBuildingMenuPanel extends JPanel{
 	
 	public void updateArcheryTier() {
 		archeryLabel.setText(getArcheryLabelText());
+		upgradeButton.setText("Musketeers");
 	}
 	
 	private String getArcheryLabelText() {

@@ -17,7 +17,7 @@ public class BarracksBuildingMenuPanel extends JPanel{
 	private MobileInterface manager;
 	
 	private JLabel barracksLabel= new JLabel("<html>Barracks <br>tier : 1 </html>", JLabel.CENTER);;
-	private JButton unitsButton=new JButton("warrior"); ;
+	private JButton unitsButton=new JButton("Warrior"); ;
 	private JButton  upgradeButton= new JButton("Upgrade Base");;
 	private JButton backButton= new JButton("Back"); ;
 	
@@ -33,6 +33,7 @@ public class BarracksBuildingMenuPanel extends JPanel{
 	}
 	public void updateBarracksTier() {
 		barracksLabel.setText(getBarracksLabelText());
+		upgradeButton.setText("Knight");
 	}
 	
 	private String getBarracksLabelText() {

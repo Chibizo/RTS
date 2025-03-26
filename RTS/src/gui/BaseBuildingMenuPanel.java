@@ -35,6 +35,7 @@ public class BaseBuildingMenuPanel extends JPanel{
 	
 	public void updateBaseTier() {
 		baseLabel.setText(getBaseLabelText());
+		upgradeButton.setText("...");
 	}
 	
 	private String getBaseLabelText() {
