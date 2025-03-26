@@ -96,7 +96,7 @@ public class InfoPlayerPanel extends JPanel{
 		infoLabel2.setText("");
 	    woodValue.setText(String.valueOf(mainPlayer.getWood()));
 	    magicOreValue.setText(String.valueOf(mainPlayer.getMagicOre()));
-	    if (mainGui.getValueInfo().equals("base")|| mainGui.getValueInfo().equals("barracks") || mainGui.getValueInfo().equals("runway")) {
+	    if (mainGui.getValueInfo().equals("base")|| mainGui.getValueInfo().equals("barracks") || mainGui.getValueInfo().equals("runway") || mainGui.getValueInfo().equals("archery")) {
 	    	for(Building building : mainPlayer.getBuildings()) {
 	    		if(building.getName().equals("base")&& mainGui.getValueInfo().equals("base")) {
 	    			infoLabel.setText("PV : "+String.valueOf(building.getCurrentHealth()));
@@ -108,6 +108,9 @@ public class InfoPlayerPanel extends JPanel{
 	    			infoLabel.setForeground(Color.GREEN);
 
 	    		}else if(building.getName().equals("runway")&& mainGui.getValueInfo().equals("runway")) {
+	    			infoLabel.setText("PV : "+String.valueOf(building.getCurrentHealth()));
+	    			infoLabel.setForeground(Color.GREEN);
+	    		}else if(building.getName().equals("archery")&& mainGui.getValueInfo().equals("runway")) {
 	    			infoLabel.setText("PV : "+String.valueOf(building.getCurrentHealth()));
 	    			infoLabel.setForeground(Color.GREEN);
 	    		}

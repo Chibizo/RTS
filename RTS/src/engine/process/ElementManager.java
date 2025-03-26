@@ -159,8 +159,14 @@ public class ElementManager implements MobileInterface {
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
-			}
-			else if (type=="base") {
+			}else if (type=="archery") {
+				Building building=new Building(zone,1,750,750,0,0,50000,player.getRace(),"archery");	
+				buildingsMainPlayer.put("archery",building);
+				buildings.add(building);
+				player.addBuilding(building);
+				map.addFullPosition(zone);
+			
+			}else if (type=="base") {
 				Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
 				buildingsMainPlayer.put("base",building);
 				buildings.add(building);
@@ -225,6 +231,32 @@ public class ElementManager implements MobileInterface {
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
 		putWizard(new Zone(zone),player);
+	}
+	
+	public synchronized void putArchery(Zone zone,Player player) {
+		if(player.getBuildings("archery")==null) {
+			return;
+		}
+		for(Position position : zone.getPositions()) {
+			if(map.isOnBorder(position) || map.isfull(position)) {
+				return; 
+			}
+		}
+		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.BOWMAN_COST,0,10000,player.getRace(),"bowman",10);
+		units.add(unit);
+		map.addFullUnitsPosition(unit.getZone());
+		player.setWood(player.getWood()-unit.getCost().getWood());
+		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		unitSteppers.put(unit, stepper);
+		Thread thread = new Thread(stepper);
+		thread.start();
+		
+	}
+	public synchronized void putArchery(Position position,Player player) {
+	    logger.debug("Tentative de création d'un archer à la position: " + position);
+		ArrayList<Position> zone=new ArrayList<Position>();
+		zone.add(position);
+		putArchery(new Zone(zone),player);
 	}
 	
 	public synchronized void putSlave(Zone zone,Player player) {

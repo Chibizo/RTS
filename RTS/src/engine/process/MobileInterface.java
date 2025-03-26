@@ -17,6 +17,9 @@ public interface MobileInterface {
 	public void  putWizard(Zone zone,Player player);
 	public void  putWizard(Position position,Player player);
 	
+	public void  putArchery(Zone zone,Player player);
+	public void  putArchery(Position position,Player player);
+	
 	public List<Building> getBuildings();
 	
 	public HashMap<String,Building> getBuildingsMainPlayer();

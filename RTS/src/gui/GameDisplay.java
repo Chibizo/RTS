@@ -66,6 +66,9 @@ public class GameDisplay extends JPanel {
 		        }else if(typeBuilding=="runway") {
 		        	paintStrategy.paint(building,"runway", g2);
 		        
+		        }else if(typeBuilding=="archery") {
+		        	paintStrategy.paint(building,"archery", g2);
+		        	
 		        }else if (typeBuilding=="base") {
 		            paintStrategy.paint(building, "base", g2);
 		        }
@@ -82,7 +85,10 @@ public class GameDisplay extends JPanel {
 		        }else if(typeBuilding=="runway") {
 		        	paintStrategy.paint(building,"runway", g2);
 		        	
-		    	}else if (typeBuilding=="base") {
+		    	}else if(typeBuilding=="archery") {
+		        	paintStrategy.paint(building,"archery", g2);
+		    		
+		        }else if (typeBuilding=="base") {
 		            paintStrategy.paint(building, "base", g2);
 		        }
 		    }
@@ -101,6 +107,8 @@ public class GameDisplay extends JPanel {
 				paintStrategy.paint(unit, "warrior", g2);
 		    }else if(unit.getName()=="wizard") {
 		    	paintStrategy.paint(unit,"wizard", g2);
+		    }else if(unit.getName()=="bowman") {
+		    	paintStrategy.paint(unit,"bowman", g2);
 		    }
 		}
 		
