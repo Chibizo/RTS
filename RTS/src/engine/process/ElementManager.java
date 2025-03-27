@@ -234,7 +234,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.WARRIOR_COST,0,20000,player.getRace(),"warrior",10);
+		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.WARRIOR_COST,0,GameConfiguration.WARRIOR_CONSTRUCT_TIME,player.getRace(),"warrior",10,1);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
@@ -261,7 +261,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.WIZARD_COST,0,10000,player.getRace(),"wizard",10);
+		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.WIZARD_COST,0,10000,player.getRace(),"wizard",10,1);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
@@ -278,7 +278,7 @@ public class ElementManager implements MobileInterface {
 		putWizard(new Zone(zone),player);
 	}
 	
-	public synchronized void putArchery(Zone zone,Player player) {
+	public synchronized void putBowman(Zone zone,Player player) {
 		if(player.getBuildings("archery")==null) {
 			return;
 		}
@@ -287,7 +287,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.BOWMAN_COST,0,10000,player.getRace(),"bowman",10);
+		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.BOWMAN_COST,0,10000,player.getRace(),"bowman",10,15);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
@@ -297,11 +297,11 @@ public class ElementManager implements MobileInterface {
 		thread.start();
 		
 	}
-	public synchronized void putArchery(Position position,Player player) {
+	public synchronized void putBowman(Position position,Player player) {
 	    logger.debug("Tentative de création d'un archer à la position: " + position);
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
-		putArchery(new Zone(zone),player);
+		putBowman(new Zone(zone),player);
 	}
 	
 	public synchronized void putSlave(Zone zone,Player player) {
@@ -313,7 +313,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Slave slave=new Slave(zone,"temp",100,100,GameConfiguration.SLAVE_COST,0,15000,player.getRace(),"slave",10);
+		Slave slave=new Slave(zone,"temp",100,100,GameConfiguration.SLAVE_COST,0,15000,player.getRace(),"slave",10,1);
 		units.add(slave);
 		map.addFullUnitsPosition(zone);
 		player.setWood(player.getWood()-slave.getCost().getWood());
@@ -347,6 +347,17 @@ public class ElementManager implements MobileInterface {
 	        if (units.contains(unit.getTargetUnit())) {
 	            targetPosition = unit.getTargetUnit().getZone().getPositions().get(0);
 	            unit.setTargetPosition(targetPosition);
+	            
+	            if (unit.getName().equals("bowman")) {
+	                int distanceToTarget = calculateDistance(currentPosition, targetPosition);
+	                int attackRange = unit.getAttackRange();
+	                
+	                if (distanceToTarget <= attackRange) {
+	                	unit.setTargetPosition(currentPosition);
+	                    return;
+	                }
+	                targetPosition = findPositionAtRange(currentPosition, targetPosition, attackRange);
+	            }
 	        } else {
 	            unit.setTargetUnit(null);
 	        }
@@ -373,7 +384,7 @@ public class ElementManager implements MobileInterface {
 	            logger.debug(unit.getName() + " se déplace de " + currentPosition + " vers " + nextPosition);
 	            currentPosition.setColumn(nextPosition.getColumn());
 	            currentPosition.setLine(nextPosition.getLine());
-	        }else {
+	        } else {
 	            logger.debug(unit.getName() + " ne peut pas se déplacer vers " + nextPosition + " (case occupée)");
 	        }
 	    }
@@ -456,9 +467,9 @@ public class ElementManager implements MobileInterface {
         return Math.abs(p1.getLine() - p2.getLine()) + Math.abs(p1.getColumn() - p2.getColumn());
     }
 	
+
 	public void checkCloseEnemy() {
 	    int detectionRadius = 5; 
-	    
 	    
 	    List<Unit> unitsCopy;
 	    synchronized(this) {
@@ -467,42 +478,45 @@ public class ElementManager implements MobileInterface {
 	    
 	    for (Unit unit : unitsCopy) {
 	        if (!unit.isUnderConstruction() && unit.getTargetUnit() == null && !unit.isManuallyCommanded()) {
-	        	if(unit.getName().equals("warrior")) {
-	        		detectionRadius=12;
-	        	}else {
-	        		detectionRadius=5;
-	        	}
-		        
-		        Position unitPosition = unit.getZone().getPositions().get(0);
-		        
-		        Unit closestEnemy = null;
-		        int closestDistance = Integer.MAX_VALUE;
-		        
-		        for (Unit potentialEnemy : unitsCopy) {
-		            if (!potentialEnemy.getRace().getName().equals(unit.getRace().getName()) && 
-			                !potentialEnemy.isUnderConstruction()) {
-			              
-			            
-			            Position enemyPosition = potentialEnemy.getZone().getPositions().get(0);
-			            int distance = calculateDistance(unitPosition, enemyPosition);
-			            
-			            if (distance <= detectionRadius && distance < closestDistance) {
-			                closestEnemy = potentialEnemy;
-			                closestDistance = distance;
-			            }
-		            }
-		        }
-		        
-		        if (closestEnemy != null) {
-		            unit.setTargetUnit(closestEnemy);
-		            unit.setTargetBuilding(null);
-		            unit.setTargetPosition(closestEnemy.getZone().getPositions().get(0));
-		            
-		            if (unit instanceof Slave) {
-		                ((Slave) unit).setHarvesting(false);
-		                ((Slave) unit).setReturning(false);
-		            }
-		        }
+	            if (unit.getName().equals("warrior")) {
+	                detectionRadius = 12;
+	            } else if (unit.getName().equals("slave")) {
+	                detectionRadius = 0;
+	            } else if (unit.getName().equals("bowman")) {
+	                detectionRadius = 0;
+	            } else {
+	                detectionRadius = 5;
+	            }
+	            
+	            Position unitPosition = unit.getZone().getPositions().get(0);
+	            
+	            Unit closestEnemy = null;
+	            int closestDistance = Integer.MAX_VALUE;
+	            
+	            for (Unit potentialEnemy : unitsCopy) {
+	                if (!potentialEnemy.getRace().getName().equals(unit.getRace().getName()) && 
+	                    !potentialEnemy.isUnderConstruction()) {
+	                    
+	                    Position enemyPosition = potentialEnemy.getZone().getPositions().get(0);
+	                    int distance = calculateDistance(unitPosition, enemyPosition);
+	                    
+	                    if (distance <= detectionRadius && distance < closestDistance) {
+	                        closestEnemy = potentialEnemy;
+	                        closestDistance = distance;
+	                    }
+	                }
+	            }
+	            
+	            if (closestEnemy != null) {
+	                unit.setTargetUnit(closestEnemy);
+	                unit.setTargetBuilding(null);
+	                unit.setTargetPosition(closestEnemy.getZone().getPositions().get(0));
+	                
+	                if (unit instanceof Slave) {
+	                    ((Slave) unit).setHarvesting(false);
+	                    ((Slave) unit).setReturning(false);
+	                }
+	            }
 	        }
 	    }
 	}
@@ -520,15 +534,32 @@ public class ElementManager implements MobileInterface {
 	    for (Unit unit : unitsCopy) {
 	        if (!unit.isUnderConstruction()) {
 	            Position currentPosition = unit.getZone().getPositions().get(0);
-	            int line = currentPosition.getLine();
-	            int column = currentPosition.getColumn();
+	            int attackRange = unit.getAttackRange();  
 
-	            for (int i = -1; i <= 1; i++) {
-	                for (int j = -1; j <= 1; j++) {
-	                    if (i != 0 || j != 0) {
-	                        int checkLine = line + i;
-	                        int checkColumn = column + j;
-	                        
+	            // For bowmen, modify targeting and attack behavior
+	            if (unit.getName().equals("bowman") && unit.getTargetUnit() != null) {
+	                Position targetPosition = unit.getTargetUnit().getZone().getPositions().get(0);
+	                int distanceToTarget = calculateDistance(currentPosition, targetPosition);
+	                
+	                // If the target is within attack range, attack
+	                if (distanceToTarget <= attackRange) {
+	                    boolean killed = attack(unit, unit.getTargetUnit());
+	                    if (killed) {
+	                        logger.info(unit.getName() + " a tué " + unit.getTargetUnit().getName());
+	                        unitsToRemove.add(unit.getTargetUnit());
+	                        unit.setTargetUnit(null);
+	                        unit.setTargetPosition(currentPosition);
+	                    }
+	                    continue;
+	                }
+	            }
+
+	            for (int i = -attackRange; i <= attackRange; i++) {
+	                for (int j = -attackRange; j <= attackRange; j++) {
+	                    int checkLine = currentPosition.getLine() + i;
+	                    int checkColumn = currentPosition.getColumn() + j;
+	                    
+	                    if (calculateDistance(currentPosition, new Position(checkLine, checkColumn)) <= attackRange) {
 	                        if (checkLine >= 0 && checkLine < map.getLineCount() && 
 	                            checkColumn >= 0 && checkColumn < map.getColumnCount()) {
 	                            
@@ -569,6 +600,7 @@ public class ElementManager implements MobileInterface {
 	        }
 	    }
 	}
+	
 
 	
 	public boolean attack(Unit attacker, Unit defender) {
@@ -614,8 +646,12 @@ public class ElementManager implements MobileInterface {
 	    	mainPlayer.setSlave(mainPlayer.getSlave()-1);
 	    }
 	    units.remove(unit);
-	    unitSteppers.get(unit).stop();
-	    unitSteppers.remove(unit);
+	    UnitStepper stepper = unitSteppers.get(unit);
+	    if (stepper != null) {
+	        stepper.stop();
+	        unitSteppers.remove(unit);
+	    }
+	    
 	    System.out.println(map.getFullUnitsPosition());
 	}
 	
@@ -708,7 +744,22 @@ public class ElementManager implements MobileInterface {
 	
 	
 	
-	
+	public Position findPositionAtRange(Position currentPos, Position targetPos, int range) {
+	    // Calculate the direction vector
+	    int dLine = targetPos.getLine() - currentPos.getLine();
+	    int dColumn = targetPos.getColumn() - currentPos.getColumn();
+	    
+	    // Normalize the direction
+	    double length = Math.sqrt(dLine * dLine + dColumn * dColumn);
+	    double normalizedDLine = dLine / length;
+	    double normalizedDColumn = dColumn / length;
+	    
+	    // Calculate the position at range
+	    int newLine = currentPos.getLine() + (int)Math.round(normalizedDLine * range);
+	    int newColumn = currentPos.getColumn() + (int)Math.round(normalizedDColumn * range);
+	    
+	    return new Position(newLine, newColumn);
+	}
 	
 	
 	

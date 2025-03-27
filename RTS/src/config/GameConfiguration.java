@@ -30,7 +30,12 @@ public class GameConfiguration {
     public static final int RUNWAY_UPGRADE=0;
 
     public static final int SLAVE_COST=100;
-    public static final int WARRIOR_COST=200;
+    
+    
+    public static final int WARRIOR_COST=0;
+    public static final int WARRIOR_CONSTRUCT_TIME=0;
+
+    
     public static final int WIZARD_COST=200;
     public static final int BOWMAN_COST=200;
 

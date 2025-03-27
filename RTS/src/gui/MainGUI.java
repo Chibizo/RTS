@@ -802,7 +802,7 @@ public class MainGUI extends JFrame implements Runnable {
 			     
 			        );
 				System.out.println(unitPosition);
-				manager.putArchery(unitPosition,mainPlayer);
+				manager.putBowman(unitPosition,mainPlayer);
 				manager.selectMostRecentUnit();
 				placingUnit=true;
 				

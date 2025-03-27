@@ -25,6 +25,7 @@ public class AIManager {
     private Random random = new Random();
     private Position defensivePosition;     
     private static Logger logger = LoggerUtility.getLogger(Map.class, "html");
+    private int stage = 1;
 
     
     public AIManager(AIPlayer aiPlayer, MobileInterface mobileManager, Map map) {
@@ -34,7 +35,7 @@ public class AIManager {
         logger.info("Gestionnaire IA initialisé pour le joueur: " + aiPlayer.getRace().getName());
         
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
-        this.defensivePosition = new Position(basePos.getLine() +10, basePos.getColumn()-10);
+        this.defensivePosition = new Position(basePos.getLine() +7, basePos.getColumn()-15);
     }
     
     public void update() {
@@ -48,6 +49,10 @@ public class AIManager {
     private void makeHardDecisions() {
         int currentSlaveCount = countUnitType("slave");
         
+        int warriorCount = countUnitType("warrior");
+        int bowmanCount = countUnitType("bowman");
+
+        
         if (currentSlaveCount < 4 && aiPlayer.getWood() >= GameConfiguration.SLAVE_COST) {
             buildSlave();
             logger.info("L'IA décide de construire un esclave (total: " + (currentSlaveCount + 1) + "/4)");
@@ -55,18 +60,26 @@ public class AIManager {
         else if (!hasBarracks() && aiPlayer.getWood() >= GameConfiguration.BARRACKS_COST) {
             buildBarracks();
             logger.info("L'IA décide de construire une caserne");
-        } else if (hasBarracks() && aiPlayer.getWood() >= GameConfiguration.WARRIOR_COST) {
+        } else if (hasBarracks() && aiPlayer.getWood() >= GameConfiguration.WARRIOR_COST && (warriorCount<10 || stage==1)) {
             buildWarrior();
-            logger.info("L'IA décide de construire un guerrier (total: " + (countUnitType("warrior") + 1) + "/10)");
+            logger.info("L'IA décide de construire un guerrier (total: " + (warriorCount + 1) + "/10)");
+        }else if (!hasArchery() && aiPlayer.getWood() >= GameConfiguration.ARCHERY_COST) {
+        	buildArchery();
+            logger.info("L'IA décide de construire un camp d'archers");
+        }else if(hasArchery() && aiPlayer.getWood() >= GameConfiguration.BOWMAN_COST && (bowmanCount<10 || stage ==2)) {
+        	buildBowman();
         }
         
         assignHarvesters();
         positionDefensiveWarriors();
         
-        int warriorCount = countUnitType("warrior");
-        if (warriorCount > 15) {
+
+        if (warriorCount > 15 ) {
             coordinatedAttack(warriorCount - 10);
+            stage=2;
             logger.info("L'IA lance une attaque coordonnée avec " + (warriorCount - 10) + " guerriers en surplus");
+        }if(bowmanCount >=10) {
+        	stage=3;
         }
     }
     
@@ -83,6 +96,11 @@ public class AIManager {
         }
         return count;
     }
+    
+    private boolean hasArchery() {
+        return aiPlayer.getBuildings("archery") != null;
+    }
+    
     
     private List<Unit> getAIUnits() {
         List<Unit> aiUnits = new ArrayList<>();
@@ -121,6 +139,21 @@ public class AIManager {
         }
     }
     
+    private void buildBowman() {
+        Building barracks = aiPlayer.getBuildings("archery");
+        if (barracks != null && !barracks.isUnderConstruction()) {
+            Position barrackPos = barracks.getZone().getPositions().get(0);
+            Position unitPos = new Position(
+                barrackPos.getLine() + 3,
+                barrackPos.getColumn() + getAIUnits().size() % 10
+            );
+            
+            if (!map.isfull(unitPos) && !map.isOnBorder(unitPos)) {
+                mobileManager.putBowman(unitPos, aiPlayer);
+            }
+        }
+    }
+    
     private void buildBarracks() {
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
         int startLine = basePos.getLine() + 5;
@@ -153,23 +186,63 @@ public class AIManager {
         }
     }
     
+    private void buildArchery() {
+        Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
+        int startLine = basePos.getLine() + 11;
+        int startColumn = basePos.getColumn() + 3;
+        
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                Position pos = new Position(startLine + i, startColumn + j);
+                
+                ArrayList<Position> listPosition = new ArrayList<>();
+                listPosition.add(pos);
+                listPosition.add(new Position(pos.getLine() + 1, pos.getColumn()));
+                listPosition.add(new Position(pos.getLine(), pos.getColumn() + 1));
+                listPosition.add(new Position(pos.getLine() + 1, pos.getColumn() + 1));
+                
+                boolean validZone = true;
+                for (Position p : listPosition) {
+                    if (map.isfull(p) || map.isOnBorder(p)) {
+                        validZone = false;
+                        break;
+                    }
+                }
+                
+                if (validZone) {
+                    Zone zone = new Zone(listPosition);
+                    mobileManager.putBuilding(zone, "archery", aiPlayer);
+                    return;
+                }
+            }
+        }
+    }
+    
     private void positionDefensiveWarriors() {
         List<Unit> warriors = new ArrayList<>();
+        List<Unit> bowmans = new ArrayList<>();
         for (Unit unit : getAIUnits()) {
             if (unit.getName().equals("warrior") && !unit.isUnderConstruction() && 
                 !unit.isManuallyCommanded() && unit.getTargetUnit() == null && unit.getTargetBuilding() == null) {
                 warriors.add(unit);
             }
+            if (unit.getName().equals("bowman") && !unit.isUnderConstruction() && 
+                    !unit.isManuallyCommanded() && unit.getTargetUnit() == null && unit.getTargetBuilding() == null) {
+                    bowmans.add(unit);
+            }
         }
         
         int totalWarriors = warriors.size();
-        int maxDefenders = Math.min(10, totalWarriors);
+        int maxDefendersWarriors = Math.min(10, totalWarriors);
+        int totalBowmans = bowmans.size();
+        int maxDefendersBowman = Math.min(10, totalBowmans);
         
-        for (int i = 0; i < maxDefenders; i++) {
+        // Formation diagonale
+        for (int i = 0; i < maxDefendersWarriors; i++) {
             Unit warrior = warriors.get(i);
             Position defPos = new Position(
-                defensivePosition.getLine(),
-                defensivePosition.getColumn() + (i - maxDefenders/2)
+                defensivePosition.getLine() + i, 
+                defensivePosition.getColumn() + i
             );
             
             if (!warrior.getZone().getPositions().get(0).equals(defPos)) {
@@ -178,7 +251,21 @@ public class AIManager {
                 warrior.setTargetBuilding(null);
             }
         }
+        for (int i = 0; i < maxDefendersBowman; i++) {
+            Unit bowman = bowmans.get(i);
+            Position defPos = new Position(
+                defensivePosition.getLine() + i-2, 
+                defensivePosition.getColumn() + i+2
+            );
+            
+            if (!bowman.getZone().getPositions().get(0).equals(defPos)) {
+                bowman.setTargetPosition(defPos);
+                bowman.setTargetUnit(null);
+                bowman.setTargetBuilding(null);
+            }
+        }
     }
+    
     
     private void assignHarvesters() {
         List<Slave> idleSlaves = new ArrayList<>();
@@ -274,48 +361,63 @@ public class AIManager {
         }
         
         if (!attackForce.isEmpty()) {
-            Unit targetUnit = null;
-            Position targetPos = null;
-            
-            List<Unit> playerUnits = new ArrayList<>();
+            List<Unit> enemyUnits = new ArrayList<>();
             for (Unit unit : mobileManager.getAllUnits()) {
                 if (!unit.getRace().getName().equals(aiPlayer.getRace().getName())) {
-                    playerUnits.add(unit);
+                    enemyUnits.add(unit);
                 }
             }
             
-            if (!playerUnits.isEmpty()) {
-                targetUnit = playerUnits.get(0);
-                targetPos = targetUnit.getZone().getPositions().get(0);
+            List<Building> enemyBuildings = new ArrayList<>();
+            for (Building building : mobileManager.getBuildings()) {
+                if (!building.getRace().getName().equals(aiPlayer.getRace().getName())) {
+                    enemyBuildings.add(building);
+                }
+            }
+            
+            Position attackerBasePosition = aiPlayer.getStarterZone().getPositions().get(0);
+            Unit nearestEnemyUnit = null;
+            Building nearestEnemyBuilding = null;
+            int minUnitDistance = Integer.MAX_VALUE;
+            int minBuildingDistance = Integer.MAX_VALUE;
+            
+            for (Unit enemyUnit : enemyUnits) {
+                int distance = mobileManager.calculateDistance(attackerBasePosition, enemyUnit.getZone().getPositions().get(0));
+                if (distance < minUnitDistance) {
+                    nearestEnemyUnit = enemyUnit;
+                    minUnitDistance = distance;
+                }
+            }
+            
+            for (Building enemyBuilding : enemyBuildings) {
+                int distance = mobileManager.calculateDistance(attackerBasePosition, enemyBuilding.getZone().getPositions().get(0));
+                if (distance < minBuildingDistance) {
+                    nearestEnemyBuilding = enemyBuilding;
+                    minBuildingDistance = distance;
+                }
+            }
+            
+            if (nearestEnemyUnit != null) {
+                Position targetPos = nearestEnemyUnit.getZone().getPositions().get(0);
                 
-                logger.info("L'IA cible une unité ennemie à la position: " + targetPos + " avec " + attackForce.size() + " guerriers");
+                logger.info("L'IA cible l'unité ennemie la plus proche à la position: " + targetPos + " avec " + attackForce.size() + " guerriers");
                 
                 for (Unit warrior : attackForce) {
                     warrior.setTargetPosition(targetPos);
-                    warrior.setTargetUnit(targetUnit);
+                    warrior.setTargetUnit(nearestEnemyUnit);
                     warrior.setTargetBuilding(null);
                     warrior.setManuallyCommanded(true);
                 }
-                return;
-            }
-            
-            Player mainPlayer = mobileManager.getMainPlayer();
-            if (mainPlayer != null && !mainPlayer.getStarterZone().getPositions().isEmpty()) {
-                targetPos = mainPlayer.getStarterZone().getPositions().get(0);
+            } 
+            else if (nearestEnemyBuilding != null) {
+                Position targetPos = nearestEnemyBuilding.getZone().getPositions().get(0);
                 
-                Building targetBuilding = null;
-                for (Building building : mobileManager.getBuildings()) {
-                    if (!building.getRace().getName().equals(aiPlayer.getRace().getName())) {
-                        targetBuilding = building;
-                        logger.info("L'IA cible un bâtiment ennemi: " + targetBuilding.getName() + " avec " + attackForce.size() + " guerriers");
-                        break;
-                    }
-                }
+                logger.info("L'IA cible le bâtiment ennemi le plus proche: " + nearestEnemyBuilding.getName() + " avec " + attackForce.size() + " guerriers");
                 
                 for (Unit warrior : attackForce) {
                     warrior.setTargetPosition(targetPos);
                     warrior.setTargetUnit(null);
-                    warrior.setTargetBuilding(targetBuilding);
+                    warrior.setTargetBuilding(nearestEnemyBuilding);
                     warrior.setManuallyCommanded(true);
                 }
             }
