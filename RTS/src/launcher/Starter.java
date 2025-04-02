@@ -7,7 +7,6 @@ public class Starter {
 
 	public static void main(String[] args) {
 		new ChoiceMenu("Menu");
-		System.out.println("ze");
 	}
 
 }
