@@ -138,10 +138,10 @@ public class MainGUI extends JFrame implements Runnable {
 		panelInteraction.add(buildingButton);	
 		contentPane.add(panelInteraction,BorderLayout.EAST);
 		
-		baseBuildingMenuPanel=new BaseBuildingMenuPanel(mainPlayer);
-		barracksBuildingMenuPanel=new BarracksBuildingMenuPanel(mainPlayer);
-		runwayBuildingMenuPanel=new RunwayBuildingMenuPanel(mainPlayer);
-		archeryBuildingMenuPanel=new ArcheryBuildingMenuPanel(mainPlayer);
+		baseBuildingMenuPanel=new BaseBuildingMenuPanel(mainPlayer,manager);
+		barracksBuildingMenuPanel=new BarracksBuildingMenuPanel(mainPlayer,manager);
+		runwayBuildingMenuPanel=new RunwayBuildingMenuPanel(mainPlayer,manager);
+		archeryBuildingMenuPanel=new ArcheryBuildingMenuPanel(mainPlayer,manager);
 		
 		infoPlayerPanel=new InfoPlayerPanel(mainPlayer,this);
 		contentPane.add(infoPlayerPanel,BorderLayout.SOUTH);
@@ -207,12 +207,17 @@ public class MainGUI extends JFrame implements Runnable {
 		buildingPanel.getArcheryBuilding().addActionListener(new PutArchery());
 		baseBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		baseBuildingMenuPanel.getUnitsButton().addActionListener(new SlaveButton());
+		baseBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeBaseButton());
 		barracksBuildingMenuPanel.getUnitsButton().addActionListener(new WarriorButton());
 		barracksBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
+		barracksBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeBarracksButton());
 		runwayBuildingMenuPanel.getUnitsButton().addActionListener(new WizardAction());
 		runwayBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
+		runwayBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeRunwayButton());
 		archeryBuildingMenuPanel.getUnitsButton().addActionListener(new BowmanAction());
 		archeryBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
+		archeryBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeArcheryButton());
+
 		
 	}
 	
@@ -521,7 +526,7 @@ public class MainGUI extends JFrame implements Runnable {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
-	            valueInfo="you don't have enough wood";
+	            valueInfo="you don't have enough wood"+GameConfiguration.BARRACKS_COST;
 	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
@@ -561,6 +566,82 @@ public class MainGUI extends JFrame implements Runnable {
 	                lastInfo = valueInfo;
 	            }
 	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+		
+	}
+	
+	private class UpgradeBaseButton implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(mainPlayer.getWood()>=GameConfiguration.BASE_UPGRADE && manager.getBuildingsMainPlayer().get("base").getTier()<2) {
+				manager.upgradeBuilding(manager.getBuildingsMainPlayer().get("base"),mainPlayer);
+				baseBuildingMenuPanel.updateBaseTier();
+
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+		
+	}
+	private class UpgradeBarracksButton implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(mainPlayer.getWood()>=GameConfiguration.BARRACKS_UPGRADE && manager.getBuildingsMainPlayer().get("barracks").getTier()<2 && manager.getBuildingsMainPlayer().get("base").getTier()>1) {
+				manager.upgradeBuilding(manager.getBuildingsMainPlayer().get("barracks"),mainPlayer);
+				barracksBuildingMenuPanel.updateBarracksTier();
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood or need to upgrade base first";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+		
+	}
+	private class UpgradeRunwayButton implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(mainPlayer.getWood()>=GameConfiguration.RUNWAY_UPGRADE && manager.getBuildingsMainPlayer().get("runway").getTier()<2 && manager.getBuildingsMainPlayer().get("base").getTier()>1) {
+				manager.upgradeBuilding(manager.getBuildingsMainPlayer().get("runway"),mainPlayer);
+				runwayBuildingMenuPanel.updateRunwayTier();
+
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood or need to upgrade base first";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+		
+	}
+	private class UpgradeArcheryButton implements ActionListener {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if(mainPlayer.getWood()>=GameConfiguration.ARCHERY_UPGRADE && manager.getBuildingsMainPlayer().get("archery").getTier()<2 && manager.getBuildingsMainPlayer().get("base").getTier()>1) {
+				manager.upgradeBuilding(manager.getBuildingsMainPlayer().get("archery"),mainPlayer);
+				archeryBuildingMenuPanel.updateArcheryTier();
+
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood or need to upgrade base first";
 	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
@@ -721,7 +802,7 @@ public class MainGUI extends JFrame implements Runnable {
 			     
 			        );
 				System.out.println(unitPosition);
-				manager.putArchery(unitPosition,mainPlayer);
+				manager.putBowman(unitPosition,mainPlayer);
 				manager.selectMostRecentUnit();
 				placingUnit=true;
 				

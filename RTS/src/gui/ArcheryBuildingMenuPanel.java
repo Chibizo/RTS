@@ -10,17 +10,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import data.model.Player;
+import engine.process.MobileInterface;
 
 public class ArcheryBuildingMenuPanel extends JPanel{
 
+	private MobileInterface manager;
 
-
-	private JLabel archeryLabel= new JLabel("Archery", JLabel.CENTER);;
+	private JLabel archeryLabel= new JLabel("<html>Archery <br>tier : 1 </html>", JLabel.CENTER);;
 	private JButton unitsButton=new JButton("Bowman"); ;
 	private JButton  upgradeButton= new JButton("Upgrade Base");;
 	private JButton backButton= new JButton("Back"); ;
 	
-	public ArcheryBuildingMenuPanel(Player mainPlayer) {
+	public ArcheryBuildingMenuPanel(Player mainPlayer,MobileInterface manager) {
+		this.manager=manager;
 		setLayout(new GridLayout(4,1,10,10));
 		initStyle();
 		add(archeryLabel);
@@ -53,6 +55,16 @@ public class ArcheryBuildingMenuPanel extends JPanel{
         
 		setBackground(new Color(40, 40, 40));
 
+	}
+	
+	public void updateArcheryTier() {
+		archeryLabel.setText(getArcheryLabelText());
+		upgradeButton.setText("Musketeers");
+	}
+	
+	private String getArcheryLabelText() {
+		int tier = manager.getBuildingsMainPlayer().get("archery").getTier();
+		return "<html>Archery <br>tier : "+tier+"</html>";
 	}
 
 	public JButton getUnitsButton() {

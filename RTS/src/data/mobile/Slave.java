@@ -15,8 +15,8 @@ public class Slave extends Unit{
 	
 	
 	
-	public Slave(Zone zone,String type,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race,String name,int attackDamage) {
-		super(zone,type,maxHealth,currentHealth,wood,magicOre,constructTime,race,name,attackDamage);
+	public Slave(Zone zone,String type,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race,String name,int attackDamage,int attackRange) {
+		super(zone,type,maxHealth,currentHealth,wood,magicOre,constructTime,race,name,attackDamage,attackRange);
 	}
 	
 	public String getHarvestingResourceType() {

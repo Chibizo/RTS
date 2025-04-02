@@ -14,6 +14,14 @@ public class Building extends MobileElement{
 		super(zone,maxHealth,currentHealth,wood,magicOre,constructTime,race,name);
 		this.tier=tier;
 	}
+	
+	public int getTier() {
+        return tier;
+    }
+
+    public void setTier(int tier) {
+        this.tier = tier;
+    }
 
 	public Zone getZone() {
 		return super.getZone();

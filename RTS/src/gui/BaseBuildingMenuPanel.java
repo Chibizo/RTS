@@ -11,15 +11,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import data.model.Player;
+import engine.process.MobileInterface;
 
 public class BaseBuildingMenuPanel extends JPanel{
 		
-	private JLabel baseLabel= new JLabel("Base Management", JLabel.CENTER);;
+	private MobileInterface manager;
+	
+	private JLabel baseLabel= new JLabel("<html>Base <br>Management <br>tier : 1 </html>", JLabel.CENTER);;
 	private JButton unitsButton=new JButton("Slave"); ;
 	private JButton  upgradeButton= new JButton("Upgrade Base");;
 	private JButton backButton= new JButton("Back"); ;
 	
-	public BaseBuildingMenuPanel(Player mainPlayer) {
+	public BaseBuildingMenuPanel(Player mainPlayer,MobileInterface manager) {
+		this.manager=manager;
 		setLayout(new GridLayout(4,1,10,10));
 		initStyle();
 		add(baseLabel);
@@ -27,6 +31,16 @@ public class BaseBuildingMenuPanel extends JPanel{
         add(upgradeButton);
         add(backButton);
 		
+	}
+	
+	public void updateBaseTier() {
+		baseLabel.setText(getBaseLabelText());
+		upgradeButton.setText("...");
+	}
+	
+	private String getBaseLabelText() {
+		int tier = manager.getBuildingsMainPlayer().get("base").getTier();
+		return "<html>Base <br>Management <br>tier : "+tier+"</html>";
 	}
 	
 	public void initStyle() {
@@ -53,6 +67,8 @@ public class BaseBuildingMenuPanel extends JPanel{
 		setBackground(new Color(40, 40, 40));
 
 	}
+	
+	
 
 	public JButton getUnitsButton() {
 		return unitsButton;

@@ -17,8 +17,8 @@ public interface MobileInterface {
 	public void  putWizard(Zone zone,Player player);
 	public void  putWizard(Position position,Player player);
 	
-	public void  putArchery(Zone zone,Player player);
-	public void  putArchery(Position position,Player player);
+	public void  putBowman(Zone zone,Player player);
+	public void  putBowman(Position position,Player player);
 	
 	public List<Building> getBuildings();
 	
@@ -66,5 +66,9 @@ public interface MobileInterface {
 	
 	public void checkUnitReachedDestination(Unit unit);
 	
+	public void upgradeBuilding(Building building,Player player);
+	
 	public void terminateGame() ;
+	
+	public Position findPositionAtRange(Position currentPos, Position targetPos, int range);
 }

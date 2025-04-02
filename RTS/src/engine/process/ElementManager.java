@@ -122,15 +122,21 @@ public class ElementManager implements MobileInterface {
 
 			if(type=="barracks") {
 	            logger.info("Caserne construite par l'IA à la position: " + zone.getPositions().get(0));
-				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,30000,player.getRace(),"barracks");	
+				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,GameConfiguration.BARRACKS_CONSTRUCT_TIME,player.getRace(),"barracks");	
 				buildingsAIPlayer.put("barracks",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
 				player.setWood(player.getWood()-building.getCost().getWood());
 			}else if (type=="runway") {
-				Building building=new Building(zone,1,750,750,0,0,50000,player.getRace(),"runway");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST,0,GameConfiguration.RUNWAY_CONSTRUCT_TIME,player.getRace(),"runway");	
 				buildingsAIPlayer.put("runway",building);
+				buildings.add(building);
+				player.addBuilding(building);
+				map.addFullPosition(zone);
+			}else if (type=="archery") {
+				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST,0,GameConfiguration.ARCHERY_CONSTRUCT_TIME,player.getRace(),"archery");	
+				buildingsAIPlayer.put("archery",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
@@ -147,24 +153,27 @@ public class ElementManager implements MobileInterface {
 		}else {
 			if(type=="barracks") {
 	            logger.info("Caserne construite par le joueur principal à la position: " + zone.getPositions().get(0));
-				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,30000,player.getRace(),"barracks");	
+				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,GameConfiguration.BARRACKS_CONSTRUCT_TIME,player.getRace(),"barracks");	
 				buildingsMainPlayer.put("barracks",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
 				player.setWood(player.getWood()-building.getCost().getWood());
 			}else if (type=="runway") {
-				Building building=new Building(zone,1,750,750,0,0,50000,player.getRace(),"runway");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST,0,GameConfiguration.RUNWAY_CONSTRUCT_TIME,player.getRace(),"runway");	
 				buildingsMainPlayer.put("runway",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
+				player.setWood(player.getWood()-building.getCost().getWood());
 			}else if (type=="archery") {
-				Building building=new Building(zone,1,750,750,0,0,50000,player.getRace(),"archery");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST,0,GameConfiguration.ARCHERY_CONSTRUCT_TIME,player.getRace(),"archery");	
 				buildingsMainPlayer.put("archery",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
+				player.setWood(player.getWood()-building.getCost().getWood());
+
 			
 			}else if (type=="base") {
 				Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
@@ -180,6 +189,42 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	
+	public void upgradeBuilding(Building building,Player player) {
+		if(building.getName().equals("base") && building.getTier()<2) {
+			building.setTier(2);
+			building.setUnderConstruction(true);
+			building.setConstructionStartTime(System.currentTimeMillis());
+			building.setConstructionTime(60000);
+			building.setMaxHealth(2000);
+			building.setCurrentHealth(2000);
+			player.setWood(player.getWood()-GameConfiguration.BASE_UPGRADE);
+		}else if(building.getName().equals("barracks") && buildingsMainPlayer.get("base").getTier()>1) {
+			building.setTier(2);
+			building.setUnderConstruction(true);
+			building.setConstructionStartTime(System.currentTimeMillis());
+			building.setConstructionTime(60000);
+			building.setMaxHealth(1000);
+			building.setCurrentHealth(1000);
+			player.setWood(player.getWood()-GameConfiguration.BARRACKS_COST);
+		}else if(building.getName().equals("runway") && buildingsMainPlayer.get("base").getTier()>1) {
+			building.setTier(2);
+			building.setUnderConstruction(true);
+			building.setConstructionStartTime(System.currentTimeMillis());
+			building.setConstructionTime(60000);
+			building.setMaxHealth(1700);
+			building.setCurrentHealth(1700);
+			player.setWood(player.getWood()-GameConfiguration.RUNWAY_UPGRADE);
+		}else if(building.getName().equals("archery") && buildingsMainPlayer.get("base").getTier()>1) {
+			building.setTier(2);
+			building.setUnderConstruction(true);
+			building.setConstructionStartTime(System.currentTimeMillis());
+			building.setConstructionTime(60000);
+			building.setMaxHealth(1800);
+			building.setCurrentHealth(1800);
+			player.setWood(player.getWood()-GameConfiguration.ARCHERY_UPGRADE);
+		}
+	}
+	
 	public synchronized void putWarrior(Zone zone,Player player) {
 		if(player.getBuildings("barracks")==null) {
 			return;
@@ -189,7 +234,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.WARRIOR_COST,0,20000,player.getRace(),"warrior",10);
+		Unit unit=new Unit(zone,"ground",200,200,GameConfiguration.WARRIOR_COST,0,GameConfiguration.WARRIOR_CONSTRUCT_TIME,player.getRace(),"warrior",10,1);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
@@ -216,7 +261,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.WIZARD_COST,0,10000,player.getRace(),"wizard",10);
+		Unit unit=new Unit(zone,"air",200,200,GameConfiguration.WIZARD_COST,0,GameConfiguration.WIZARD_CONSTRUCT_TIME,player.getRace(),"wizard",10,1);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
@@ -233,7 +278,7 @@ public class ElementManager implements MobileInterface {
 		putWizard(new Zone(zone),player);
 	}
 	
-	public synchronized void putArchery(Zone zone,Player player) {
+	public synchronized void putBowman(Zone zone,Player player) {
 		if(player.getBuildings("archery")==null) {
 			return;
 		}
@@ -242,7 +287,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"temp",200,200,GameConfiguration.BOWMAN_COST,0,10000,player.getRace(),"bowman",10);
+		Unit unit=new Unit(zone,"ground",200,200,GameConfiguration.BOWMAN_COST,0,GameConfiguration.BOWMAN_CONSTRUCT_TIME,player.getRace(),"bowman",10,15);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
@@ -252,11 +297,11 @@ public class ElementManager implements MobileInterface {
 		thread.start();
 		
 	}
-	public synchronized void putArchery(Position position,Player player) {
+	public synchronized void putBowman(Position position,Player player) {
 	    logger.debug("Tentative de création d'un archer à la position: " + position);
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
-		putArchery(new Zone(zone),player);
+		putBowman(new Zone(zone),player);
 	}
 	
 	public synchronized void putSlave(Zone zone,Player player) {
@@ -268,7 +313,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Slave slave=new Slave(zone,"temp",100,100,GameConfiguration.SLAVE_COST,0,15000,player.getRace(),"slave",10);
+		Slave slave=new Slave(zone,"ground",100,100,GameConfiguration.SLAVE_COST,0,GameConfiguration.SLAVE_CONSTRUCT_TIME,player.getRace(),"slave",10,1);
 		units.add(slave);
 		map.addFullUnitsPosition(zone);
 		player.setWood(player.getWood()-slave.getCost().getWood());
@@ -302,6 +347,17 @@ public class ElementManager implements MobileInterface {
 	        if (units.contains(unit.getTargetUnit())) {
 	            targetPosition = unit.getTargetUnit().getZone().getPositions().get(0);
 	            unit.setTargetPosition(targetPosition);
+	            
+	            if (unit.getName().equals("bowman")) {
+	                int distanceToTarget = calculateDistance(currentPosition, targetPosition);
+	                int attackRange = unit.getAttackRange();
+	                
+	                if (distanceToTarget <= attackRange) {
+	                	unit.setTargetPosition(currentPosition);
+	                    return;
+	                }
+	                targetPosition = findPositionAtRange(currentPosition, targetPosition, attackRange);
+	            }
 	        } else {
 	            unit.setTargetUnit(null);
 	        }
@@ -328,7 +384,7 @@ public class ElementManager implements MobileInterface {
 	            logger.debug(unit.getName() + " se déplace de " + currentPosition + " vers " + nextPosition);
 	            currentPosition.setColumn(nextPosition.getColumn());
 	            currentPosition.setLine(nextPosition.getLine());
-	        }else {
+	        } else {
 	            logger.debug(unit.getName() + " ne peut pas se déplacer vers " + nextPosition + " (case occupée)");
 	        }
 	    }
@@ -389,15 +445,17 @@ public class ElementManager implements MobileInterface {
 	
 	
 	public void updateConstruction() {
-	    for (Building building : buildings) {
+	    List<Building> buildingsToUpdate = new ArrayList<>(buildings);
+	    for (Building building : buildingsToUpdate) {
 	        if (building.isUnderConstruction()) {
 	            if (building.getConstructionProgress() >= 1.0f) {
 	                building.setUnderConstruction(false);
 	            }
 	        }
 	    }
-	    
-	    for (Unit unit : units) {
+
+	    List<Unit> unitsToUpdate = new ArrayList<>(units);
+	    for (Unit unit : unitsToUpdate) {
 	        if (unit.isUnderConstruction()) {
 	            if (unit.getConstructionProgress() >= 1.0f) {
 	                unit.setUnderConstruction(false);
@@ -406,14 +464,13 @@ public class ElementManager implements MobileInterface {
 	    }
 	}
 	
-	
 	public int calculateDistance(Position p1, Position p2) {
         return Math.abs(p1.getLine() - p2.getLine()) + Math.abs(p1.getColumn() - p2.getColumn());
     }
 	
+
 	public void checkCloseEnemy() {
 	    int detectionRadius = 5; 
-	    
 	    
 	    List<Unit> unitsCopy;
 	    synchronized(this) {
@@ -422,42 +479,46 @@ public class ElementManager implements MobileInterface {
 	    
 	    for (Unit unit : unitsCopy) {
 	        if (!unit.isUnderConstruction() && unit.getTargetUnit() == null && !unit.isManuallyCommanded()) {
-	        	if(unit.getName().equals("warrior")) {
-	        		detectionRadius=12;
-	        	}else {
-	        		detectionRadius=5;
-	        	}
-		        
-		        Position unitPosition = unit.getZone().getPositions().get(0);
-		        
-		        Unit closestEnemy = null;
-		        int closestDistance = Integer.MAX_VALUE;
-		        
-		        for (Unit potentialEnemy : unitsCopy) {
-		            if (!potentialEnemy.getRace().getName().equals(unit.getRace().getName()) && 
-			                !potentialEnemy.isUnderConstruction()) {
-			              
-			            
-			            Position enemyPosition = potentialEnemy.getZone().getPositions().get(0);
-			            int distance = calculateDistance(unitPosition, enemyPosition);
-			            
-			            if (distance <= detectionRadius && distance < closestDistance) {
-			                closestEnemy = potentialEnemy;
-			                closestDistance = distance;
-			            }
-		            }
-		        }
-		        
-		        if (closestEnemy != null) {
-		            unit.setTargetUnit(closestEnemy);
-		            unit.setTargetBuilding(null);
-		            unit.setTargetPosition(closestEnemy.getZone().getPositions().get(0));
-		            
-		            if (unit instanceof Slave) {
-		                ((Slave) unit).setHarvesting(false);
-		                ((Slave) unit).setReturning(false);
-		            }
-		        }
+	            if (unit.getName().equals("warrior")) {
+	                detectionRadius = 12;
+	            } else if (unit.getName().equals("slave")) {
+	                detectionRadius = 0;
+	            } else if (unit.getName().equals("bowman")) {
+	                detectionRadius = 0;
+	            } else {
+	                detectionRadius = 5;
+	            }
+	            
+	            Position unitPosition = unit.getZone().getPositions().get(0);
+	            
+	            Unit closestEnemy = null;
+	            int closestDistance = Integer.MAX_VALUE;
+	            
+	            for (Unit potentialEnemy : unitsCopy) {
+	                if (!potentialEnemy.getRace().getName().equals(unit.getRace().getName()) && 
+	                    !potentialEnemy.isUnderConstruction() ) {
+	                    if((unit.getType().equals("ground") && potentialEnemy.getType().equals("ground")) || unit.getName().equals("bowman") || unit.getType().equals("air")) {
+		                    Position enemyPosition = potentialEnemy.getZone().getPositions().get(0);
+		                    int distance = calculateDistance(unitPosition, enemyPosition);
+		                    
+		                    if (distance <= detectionRadius && distance < closestDistance) {
+		                        closestEnemy = potentialEnemy;
+		                        closestDistance = distance;
+		                    }
+	                   }
+	                }
+	            }
+	            
+	            if (closestEnemy != null) {
+	                unit.setTargetUnit(closestEnemy);
+	                unit.setTargetBuilding(null);
+	                unit.setTargetPosition(closestEnemy.getZone().getPositions().get(0));
+	                
+	                if (unit instanceof Slave) {
+	                    ((Slave) unit).setHarvesting(false);
+	                    ((Slave) unit).setReturning(false);
+	                }
+	            }
 	        }
 	    }
 	}
@@ -475,21 +536,38 @@ public class ElementManager implements MobileInterface {
 	    for (Unit unit : unitsCopy) {
 	        if (!unit.isUnderConstruction()) {
 	            Position currentPosition = unit.getZone().getPositions().get(0);
-	            int line = currentPosition.getLine();
-	            int column = currentPosition.getColumn();
+	            int attackRange = unit.getAttackRange();  
 
-	            for (int i = -1; i <= 1; i++) {
-	                for (int j = -1; j <= 1; j++) {
-	                    if (i != 0 || j != 0) {
-	                        int checkLine = line + i;
-	                        int checkColumn = column + j;
-	                        
+	            if (unit.getName().equals("bowman") && unit.getTargetUnit() != null) {
+	                Position targetPosition = unit.getTargetUnit().getZone().getPositions().get(0);
+	                int distanceToTarget = calculateDistance(currentPosition, targetPosition);
+	                
+	                if (distanceToTarget <= attackRange) {
+	                    boolean killed = attack(unit, unit.getTargetUnit());
+	                    if (killed) {
+	                        logger.info(unit.getName() + " a tué " + unit.getTargetUnit().getName());
+	                        unitsToRemove.add(unit.getTargetUnit());
+	                        unit.setTargetUnit(null);
+	                        unit.setTargetPosition(currentPosition);
+	                    }
+	                    continue;
+	                }
+	            }
+
+	            for (int i = -attackRange; i <= attackRange; i++) {
+	                for (int j = -attackRange; j <= attackRange; j++) {
+	                    int checkLine = currentPosition.getLine() + i;
+	                    int checkColumn = currentPosition.getColumn() + j;
+	                    
+	                    if (calculateDistance(currentPosition, new Position(checkLine, checkColumn)) <= attackRange) {
 	                        if (checkLine >= 0 && checkLine < map.getLineCount() && 
 	                            checkColumn >= 0 && checkColumn < map.getColumnCount()) {
 	                            
 	                            Unit enemy = MouseUtility.findEnemyAt(unitsCopy, checkLine, checkColumn, unit);
 	                            
-	                            if (enemy != null) {
+	                           
+	                            
+	                            if (enemy != null && ((unit.getType().equals("ground") && enemy.getType().equals("ground")) || unit.getName().equals("bowman") || unit.getType().equals("air"))) {
 	                                boolean killed = attack(unit, enemy);
 	                                if (killed && !unitsToRemove.contains(enemy)) {
 	                                    logger.info(unit.getName() + " a tué " + enemy.getName());
@@ -499,7 +577,7 @@ public class ElementManager implements MobileInterface {
 	                            
 	                            Building enemyBuild = MouseUtility.findEnemyBuildingAt(buildings, checkLine, checkColumn, unit);
 	                            
-	                            if (enemyBuild != null) {
+	                            if (enemyBuild != null ) {
 	                                boolean killed = attackBuilding(unit, enemyBuild);
 	                                if (killed && !buildingsToRemove.contains(enemyBuild)) {
 	                                    logger.info(unit.getName() + " a détruit " + enemyBuild.getName());
@@ -524,6 +602,7 @@ public class ElementManager implements MobileInterface {
 	        }
 	    }
 	}
+	
 
 	
 	public boolean attack(Unit attacker, Unit defender) {
@@ -569,8 +648,12 @@ public class ElementManager implements MobileInterface {
 	    	mainPlayer.setSlave(mainPlayer.getSlave()-1);
 	    }
 	    units.remove(unit);
-	    unitSteppers.get(unit).stop();
-	    unitSteppers.remove(unit);
+	    UnitStepper stepper = unitSteppers.get(unit);
+	    if (stepper != null) {
+	        stepper.stop();
+	        unitSteppers.remove(unit);
+	    }
+	    
 	    System.out.println(map.getFullUnitsPosition());
 	}
 	
@@ -663,7 +746,19 @@ public class ElementManager implements MobileInterface {
 	
 	
 	
-	
+	public Position findPositionAtRange(Position currentPos, Position targetPos, int range) {
+	    int dLine = targetPos.getLine() - currentPos.getLine();
+	    int dColumn = targetPos.getColumn() - currentPos.getColumn();
+	    
+	    double length = Math.sqrt(dLine * dLine + dColumn * dColumn);
+	    double normalizedDLine = dLine / length;
+	    double normalizedDColumn = dColumn / length;
+	    
+	    int newLine = currentPos.getLine() + (int)Math.round(normalizedDLine * range);
+	    int newColumn = currentPos.getColumn() + (int)Math.round(normalizedDColumn * range);
+	    
+	    return new Position(newLine, newColumn);
+	}
 	
 	
 	

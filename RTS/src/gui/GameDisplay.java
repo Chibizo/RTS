@@ -98,18 +98,33 @@ public class GameDisplay extends JPanel {
 		}
 		
 		List<Unit> allUnits = new ArrayList<>(manager.getAllUnits());
-		
 		for (Unit unit : allUnits) {
 			if(unit instanceof Slave) {
-				paintStrategy.paint((Slave)unit, g2);
+				if(manager.getMainPlayer().getRace().equals(unit.getRace())) {
+					paintStrategy.paint((Slave)unit, g2,manager.getMainPlayer());
+				}else {
+					paintStrategy.paint((Slave)unit, g2,null);
+
+				}
 			}
-			else if(unit.getName()=="warrior"){
-				paintStrategy.paint(unit, "warrior", g2);
-		    }else if(unit.getName()=="wizard") {
-		    	paintStrategy.paint(unit,"wizard", g2);
-		    }else if(unit.getName()=="bowman") {
-		    	paintStrategy.paint(unit,"bowman", g2);
-		    }
+			else if(unit.getName()=="warrior" && manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "warrior", g2, manager.getMainPlayer());
+			}
+			else if(unit.getName()=="warrior" && !manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "warrior", g2, null);
+			}
+			else if(unit.getName()=="wizard" && manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "wizard", g2, manager.getMainPlayer());
+			}
+			else if(unit.getName()=="wizard" && !manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "wizard", g2, null);
+			}
+			else if(unit.getName()=="bowman" && manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "bowman", g2, manager.getMainPlayer());
+			}
+			else if(unit.getName()=="bowman" && !manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "bowman", g2, null);
+			}
 		}
 		
 		if (selectionStart != null && selectionEnd != null) {

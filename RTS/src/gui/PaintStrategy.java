@@ -22,6 +22,7 @@ import config.GameConfiguration;
 import data.map.Map;
 import data.map.Position;
 import data.mobile.*;
+import data.model.Player;
 import engine.process.GameBuilder;
 import data.map.*;
 
@@ -276,7 +277,7 @@ public class PaintStrategy {
 	    }
 	}
 	
-	public void paint(Unit unit,String name, Graphics2D g2) {
+	public void paint(Unit unit,String name, Graphics2D g2,Player mainPlayer) {
 		if(!images.containsKey("src/images/medievalUnit_08.png")) {
 			images.put("src/images/medievalUnit_08.png", GameBuilder.readImage("src/images/medievalUnit_08.png"));
 		}
@@ -381,14 +382,18 @@ public class PaintStrategy {
 		        g2.fillRect(barX, barY, barWidth, barHeight);
 		        
 		        float progress = (float) unit.getCurrentHealth() / 200.0f;
-		        g2.setColor(Color.GREEN);
+		        if(mainPlayer!=null) {
+		        	g2.setColor(Color.GREEN);
+		        }else {
+		        	g2.setColor(Color.RED);
+		        }
 		        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
 		    }
 			 
 		
 	}
 	
-	public void paint(Slave unit, Graphics2D g2) {
+	public void paint(Slave unit, Graphics2D g2,Player mainPlayer) {
 		if(!images.containsKey("src/images/medievalUnit_06.png")) {
 			images.put("src/images/medievalUnit_06.png", GameBuilder.readImage("src/images/medievalUnit_06.png"));
 		}
@@ -464,7 +469,11 @@ public class PaintStrategy {
 	        g2.fillRect(barX, barY, barWidth, barHeight);
 	        
 	        float progress = (float) unit.getCurrentHealth() / 100.0f;
-	        g2.setColor(Color.GREEN);
+	        if(mainPlayer!=null) {
+	        	g2.setColor(Color.GREEN);
+	        }else {
+	        	g2.setColor(Color.RED);
+	        }
 	        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
 		    
 		    if(((Slave)unit).isHarvesting()||((Slave)unit).isReturning() ) {

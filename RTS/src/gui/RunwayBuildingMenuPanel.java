@@ -10,17 +10,19 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import data.model.Player;
+import engine.process.MobileInterface;
 
 public class RunwayBuildingMenuPanel extends JPanel{
 
+	private MobileInterface manager;
 
-
-	private JLabel runwayLabel= new JLabel("Runway", JLabel.CENTER);;
-	private JButton unitsButton=new JButton("wizard"); ;
+	private JLabel runwayLabel= new JLabel("<html>Archery <br>tier : 1 </html>", JLabel.CENTER);;
+	private JButton unitsButton=new JButton("Wizard"); ;
 	private JButton  upgradeButton= new JButton("Upgrade Base");;
 	private JButton backButton= new JButton("Back"); ;
 	
-	public RunwayBuildingMenuPanel(Player mainPlayer) {
+	public RunwayBuildingMenuPanel(Player mainPlayer,MobileInterface manager) {
+		this.manager=manager;
 		setLayout(new GridLayout(4,1,10,10));
 		initStyle();
 		add(runwayLabel);
@@ -28,6 +30,16 @@ public class RunwayBuildingMenuPanel extends JPanel{
         add(upgradeButton);
         add(backButton);
 		
+	}
+	
+	public void updateRunwayTier() {
+		runwayLabel.setText(getRunwayLabelText());
+		upgradeButton.setText("airship");
+	}
+	
+	private String getRunwayLabelText() {
+		int tier = manager.getBuildingsMainPlayer().get("runway").getTier();
+		return "<html>Runway <br>tier : "+tier+"</html>";
 	}
 	
 	public void initStyle() {

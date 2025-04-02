@@ -22,11 +22,12 @@ public class Unit extends MobileElement{
 	
 	
 	
-	public Unit (Zone zone,String type,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race,String name,int attackDamage) {
+	public Unit (Zone zone,String type,int maxHealth,int currentHealth,int wood,int magicOre,int constructTime,Race race,String name,int attackDamage,int attackRange) {
 		super(zone,maxHealth,currentHealth,wood,magicOre,constructTime,race,name);
 		this.type=type;
 		this.targetPosition=zone.getPositions().get(0);
 		this.attackDamage=attackDamage;
+		this.attackRange=attackRange;
 		
 		
 	}
