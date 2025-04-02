@@ -122,20 +122,20 @@ public class ElementManager implements MobileInterface {
 
 			if(type=="barracks") {
 	            logger.info("Caserne construite par l'IA à la position: " + zone.getPositions().get(0));
-				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,GameConfiguration.BARRACKS_CONSTRUCT_TIME,player.getRace(),"barracks");	
+				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST_WOOD,GameConfiguration.BARRACKS_COST_ORE,GameConfiguration.BARRACKS_CONSTRUCT_TIME,player.getRace(),"barracks");	
 				buildingsAIPlayer.put("barracks",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
 				player.setWood(player.getWood()-building.getCost().getWood());
 			}else if (type=="runway") {
-				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST,0,GameConfiguration.RUNWAY_CONSTRUCT_TIME,player.getRace(),"runway");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST_WOOD,GameConfiguration.RUNWAY_COST_ORE,GameConfiguration.RUNWAY_CONSTRUCT_TIME,player.getRace(),"runway");	
 				buildingsAIPlayer.put("runway",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
 			}else if (type=="archery") {
-				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST,0,GameConfiguration.ARCHERY_CONSTRUCT_TIME,player.getRace(),"archery");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST_WOOD,GameConfiguration.ARCHERY_COST_ORE,GameConfiguration.ARCHERY_CONSTRUCT_TIME,player.getRace(),"archery");	
 				buildingsAIPlayer.put("archery",building);
 				buildings.add(building);
 				player.addBuilding(building);
@@ -153,21 +153,21 @@ public class ElementManager implements MobileInterface {
 		}else {
 			if(type=="barracks") {
 	            logger.info("Caserne construite par le joueur principal à la position: " + zone.getPositions().get(0));
-				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST,0,GameConfiguration.BARRACKS_CONSTRUCT_TIME,player.getRace(),"barracks");	
+				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST_WOOD,GameConfiguration.BARRACKS_COST_ORE,GameConfiguration.BARRACKS_CONSTRUCT_TIME,player.getRace(),"barracks");	
 				buildingsMainPlayer.put("barracks",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
 				player.setWood(player.getWood()-building.getCost().getWood());
 			}else if (type=="runway") {
-				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST,0,GameConfiguration.RUNWAY_CONSTRUCT_TIME,player.getRace(),"runway");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST_WOOD,GameConfiguration.RUNWAY_COST_ORE,GameConfiguration.RUNWAY_CONSTRUCT_TIME,player.getRace(),"runway");	
 				buildingsMainPlayer.put("runway",building);
 				buildings.add(building);
 				player.addBuilding(building);
 				map.addFullPosition(zone);
 				player.setWood(player.getWood()-building.getCost().getWood());
 			}else if (type=="archery") {
-				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST,0,GameConfiguration.ARCHERY_CONSTRUCT_TIME,player.getRace(),"archery");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST_WOOD,GameConfiguration.ARCHERY_COST_ORE,GameConfiguration.ARCHERY_CONSTRUCT_TIME,player.getRace(),"archery");	
 				buildingsMainPlayer.put("archery",building);
 				buildings.add(building);
 				player.addBuilding(building);
@@ -197,7 +197,8 @@ public class ElementManager implements MobileInterface {
 			building.setConstructionTime(60000);
 			building.setMaxHealth(2000);
 			building.setCurrentHealth(2000);
-			player.setWood(player.getWood()-GameConfiguration.BASE_UPGRADE);
+			player.setWood(player.getWood()-GameConfiguration.BASE_UPGRADE_WOOD);
+			player.setMagicOre(player.getMagicOre()-GameConfiguration.BASE_UPGRADE_ORE);
 		}else if(building.getName().equals("barracks") && buildingsMainPlayer.get("base").getTier()>1) {
 			building.setTier(2);
 			building.setUnderConstruction(true);
@@ -205,7 +206,8 @@ public class ElementManager implements MobileInterface {
 			building.setConstructionTime(60000);
 			building.setMaxHealth(1000);
 			building.setCurrentHealth(1000);
-			player.setWood(player.getWood()-GameConfiguration.BARRACKS_COST);
+			player.setWood(player.getWood()-GameConfiguration.BARRACKS_UPGRADE_WOOD);
+			player.setMagicOre(player.getMagicOre()-GameConfiguration.BARRACKS_UPGRADE_ORE);
 		}else if(building.getName().equals("runway") && buildingsMainPlayer.get("base").getTier()>1) {
 			building.setTier(2);
 			building.setUnderConstruction(true);
@@ -213,7 +215,9 @@ public class ElementManager implements MobileInterface {
 			building.setConstructionTime(60000);
 			building.setMaxHealth(1700);
 			building.setCurrentHealth(1700);
-			player.setWood(player.getWood()-GameConfiguration.RUNWAY_UPGRADE);
+			player.setWood(player.getWood()-GameConfiguration.RUNWAY_UPGRADE_WOOD);
+			player.setMagicOre(player.getMagicOre()-GameConfiguration.RUNWAY_UPGRADE_ORE);
+
 		}else if(building.getName().equals("archery") && buildingsMainPlayer.get("base").getTier()>1) {
 			building.setTier(2);
 			building.setUnderConstruction(true);
@@ -221,7 +225,9 @@ public class ElementManager implements MobileInterface {
 			building.setConstructionTime(60000);
 			building.setMaxHealth(1800);
 			building.setCurrentHealth(1800);
-			player.setWood(player.getWood()-GameConfiguration.ARCHERY_UPGRADE);
+			player.setWood(player.getWood()-GameConfiguration.ARCHERY_UPGRADE_WOOD);
+			player.setMagicOre(player.getMagicOre()-GameConfiguration.ARCHERY_UPGRADE_ORE);
+
 		}
 	}
 	
@@ -234,7 +240,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"ground",200,200,GameConfiguration.WARRIOR_COST,0,GameConfiguration.WARRIOR_CONSTRUCT_TIME,player.getRace(),"warrior",10,1);
+		Unit unit=new Unit(zone,"ground",200,200,GameConfiguration.WARRIOR_COST_WOOD,GameConfiguration.WARRIOR_COST_ORE,GameConfiguration.WARRIOR_CONSTRUCT_TIME,player.getRace(),"warrior",10,1);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
@@ -261,7 +267,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"air",200,200,GameConfiguration.WIZARD_COST,0,GameConfiguration.WIZARD_CONSTRUCT_TIME,player.getRace(),"wizard",10,1);
+		Unit unit=new Unit(zone,"air",200,200,GameConfiguration.WIZARD_COST_WOOD,GameConfiguration.WIZARD_COST_ORE,GameConfiguration.WIZARD_CONSTRUCT_TIME,player.getRace(),"wizard",10,5);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
@@ -287,7 +293,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"ground",200,200,GameConfiguration.BOWMAN_COST,0,GameConfiguration.BOWMAN_CONSTRUCT_TIME,player.getRace(),"bowman",10,15);
+		Unit unit=new Unit(zone,"ground",200,200,GameConfiguration.BOWMAN_COST_WOOD,GameConfiguration.BOWMAN_COST_ORE,GameConfiguration.BOWMAN_CONSTRUCT_TIME,player.getRace(),"bowman",10,15);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
@@ -313,7 +319,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Slave slave=new Slave(zone,"ground",100,100,GameConfiguration.SLAVE_COST,0,GameConfiguration.SLAVE_CONSTRUCT_TIME,player.getRace(),"slave",10,1);
+		Slave slave=new Slave(zone,"ground",100,100,GameConfiguration.SLAVE_COST_WOOD,GameConfiguration.SLAVE_COST_ORE,GameConfiguration.SLAVE_CONSTRUCT_TIME,player.getRace(),"slave",10,1);
 		units.add(slave);
 		map.addFullUnitsPosition(zone);
 		player.setWood(player.getWood()-slave.getCost().getWood());
@@ -348,7 +354,7 @@ public class ElementManager implements MobileInterface {
 	            targetPosition = unit.getTargetUnit().getZone().getPositions().get(0);
 	            unit.setTargetPosition(targetPosition);
 	            
-	            if (unit.getName().equals("bowman")) {
+	            if (unit.getName().equals("bowman") || unit.getName().equals("wizard")) {
 	                int distanceToTarget = calculateDistance(currentPosition, targetPosition);
 	                int attackRange = unit.getAttackRange();
 	                

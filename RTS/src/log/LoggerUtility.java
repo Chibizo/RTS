@@ -11,8 +11,8 @@ import org.apache.log4j.PropertyConfigurator;
  * @author Tianxiao.Liu@u-cergy.fr
  */
 public class LoggerUtility {
-	private static final String TEXT_LOG_CONFIG = "src/log/log4j-text.properties";
-	private static final String HTML_LOG_CONFIG = "src/log/log4j-html.properties";
+	private static final String TEXT_LOG_CONFIG = "RTS/src/log/log4j-text.properties";
+	private static final String HTML_LOG_CONFIG = "RTS/src/log/log4j-html.properties";
 
 	public static Logger getLogger(Class<?> logClass, String logFileType) {
 		if (logFileType.equals("text")) {

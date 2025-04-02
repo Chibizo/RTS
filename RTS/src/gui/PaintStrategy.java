@@ -40,13 +40,13 @@ public class PaintStrategy {
 		
 		
 		if(!images.containsKey("src/images/medievalTile_48v2.png")) {
-			images.put("src/images/medievalTile_48v2.png",GameBuilder.readImage("src/images/medievalTile_48v2.png"));
+			images.put("src/images/medievalTile_48v2.png",GameBuilder.readImage("RTS/src/images/medievalTile_48v2.png"));
 		}if(!images.containsKey("src/images/medievalEnvironment_11.png")) {
-			images.put("src/images/medievalEnvironment_11.png",GameBuilder.readImage("src/images/medievalEnvironment_11.png"));
+			images.put("src/images/medievalEnvironment_11.png",GameBuilder.readImage("RTS/src/images/medievalEnvironment_11.png"));
 		}if(!images.containsKey("src/images/medievalEnvironment_01.png")) {
-			images.put("src/images/medievalEnvironment_01.png",GameBuilder.readImage("src/images/medievalEnvironment_01.png"));
+			images.put("src/images/medievalEnvironment_01.png",GameBuilder.readImage("RTS/src/images/medievalEnvironment_01.png"));
 		}if(!images.containsKey("src/images/medievalEnvironment_02.png")) {
-			images.put("src/images/medievalEnvironment_02.png",GameBuilder.readImage("src/images/medievalEnvironment_02.png"));
+			images.put("src/images/medievalEnvironment_02.png",GameBuilder.readImage("RTS/src/images/medievalEnvironment_02.png"));
 		}
 		
 		
@@ -142,21 +142,21 @@ public class PaintStrategy {
         
         if (previewBuildingType.equals("barracks")) {
             if (validPosition) {
-                g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
+                g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
                     x * GameConfiguration.BLOCK_SIZE - 6,
                     y * GameConfiguration.BLOCK_SIZE,
                     imageSize,imageSize, null);
             }
         }else if(previewBuildingType.equals("runway")) {
         	if(validPosition) {
-        		 g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_16.png"),
+        		 g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_16.png"),
                          x * GameConfiguration.BLOCK_SIZE - 10,
                          y * GameConfiguration.BLOCK_SIZE -15,
                          imageSize,imageSize, null);
         	}
         }else if(previewBuildingType.equals("archery")) {
         	if(validPosition) {
-       		 g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_21.png"),
+       		 g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_21.png"),
                         x * GameConfiguration.BLOCK_SIZE - 10,
                         y * GameConfiguration.BLOCK_SIZE -15,
                         imageSize,imageSize, null);
@@ -202,22 +202,22 @@ public class PaintStrategy {
 	        g2.setComposite(alphaComposite);
 	        
 	        if (type == "base") {
-	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_02.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
 	                imageSize, imageSize, null);
 	        } else if (type == "barracks") {
-	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE,
 	                imageSize, imageSize, null);
 	        }else if (type == "runway" ) {
-	        	g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_16.png"),
+	        	g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_16.png"),
 		                position.getColumn() * GameConfiguration.BLOCK_SIZE -10,
 		                position.getLine() * GameConfiguration.BLOCK_SIZE-15,
 		                imageSize, imageSize, null);
 	        }else if (type == "archery" ) {
-	        	g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_21.png"),
+	        	g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_21.png"),
 		                position.getColumn() * GameConfiguration.BLOCK_SIZE -10,
 		                position.getLine() * GameConfiguration.BLOCK_SIZE-15,
 		                imageSize, imageSize, null);
@@ -227,13 +227,13 @@ public class PaintStrategy {
 	    } else {
 	        if (type == "base") {
 
-	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_02.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_02.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
 	                imageSize, imageSize, null);
 	            
 	        } else if (type == "barracks") {
-	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_05.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_05.png"),
 	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
 	                position.getLine() * GameConfiguration.BLOCK_SIZE,
 	                imageSize, imageSize, null);
@@ -249,13 +249,13 @@ public class PaintStrategy {
 	            }
 	            **/
 	        } else if (type == "runway") {
-	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_16.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_16.png"),
 		                position.getColumn() * GameConfiguration.BLOCK_SIZE -10,
 		                position.getLine() * GameConfiguration.BLOCK_SIZE-15,
 		                imageSize, imageSize, null);
            
 		    }else if (type == "archery") {
-	            g2.drawImage(GameBuilder.readImage("src/images/medievalStructure_21.png"),
+	            g2.drawImage(GameBuilder.readImage("RTS/src/images/medievalStructure_21.png"),
 		                position.getColumn() * GameConfiguration.BLOCK_SIZE -10,
 		                position.getLine() * GameConfiguration.BLOCK_SIZE-15,
 		                imageSize, imageSize, null);
@@ -279,13 +279,13 @@ public class PaintStrategy {
 	
 	public void paint(Unit unit,String name, Graphics2D g2,Player mainPlayer) {
 		if(!images.containsKey("src/images/medievalUnit_08.png")) {
-			images.put("src/images/medievalUnit_08.png", GameBuilder.readImage("src/images/medievalUnit_08.png"));
+			images.put("src/images/medievalUnit_08.png", GameBuilder.readImage("RTS/src/images/medievalUnit_08.png"));
 		}
 		if(!images.containsKey("src/images/medievalUnit_07.png")) {
-			images.put("src/images/medievalUnit_07.png", GameBuilder.readImage("src/images/medievalUnit_07.png"));
+			images.put("src/images/medievalUnit_07.png", GameBuilder.readImage("RTS/src/images/medievalUnit_07.png"));
 			
 		}if(!images.containsKey("src/images/medievalUnit_05.png")) {
-			images.put("src/images/medievalUnit_05.png", GameBuilder.readImage("src/images/medievalUnit_05.png"));
+			images.put("src/images/medievalUnit_05.png", GameBuilder.readImage("RTS/src/images/medievalUnit_05.png"));
 		}
 		
 		
@@ -395,7 +395,7 @@ public class PaintStrategy {
 	
 	public void paint(Slave unit, Graphics2D g2,Player mainPlayer) {
 		if(!images.containsKey("src/images/medievalUnit_06.png")) {
-			images.put("src/images/medievalUnit_06.png", GameBuilder.readImage("src/images/medievalUnit_06.png"));
+			images.put("src/images/medievalUnit_06.png", GameBuilder.readImage("RTS/src/images/medievalUnit_06.png"));
 		}
 	    Position position = unit.getZone().getPositions().get(0);
 	    

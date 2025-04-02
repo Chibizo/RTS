@@ -517,7 +517,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class PutBarracks implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(mainPlayer.getWood()>=GameConfiguration.BARRACKS_COST) {
+			if(mainPlayer.getWood()>=GameConfiguration.BARRACKS_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.BARRACKS_COST_ORE) {
 				placingBuilding="barracks";
 				showBuildingPreview = true;
 		        previewBuildingType = "barracks";
@@ -526,7 +526,7 @@ public class MainGUI extends JFrame implements Runnable {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
-	            valueInfo="you don't have enough wood"+GameConfiguration.BARRACKS_COST;
+	            valueInfo="need "+GameConfiguration.BARRACKS_COST_WOOD+" wood & "+GameConfiguration.BARRACKS_COST_ORE+" Ore";
 	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
@@ -537,7 +537,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class PutRunway implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(mainPlayer.getWood()>=GameConfiguration.RUNWAY_COST) {
+			if(mainPlayer.getWood()>=GameConfiguration.RUNWAY_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.RUNWAY_COST_ORE) {
 				placingBuilding="runway";
 				showBuildingPreview = true;
 		        previewBuildingType = "runway";
@@ -546,7 +546,7 @@ public class MainGUI extends JFrame implements Runnable {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
-	            valueInfo="you don't have enough wood";
+	            valueInfo="need "+GameConfiguration.RUNWAY_COST_WOOD+" wood & "+GameConfiguration.RUNWAY_COST_ORE+" Ore";
 	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
@@ -556,7 +556,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class PutArchery implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(mainPlayer.getWood()>=GameConfiguration.ARCHERY_COST) {
+			if(mainPlayer.getWood()>=GameConfiguration.ARCHERY_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.ARCHERY_COST_ORE) {
 				placingBuilding="archery";
 				showBuildingPreview = true;
 		        previewBuildingType = "archery";
@@ -565,7 +565,7 @@ public class MainGUI extends JFrame implements Runnable {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
-	            valueInfo="you don't have enough wood";
+	            valueInfo="need "+GameConfiguration.ARCHERY_COST_WOOD+" wood & "+GameConfiguration.ARCHERY_COST_ORE+" Ore";
 	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
@@ -576,7 +576,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class UpgradeBaseButton implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(mainPlayer.getWood()>=GameConfiguration.BASE_UPGRADE && manager.getBuildingsMainPlayer().get("base").getTier()<2) {
+			if(mainPlayer.getWood()>=GameConfiguration.BASE_UPGRADE_WOOD  && mainPlayer.getMagicOre()>=GameConfiguration.BASE_UPGRADE_ORE && manager.getBuildingsMainPlayer().get("base").getTier()<2) {
 				manager.upgradeBuilding(manager.getBuildingsMainPlayer().get("base"),mainPlayer);
 				baseBuildingMenuPanel.updateBaseTier();
 
@@ -585,7 +585,7 @@ public class MainGUI extends JFrame implements Runnable {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
-	            valueInfo="you don't have enough wood";
+	            valueInfo="need "+GameConfiguration.BASE_UPGRADE_WOOD+" wood & "+GameConfiguration.BASE_UPGRADE_ORE+" Ore";
 	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
@@ -595,7 +595,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class UpgradeBarracksButton implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(mainPlayer.getWood()>=GameConfiguration.BARRACKS_UPGRADE && manager.getBuildingsMainPlayer().get("barracks").getTier()<2 && manager.getBuildingsMainPlayer().get("base").getTier()>1) {
+			if(mainPlayer.getWood()>=GameConfiguration.BARRACKS_UPGRADE_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.BARRACKS_UPGRADE_ORE && manager.getBuildingsMainPlayer().get("barracks").getTier()<2 && manager.getBuildingsMainPlayer().get("base").getTier()>1) {
 				manager.upgradeBuilding(manager.getBuildingsMainPlayer().get("barracks"),mainPlayer);
 				barracksBuildingMenuPanel.updateBarracksTier();
 			}
@@ -603,7 +603,7 @@ public class MainGUI extends JFrame implements Runnable {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
-	            valueInfo="you don't have enough wood or need to upgrade base first";
+	            valueInfo="need QG tier 2 &"+GameConfiguration.BARRACKS_UPGRADE_WOOD+" wood & "+GameConfiguration.BARRACKS_UPGRADE_ORE+" Ore";
 	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
@@ -613,7 +613,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class UpgradeRunwayButton implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(mainPlayer.getWood()>=GameConfiguration.RUNWAY_UPGRADE && manager.getBuildingsMainPlayer().get("runway").getTier()<2 && manager.getBuildingsMainPlayer().get("base").getTier()>1) {
+			if(mainPlayer.getWood()>=GameConfiguration.RUNWAY_UPGRADE_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.RUNWAY_UPGRADE_ORE && manager.getBuildingsMainPlayer().get("runway").getTier()<2 && manager.getBuildingsMainPlayer().get("base").getTier()>1) {
 				manager.upgradeBuilding(manager.getBuildingsMainPlayer().get("runway"),mainPlayer);
 				runwayBuildingMenuPanel.updateRunwayTier();
 
@@ -622,7 +622,7 @@ public class MainGUI extends JFrame implements Runnable {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
-	            valueInfo="you don't have enough wood or need to upgrade base first";
+	            valueInfo="need QG tier 2 &"+GameConfiguration.RUNWAY_UPGRADE_WOOD+" wood & "+GameConfiguration.RUNWAY_UPGRADE_ORE+" Ore";
 	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
@@ -632,7 +632,7 @@ public class MainGUI extends JFrame implements Runnable {
 	private class UpgradeArcheryButton implements ActionListener {
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			if(mainPlayer.getWood()>=GameConfiguration.ARCHERY_UPGRADE && manager.getBuildingsMainPlayer().get("archery").getTier()<2 && manager.getBuildingsMainPlayer().get("base").getTier()>1) {
+			if(mainPlayer.getWood()>=GameConfiguration.ARCHERY_UPGRADE_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.ARCHERY_UPGRADE_ORE && manager.getBuildingsMainPlayer().get("archery").getTier()<2 && manager.getBuildingsMainPlayer().get("base").getTier()>1) {
 				manager.upgradeBuilding(manager.getBuildingsMainPlayer().get("archery"),mainPlayer);
 				archeryBuildingMenuPanel.updateArcheryTier();
 
@@ -641,7 +641,7 @@ public class MainGUI extends JFrame implements Runnable {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
-	            valueInfo="you don't have enough wood or need to upgrade base first";
+	            valueInfo="need QG tier 2 &"+GameConfiguration.ARCHERY_UPGRADE_WOOD+" wood & "+GameConfiguration.ARCHERY_UPGRADE_ORE+" Ore";
 	            infoPlayerPanel.setinfoLabel(valueInfo);
 				warningTime = System.currentTimeMillis();
 			}
@@ -686,7 +686,7 @@ public class MainGUI extends JFrame implements Runnable {
 	            warningTime = System.currentTimeMillis();
 	            return;
 			}
-			else if(mainPlayer.getWood()>=GameConfiguration.SLAVE_COST && (mainPlayer.getSlave() < mainPlayer.getMaxSlaves())) {
+			else if(mainPlayer.getWood()>=GameConfiguration.SLAVE_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.SLAVE_COST_ORE && (mainPlayer.getSlave() < mainPlayer.getMaxSlaves())) {
 				Position unitPosition = new Position(
 			            mainPlayer.getStarterZone().getPositions().get(0).getLine() + 3,
 			            mainPlayer.getStarterZone().getPositions().get(0).getColumn() + manager.getAllUnits().size() %15 -5 
@@ -725,7 +725,7 @@ public class MainGUI extends JFrame implements Runnable {
 	            warningTime = System.currentTimeMillis();
 	            return;
 			}
-			else if(mainPlayer.getWood()>=GameConfiguration.WARRIOR_COST) {
+			else if(mainPlayer.getWood()>=GameConfiguration.WARRIOR_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.WARRIOR_COST_ORE) {
 				Position unitPosition = new Position(
 						barracks.getZone().getPositions().get(0).getLine()+3 ,
 						barracks.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
@@ -760,7 +760,7 @@ public class MainGUI extends JFrame implements Runnable {
 	            warningTime = System.currentTimeMillis();
 	            return;
 			}
-			else if(mainPlayer.getWood()>=GameConfiguration.WIZARD_COST) {
+			else if(mainPlayer.getWood()>=GameConfiguration.WIZARD_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.WIZARD_COST_ORE) {
 				Position unitPosition = new Position(
 						runway.getZone().getPositions().get(0).getLine()+4 ,
 						runway.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
@@ -795,7 +795,7 @@ public class MainGUI extends JFrame implements Runnable {
 	            warningTime = System.currentTimeMillis();
 	            return;
 			}
-			else if(mainPlayer.getWood()>=GameConfiguration.WIZARD_COST) {
+			else if(mainPlayer.getWood()>=GameConfiguration.BOWMAN_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.BOWMAN_COST_ORE) {
 				Position unitPosition = new Position(
 						archery.getZone().getPositions().get(0).getLine()+4 ,
 						archery.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
