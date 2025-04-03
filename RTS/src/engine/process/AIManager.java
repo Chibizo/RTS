@@ -26,6 +26,7 @@ public class AIManager {
     private Position defensivePosition;     
     private static Logger logger = LoggerUtility.getLogger(Map.class, "html");
     private int stage = 1;
+    private boolean defense=true;
 
     
     public AIManager(AIPlayer aiPlayer, MobileInterface mobileManager, Map map) {
@@ -72,13 +73,14 @@ public class AIManager {
         	buildBowman();
         }else if(!hasRunway() && aiPlayer.getWood() >= GameConfiguration.RUNWAY_COST_WOOD && stage==3) {
         	buildRunway();
-        }else if(hasRunway() && aiPlayer.getWood() >= GameConfiguration.WIZARD_COST_WOOD && (wizardCount<9 || (stage==3 && wizardCount<16))) {
+        }else if(hasRunway() && aiPlayer.getWood() >= GameConfiguration.WIZARD_COST_WOOD && (wizardCount<9 || (stage==3 && wizardCount<=16))) {
         	buildWizard();
         }
         
         assignHarvesters();
-        positionDefensiveWarriors();
-        
+        if(defense) {
+        	positionDefensiveWarriors();
+        }
 
         if (warriorCount > 15 && stage==1) {
             coordinatedAttack(warriorCount - 10,"warrior");
@@ -96,8 +98,11 @@ public class AIManager {
             coordinatedAttack(wizardCount-6,"wizard");
             stage=4;
         }
-        if(stage==4 && wizardCount>9) {
+        if(stage==4 && wizardCount>=9) {
         	coordinatedAttack3();
+        }
+        if(stage==4 && wizardCount==0) {
+        	defense=true;
         }
     }
     
@@ -194,7 +199,7 @@ public class AIManager {
     
     private void buildBarracks() {
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
-        int startLine = basePos.getLine() + 5;
+        int startLine = basePos.getLine() + 4;
         int startColumn = basePos.getColumn() - 5;
         
         for (int i = 0; i < 10; i++) {
@@ -202,11 +207,11 @@ public class AIManager {
                 Position pos = new Position(startLine + i, startColumn + j);
                 
                 ArrayList<Position> listPosition = new ArrayList<>();
-                listPosition.add(pos);
-                listPosition.add(new Position(pos.getLine() + 1, pos.getColumn()));
-                listPosition.add(new Position(pos.getLine(), pos.getColumn() + 1));
-                listPosition.add(new Position(pos.getLine() + 1, pos.getColumn() + 1));
-                
+                for (int k = 0; k < 3; k++) {
+                    for (int l = 0; l < 3; l++) {
+                        listPosition.add(new Position(pos.getLine() + k, pos.getColumn() + l));
+                    }
+                }
                 boolean validZone = true;
                 for (Position p : listPosition) {
                     if (map.isfull(p) || map.isOnBorder(p)) {
@@ -234,10 +239,11 @@ public class AIManager {
                 Position pos = new Position(startLine + i, startColumn + j);
                 
                 ArrayList<Position> listPosition = new ArrayList<>();
-                listPosition.add(pos);
-                listPosition.add(new Position(pos.getLine() + 1, pos.getColumn()));
-                listPosition.add(new Position(pos.getLine(), pos.getColumn() + 1));
-                listPosition.add(new Position(pos.getLine() + 1, pos.getColumn() + 1));
+                for (int k = 0; k < 3; k++) {
+                    for (int l = 0; l < 3; l++) {
+                        listPosition.add(new Position(pos.getLine() + k, pos.getColumn() + l));
+                    }
+                }
                 
                 boolean validZone = true;
                 for (Position p : listPosition) {
@@ -266,10 +272,11 @@ public class AIManager {
                 Position pos = new Position(startLine + i, startColumn + j);
                 
                 ArrayList<Position> listPosition = new ArrayList<>();
-                listPosition.add(pos);
-                listPosition.add(new Position(pos.getLine() + 1, pos.getColumn()));
-                listPosition.add(new Position(pos.getLine(), pos.getColumn() + 1));
-                listPosition.add(new Position(pos.getLine() + 1, pos.getColumn() + 1));
+                for (int k = 0; k < 3; k++) {
+                    for (int l = 0; l < 3; l++) {
+                        listPosition.add(new Position(pos.getLine() + k, pos.getColumn() + l));
+                    }
+                }
                 
                 boolean validZone = true;
                 for (Position p : listPosition) {
@@ -641,6 +648,7 @@ public class AIManager {
     
     
     private void coordinatedAttack3() {
+    	defense=false;
         List<Unit> allCombatUnits = new ArrayList<>();
         for (Unit unit : getAIUnits()) {
             if ((unit.getName().equals("warrior") || unit.getName().equals("bowman") || unit.getName().equals("wizard")) 

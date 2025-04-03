@@ -442,10 +442,11 @@ public class MainGUI extends JFrame implements Runnable {
 				}
 								
 				ArrayList<Position> listPosition= new ArrayList<Position>();
-				listPosition.add(map.getBlock(y, x));
-				listPosition.add(map.getBlock(y+1, x));
-				listPosition.add(map.getBlock(y, x+1));
-				listPosition.add(map.getBlock(y+1, x+1));
+				for (int k = 0; k < 3; k++) {
+                    for (int l = 0; l < 3; l++) {
+                        listPosition.add(new Position(clickedPosition.getLine() + k, clickedPosition.getColumn() + l));
+                    }
+                }
 
 				Zone zone=new Zone(listPosition);		
 			
