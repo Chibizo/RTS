@@ -36,7 +36,7 @@ public class AIManager {
         logger.info("Gestionnaire IA initialisé pour le joueur: " + aiPlayer.getRace().getName());
         
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
-        this.defensivePosition = new Position(basePos.getLine() +7, basePos.getColumn()-15);
+        this.defensivePosition = new Position(basePos.getLine() +8, basePos.getColumn()-16);
     }
     
     public void update() {
@@ -63,17 +63,17 @@ public class AIManager {
         else if (!hasBarracks() && aiPlayer.getWood() >= GameConfiguration.BARRACKS_COST_WOOD) {
             buildBarracks();
             logger.info("L'IA décide de construire une caserne");
-        } else if (hasBarracks() && aiPlayer.getWood() >= GameConfiguration.WARRIOR_COST_WOOD && ((warriorCount<10 || stage==1) || (bowmanCount>17 && stage==2))) {
+        } else if (hasBarracks() && aiPlayer.getWood() >= GameConfiguration.WARRIOR_COST_WOOD && ((warriorCount<10 || stage==1) || (bowmanCount>17 && stage==2))  && defense) {
             buildWarrior();
             logger.info("L'IA décide de construire un guerrier (total: " + (warriorCount + 1) + "/10)");
         }else if (!hasArchery() && aiPlayer.getWood() >= GameConfiguration.ARCHERY_COST_WOOD) {
         	buildArchery();
             logger.info("L'IA décide de construire un camp d'archers");
-        }else if(hasArchery() && aiPlayer.getWood() >= GameConfiguration.BOWMAN_COST_WOOD && (bowmanCount<10 || stage ==2)) {
+        }else if(hasArchery() && aiPlayer.getWood() >= GameConfiguration.BOWMAN_COST_WOOD && (bowmanCount<10 || stage ==2) && defense) {
         	buildBowman();
         }else if(!hasRunway() && aiPlayer.getWood() >= GameConfiguration.RUNWAY_COST_WOOD && stage==3) {
         	buildRunway();
-        }else if(hasRunway() && aiPlayer.getWood() >= GameConfiguration.WIZARD_COST_WOOD && (wizardCount<9 || (stage==3 && wizardCount<=16))) {
+        }else if(hasRunway() && aiPlayer.getWood() >= GameConfiguration.WIZARD_COST_WOOD && (wizardCount<9 || (stage==3 && wizardCount<=16)) && defense) {
         	buildWizard();
         }
         
@@ -94,14 +94,14 @@ public class AIManager {
         if(stage==3 && warriorCount>10 && bowmanCount>10) {
         	coordinatedAttack2(warriorCount - 10,bowmanCount-10);
         }
-        if(stage==3 && wizardCount>=15) {
+        if(stage==3 && wizardCount>=14) {
             coordinatedAttack(wizardCount-6,"wizard");
             stage=4;
         }
         if(stage==4 && wizardCount>=9) {
         	coordinatedAttack3();
         }
-        if(stage==4 && wizardCount==0) {
+        if(stage==4 && wizardCount<=1) {
         	defense=true;
         }
     }
@@ -143,7 +143,7 @@ public class AIManager {
     private void buildSlave() {
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
         Position unitPos = new Position(
-            basePos.getLine() + 3,
+            basePos.getLine() + 5,
             basePos.getColumn() + getAIUnits().size() % 10
         );
         
@@ -157,7 +157,7 @@ public class AIManager {
         if (barracks != null && !barracks.isUnderConstruction()) {
             Position barrackPos = barracks.getZone().getPositions().get(0);
             Position unitPos = new Position(
-                barrackPos.getLine() + 3,
+                barrackPos.getLine() + 4,
                 barrackPos.getColumn() + getAIUnits().size() % 10
             );
             
@@ -172,7 +172,7 @@ public class AIManager {
         if (archery != null && !archery.isUnderConstruction()) {
             Position archeryPos = archery.getZone().getPositions().get(0);
             Position unitPos = new Position(
-                archeryPos.getLine() + 3,
+                archeryPos.getLine() + 4,
                 archeryPos.getColumn() + getAIUnits().size() % 10
             );
             
@@ -200,15 +200,15 @@ public class AIManager {
     private void buildBarracks() {
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
         int startLine = basePos.getLine() + 4;
-        int startColumn = basePos.getColumn() - 5;
+        int startColumn = basePos.getColumn() - 6;
         
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 Position pos = new Position(startLine + i, startColumn + j);
                 
                 ArrayList<Position> listPosition = new ArrayList<>();
-                for (int k = 0; k < 3; k++) {
-                    for (int l = 0; l < 3; l++) {
+                for (int k = 0; k < 4; k++) {
+                    for (int l = 0; l < 4; l++) {
                         listPosition.add(new Position(pos.getLine() + k, pos.getColumn() + l));
                     }
                 }
@@ -231,8 +231,8 @@ public class AIManager {
     
     private void buildArchery() {
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
-        int startLine = basePos.getLine() + 11;
-        int startColumn = basePos.getColumn() + 3;
+        int startLine = basePos.getLine() + 13;
+        int startColumn = basePos.getColumn() ;
         
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -265,7 +265,7 @@ public class AIManager {
     private void buildRunway() {
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
         int startLine = basePos.getLine()-4;
-        int startColumn = basePos.getColumn() -5;
+        int startColumn = basePos.getColumn() -9;
         
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -350,11 +350,11 @@ public class AIManager {
         }
         if (maxDefendersWizard > 0) {
             int wizardCount = 0;
-            for (int row = 0; row < 5 && wizardCount < maxDefendersWizard; row += 2) {
+            for (int line = 0; line < 5 && wizardCount < maxDefendersWizard; line += 2) {
                 for (int col = 0; col < 5 && wizardCount < maxDefendersWizard; col += 2) {
                     Unit wizard = wizards.get(wizardCount);
                     Position defPos = new Position(
-                        defensivePosition.getLine()+row+5,
+                        defensivePosition.getLine()+line+5,
                         defensivePosition.getColumn()+col-5  
                     );
                     

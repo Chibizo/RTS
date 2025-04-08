@@ -194,7 +194,7 @@ public class ElementManager implements MobileInterface {
 			building.setTier(2);
 			building.setUnderConstruction(true);
 			building.setConstructionStartTime(System.currentTimeMillis());
-			building.setConstructionTime(60000);
+			building.setConstructionTime(GameConfiguration.BASE_UPGRADE_TIME);
 			building.setMaxHealth(2000);
 			building.setCurrentHealth(2000);
 			player.setWood(player.getWood()-GameConfiguration.BASE_UPGRADE_WOOD);
@@ -203,7 +203,7 @@ public class ElementManager implements MobileInterface {
 			building.setTier(2);
 			building.setUnderConstruction(true);
 			building.setConstructionStartTime(System.currentTimeMillis());
-			building.setConstructionTime(60000);
+			building.setConstructionTime(GameConfiguration.BARRACKS_UPGRADE_TIME);
 			building.setMaxHealth(1000);
 			building.setCurrentHealth(1000);
 			player.setWood(player.getWood()-GameConfiguration.BARRACKS_UPGRADE_WOOD);
@@ -212,7 +212,7 @@ public class ElementManager implements MobileInterface {
 			building.setTier(2);
 			building.setUnderConstruction(true);
 			building.setConstructionStartTime(System.currentTimeMillis());
-			building.setConstructionTime(60000);
+			building.setConstructionTime(GameConfiguration.RUNWAY_UPGRADE_TIME);
 			building.setMaxHealth(1700);
 			building.setCurrentHealth(1700);
 			player.setWood(player.getWood()-GameConfiguration.RUNWAY_UPGRADE_WOOD);
@@ -222,7 +222,7 @@ public class ElementManager implements MobileInterface {
 			building.setTier(2);
 			building.setUnderConstruction(true);
 			building.setConstructionStartTime(System.currentTimeMillis());
-			building.setConstructionTime(60000);
+			building.setConstructionTime(GameConfiguration.ARCHERY_UPGRADE_TIME);
 			building.setMaxHealth(1800);
 			building.setCurrentHealth(1800);
 			player.setWood(player.getWood()-GameConfiguration.ARCHERY_UPGRADE_WOOD);
@@ -255,6 +255,36 @@ public class ElementManager implements MobileInterface {
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
 		putWarrior(new Zone(zone),player);
+	}
+	
+	
+	public synchronized void putKnight(Zone zone,Player player) {
+		if(player.getBuildings("barracks")==null) {
+			return;
+		}
+		for(Position position : zone.getPositions()) {
+			if(map.isOnBorder(position) || map.isfull(position)) {
+				return; 
+			}
+		}
+		Unit unit=new Unit(zone,"ground",400,400,GameConfiguration.KNIGHT_COST_WOOD,GameConfiguration.KNIGHT_COST_ORE,GameConfiguration.KNIGHT_CONSTRUCT_TIME,player.getRace(),"knight",10,1);
+		units.add(unit);
+		map.addFullUnitsPosition(unit.getZone());
+		player.setWood(player.getWood()-unit.getCost().getWood());
+		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		unitSteppers.put(unit, stepper);
+		Thread thread = new Thread(stepper);
+		thread.start();
+		for(Unit un : units) {
+			System.out.println(un.getName());
+		}
+	}
+	
+	public synchronized void putKnight(Position position,Player player) {
+	    logger.debug("Tentative de création d'un chevalier à la position: " + position);
+		ArrayList<Position> zone=new ArrayList<Position>();
+		zone.add(position);
+		putKnight(new Zone(zone),player);
 	}
 	
 	
@@ -753,15 +783,14 @@ public class ElementManager implements MobileInterface {
 	
 	
 	public Position findPositionAtRange(Position currentPos, Position targetPos, int range) {
-	    int dLine = targetPos.getLine() - currentPos.getLine();
-	    int dColumn = targetPos.getColumn() - currentPos.getColumn();
+	    int dLine =targetPos.getLine()-currentPos.getLine();
+	    int dColumn =targetPos.getColumn()-currentPos.getColumn();
+	    double length = Math.sqrt(dLine*dLine+dColumn*dColumn);
+	    double normalizedDLine =dLine/length;
+	    double normalizedDColumn =dColumn/length;
 	    
-	    double length = Math.sqrt(dLine * dLine + dColumn * dColumn);
-	    double normalizedDLine = dLine / length;
-	    double normalizedDColumn = dColumn / length;
-	    
-	    int newLine = currentPos.getLine() + (int)Math.round(normalizedDLine * range);
-	    int newColumn = currentPos.getColumn() + (int)Math.round(normalizedDColumn * range);
+	    int newLine =currentPos.getLine()+(int)Math.round(normalizedDLine * range);
+	    int newColumn =currentPos.getColumn()+(int)Math.round(normalizedDColumn * range);
 	    
 	    return new Position(newLine, newColumn);
 	}

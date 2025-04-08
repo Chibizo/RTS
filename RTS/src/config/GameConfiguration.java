@@ -19,32 +19,38 @@ public class GameConfiguration {
     
     public static final int BASE_UPGRADE_WOOD=0;
     public static final int BASE_UPGRADE_ORE=0;
-
+    
+    public static final int BASE_UPGRADE_TIME=1000;
 
     
     public static final int BARRACKS_COST_WOOD=800;
     public static final int BARRACKS_COST_ORE=0;
-
     public static final int BARRACKS_CONSTRUCT_TIME=100;
+    
     public static final int BARRACKS_UPGRADE_WOOD=0;
     public static final int BARRACKS_UPGRADE_ORE=0;
+    public static final int BARRACKS_UPGRADE_TIME=1000;
+
 
 
     public static final int ARCHERY_COST_WOOD=1200;
     public static final int ARCHERY_COST_ORE=0;
-
     public static final int ARCHERY_CONSTRUCT_TIME=100;
+    
     public static final int ARCHERY_UPGRADE_WOOD=0;
     public static final int ARCHERY_UPGRADE_ORE=0;
+    public static final int ARCHERY_UPGRADE_TIME=1000;
+
 
 
     public static final int RUNWAY_COST_WOOD=1200;
     public static final int RUNWAY_COST_ORE=0;
-    
-
     public static final int RUNWAY_CONSTRUCT_TIME=100;
+    
     public static final int RUNWAY_UPGRADE_WOOD=0;
     public static final int RUNWAY_UPGRADE_ORE=0;
+    public static final int RUNWAY_UPGRADE_TIME=1000;
+
 
 
     public static final int SLAVE_COST_WOOD=100;
@@ -58,6 +64,11 @@ public class GameConfiguration {
     public static final int WARRIOR_COST_ORE=0;
 
     public static final int WARRIOR_CONSTRUCT_TIME=100;
+    
+    public static final int KNIGHT_COST_WOOD=0;
+    public static final int KNIGHT_COST_ORE=0;
+
+    public static final int KNIGHT_CONSTRUCT_TIME=100;
 
     
     public static final int WIZARD_COST_WOOD=0;

@@ -18,8 +18,9 @@ public class BarracksBuildingMenuPanel extends JPanel{
 	
 	private JLabel barracksLabel= new JLabel("<html>Barracks <br>tier : 1 </html>", JLabel.CENTER);;
 	private JButton unitsButton=new JButton("Warrior"); ;
-	private JButton  upgradeButton= new JButton("Upgrade Base");;
-	private JButton backButton= new JButton("Back"); ;
+	private JButton  upgradeButton= new JButton("Upgrade Base");
+	private JButton heavyUnitsButton= new JButton("Knight"); 
+	private JButton backButton= new JButton("Back"); 
 	
 	public BarracksBuildingMenuPanel(Player mainPlayer,MobileInterface manager) {
 		this.manager=manager;
@@ -33,7 +34,12 @@ public class BarracksBuildingMenuPanel extends JPanel{
 	}
 	public void updateBarracksTier() {
 		barracksLabel.setText(getBarracksLabelText());
-		upgradeButton.setText("Knight");
+		remove(upgradeButton);
+		remove(backButton);
+		add(heavyUnitsButton);
+		add(backButton);
+		
+		
 	}
 	
 	private String getBarracksLabelText() {
@@ -57,6 +63,11 @@ public class BarracksBuildingMenuPanel extends JPanel{
         upgradeButton.setForeground(Color.WHITE);
         upgradeButton.setPreferredSize(new Dimension(100,100));
         
+        heavyUnitsButton.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
+        heavyUnitsButton.setBackground(new Color(50, 100, 150));
+        heavyUnitsButton.setForeground(Color.WHITE);
+        heavyUnitsButton.setPreferredSize(new Dimension(100,100));
+        
         backButton.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
         backButton.setBackground(new Color(205, 92, 92));
         backButton.setForeground(Color.WHITE);
@@ -78,5 +89,8 @@ public class BarracksBuildingMenuPanel extends JPanel{
 		return backButton;
 	}
 	
+	public JButton getHeavyUnitsButton() {
+		return heavyUnitsButton;
+	}
 	
 }

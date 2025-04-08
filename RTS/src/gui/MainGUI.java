@@ -158,8 +158,8 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	public void initAIPlayer() {
 		ArrayList<Position> enemyStarterPosition = new ArrayList<Position>();
-	    for (int lineIndex = 6; lineIndex <= 8; lineIndex++) {
-	        for (int columnIndex = 105; columnIndex <= 108; columnIndex++) {
+	    for (int lineIndex = 6; lineIndex <= 9; lineIndex++) {
+	        for (int columnIndex = 108; columnIndex <= 113; columnIndex++) {
 	            Position position = new Position(lineIndex, columnIndex);
 	            enemyStarterPosition.add(position);
 	        }
@@ -178,8 +178,8 @@ public class MainGUI extends JFrame implements Runnable {
 	public Player initMainPlayer(String raceMainPlayer) {
 		ArrayList<Position> starterPositionBase=new ArrayList<Position>();
 			
-		for (int lineIndex = 50; lineIndex <= 52; lineIndex++) {
-	        for (int columnIndex = 11; columnIndex <= 14; columnIndex++) {
+		for (int lineIndex = 49; lineIndex <= 53; lineIndex++) {
+	        for (int columnIndex = 11; columnIndex <= 17; columnIndex++) {
 	            Position position = new Position(lineIndex,columnIndex);
 	            starterPositionBase.add(position);
 	        }
@@ -206,18 +206,19 @@ public class MainGUI extends JFrame implements Runnable {
 		buildingPanel.getBarracksBuilding().addActionListener(new PutBarracks());
 		buildingPanel.getArcheryBuilding().addActionListener(new PutArchery());
 		baseBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
-		baseBuildingMenuPanel.getUnitsButton().addActionListener(new SlaveButton());
+		baseBuildingMenuPanel.getUnitsButton().addActionListener(new SlaveAction());
 		baseBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeBaseButton());
-		barracksBuildingMenuPanel.getUnitsButton().addActionListener(new WarriorButton());
+		barracksBuildingMenuPanel.getUnitsButton().addActionListener(new WarriorAction());
 		barracksBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		barracksBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeBarracksButton());
+		barracksBuildingMenuPanel.getHeavyUnitsButton().addActionListener(new KnightAction());
 		runwayBuildingMenuPanel.getUnitsButton().addActionListener(new WizardAction());
 		runwayBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		runwayBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeRunwayButton());
 		archeryBuildingMenuPanel.getUnitsButton().addActionListener(new BowmanAction());
 		archeryBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		archeryBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeArcheryButton());
-
+		
 		
 	}
 	
@@ -442,8 +443,8 @@ public class MainGUI extends JFrame implements Runnable {
 				}
 								
 				ArrayList<Position> listPosition= new ArrayList<Position>();
-				for (int k = 0; k < 3; k++) {
-                    for (int l = 0; l < 3; l++) {
+				for (int k = 0; k < 4; k++) {
+                    for (int l = 0; l < 4; l++) {
                         listPosition.add(new Position(clickedPosition.getLine() + k, clickedPosition.getColumn() + l));
                     }
                 }
@@ -675,7 +676,7 @@ public class MainGUI extends JFrame implements Runnable {
 		}
 	}
 	
-	private class SlaveButton implements ActionListener {
+	private class SlaveAction implements ActionListener {
 		public void actionPerformed(ActionEvent e){
 			Building base = manager.getBuildingsMainPlayer().get("base");
 			if(base.isUnderConstruction() && base!=null ) {
@@ -689,7 +690,7 @@ public class MainGUI extends JFrame implements Runnable {
 			}
 			else if(mainPlayer.getWood()>=GameConfiguration.SLAVE_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.SLAVE_COST_ORE && (mainPlayer.getSlave() < mainPlayer.getMaxSlaves())) {
 				Position unitPosition = new Position(
-			            mainPlayer.getStarterZone().getPositions().get(0).getLine() + 3,
+			            mainPlayer.getStarterZone().getPositions().get(0).getLine() + 5,
 			            mainPlayer.getStarterZone().getPositions().get(0).getColumn() + manager.getAllUnits().size() %15 -5 
 			        );
 				System.out.println(unitPosition);
@@ -714,7 +715,7 @@ public class MainGUI extends JFrame implements Runnable {
 		}
 	}
 	
-	private class WarriorButton implements ActionListener {
+	private class WarriorAction implements ActionListener {
 		public void actionPerformed(ActionEvent e){
 			Building barracks = mainPlayer.getBuildings("barracks");
 			if(barracks.isUnderConstruction() && barracks!=null) {
@@ -728,7 +729,7 @@ public class MainGUI extends JFrame implements Runnable {
 			}
 			else if(mainPlayer.getWood()>=GameConfiguration.WARRIOR_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.WARRIOR_COST_ORE) {
 				Position unitPosition = new Position(
-						barracks.getZone().getPositions().get(0).getLine()+3 ,
+						barracks.getZone().getPositions().get(0).getLine()+4 ,
 						barracks.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
 			     
 			        );
@@ -748,6 +749,42 @@ public class MainGUI extends JFrame implements Runnable {
 			}
 		}
 	}
+	
+	private class KnightAction implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			Building barracks = mainPlayer.getBuildings("barracks");
+			if(barracks.isUnderConstruction() && barracks!=null) {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="Base is still under construction";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+	            warningTime = System.currentTimeMillis();
+	            return;
+			}
+			else if(mainPlayer.getWood()>=GameConfiguration.KNIGHT_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.KNIGHT_COST_ORE) {
+				Position unitPosition = new Position(
+						barracks.getZone().getPositions().get(0).getLine()+4 ,
+						barracks.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
+			     
+			        );
+				System.out.println(unitPosition);
+				manager.putKnight(unitPosition,mainPlayer);
+				placingUnit=true;
+				
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+	}
+	
+	
 	
 	private class WizardAction implements ActionListener {
 		public void actionPerformed(ActionEvent e){

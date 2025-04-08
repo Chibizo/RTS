@@ -125,6 +125,12 @@ public class GameDisplay extends JPanel {
 			else if(unit.getName()=="bowman" && !manager.getMainPlayer().getRace().equals(unit.getRace())){
 			    paintStrategy.paint(unit, "bowman", g2, null);
 			}
+			else if(unit.getName()=="knight" && manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "knight", g2, manager.getMainPlayer());    
+			}
+			else if(unit.getName()=="knight" && !manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "knight", g2, null);
+			}
 		}
 		
 		if (selectionStart != null && selectionEnd != null) {

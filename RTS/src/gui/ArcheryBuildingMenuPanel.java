@@ -18,7 +18,8 @@ public class ArcheryBuildingMenuPanel extends JPanel{
 
 	private JLabel archeryLabel= new JLabel("<html>Archery <br>tier : 1 </html>", JLabel.CENTER);;
 	private JButton unitsButton=new JButton("Bowman"); ;
-	private JButton  upgradeButton= new JButton("Upgrade Base");;
+	private JButton  upgradeButton= new JButton("Upgrade Base");
+	private JButton heavyUnitsButton= new JButton("Mosketeer"); 
 	private JButton backButton= new JButton("Back"); ;
 	
 	public ArcheryBuildingMenuPanel(Player mainPlayer,MobileInterface manager) {
@@ -48,6 +49,11 @@ public class ArcheryBuildingMenuPanel extends JPanel{
         upgradeButton.setForeground(Color.WHITE);
         upgradeButton.setPreferredSize(new Dimension(100,100));
         
+        heavyUnitsButton.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
+        heavyUnitsButton.setBackground(new Color(50, 100, 150));
+        heavyUnitsButton.setForeground(Color.WHITE);
+        heavyUnitsButton.setPreferredSize(new Dimension(100,100));
+        
         backButton.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
         backButton.setBackground(new Color(205, 92, 92));
         backButton.setForeground(Color.WHITE);
@@ -59,7 +65,10 @@ public class ArcheryBuildingMenuPanel extends JPanel{
 	
 	public void updateArcheryTier() {
 		archeryLabel.setText(getArcheryLabelText());
-		upgradeButton.setText("Musketeers");
+		remove(upgradeButton);
+		remove(backButton);
+		add(heavyUnitsButton);
+		add(backButton);
 	}
 	
 	private String getArcheryLabelText() {

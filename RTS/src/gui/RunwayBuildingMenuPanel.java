@@ -18,7 +18,8 @@ public class RunwayBuildingMenuPanel extends JPanel{
 
 	private JLabel runwayLabel= new JLabel("<html>Archery <br>tier : 1 </html>", JLabel.CENTER);;
 	private JButton unitsButton=new JButton("Wizard"); ;
-	private JButton  upgradeButton= new JButton("Upgrade Base");;
+	private JButton  upgradeButton= new JButton("Upgrade Base");
+	private JButton heavyUnitsButton= new JButton("Airship"); 
 	private JButton backButton= new JButton("Back"); ;
 	
 	public RunwayBuildingMenuPanel(Player mainPlayer,MobileInterface manager) {
@@ -34,8 +35,10 @@ public class RunwayBuildingMenuPanel extends JPanel{
 	
 	public void updateRunwayTier() {
 		runwayLabel.setText(getRunwayLabelText());
-		upgradeButton.setText("airship");
-	}
+		remove(upgradeButton);
+		remove(backButton);
+		add(heavyUnitsButton);
+		add(backButton);	}
 	
 	private String getRunwayLabelText() {
 		int tier = manager.getBuildingsMainPlayer().get("runway").getTier();
@@ -57,6 +60,11 @@ public class RunwayBuildingMenuPanel extends JPanel{
         upgradeButton.setBackground(new Color(50, 100, 150));
         upgradeButton.setForeground(Color.WHITE);
         upgradeButton.setPreferredSize(new Dimension(100,100));
+        
+        heavyUnitsButton.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
+        heavyUnitsButton.setBackground(new Color(50, 100, 150));
+        heavyUnitsButton.setForeground(Color.WHITE);
+        heavyUnitsButton.setPreferredSize(new Dimension(100,100));
         
         backButton.setFont(new Font("Nimbus Sans", Font.BOLD, 15));
         backButton.setBackground(new Color(205, 92, 92));
