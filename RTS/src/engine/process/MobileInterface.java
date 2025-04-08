@@ -17,6 +17,13 @@ public interface MobileInterface {
 	public void  putKnight(Zone zone,Player player);
 	public void  putKnight(Position position,Player player);
 	
+	public void  putMosketeer(Zone zone,Player player);
+	public void  putMosketeer(Position position,Player player);
+	
+	public void  putAirship(Zone zone,Player player);
+	public void  putAirship(Position position,Player player);
+
+	
 	public void  putWizard(Zone zone,Player player);
 	public void  putWizard(Position position,Player player);
 	

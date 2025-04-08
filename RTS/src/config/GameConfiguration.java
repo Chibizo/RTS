@@ -75,6 +75,11 @@ public class GameConfiguration {
     public static final int WIZARD_COST_ORE=0;
 
     public static final int WIZARD_CONSTRUCT_TIME=100;
+    
+    public static final int AIRSHIP_COST_WOOD=0;
+    public static final int AIRSHIP_COST_ORE=0;
+
+    public static final int AIRSHIP_CONSTRUCT_TIME=100;
 
     
     
@@ -82,6 +87,11 @@ public class GameConfiguration {
     public static final int BOWMAN_COST_ORE=0;
 
     public static final int BOWMAN_CONSTRUCT_TIME=100;
+    
+    public static final int MOSKETEER_COST_WOOD=0;
+    public static final int MOSKETEER_COST_ORE=0;
+
+    public static final int MOSKETEER_CONSTRUCT_TIME=100;
 
 
 

@@ -131,6 +131,18 @@ public class GameDisplay extends JPanel {
 			else if(unit.getName()=="knight" && !manager.getMainPlayer().getRace().equals(unit.getRace())){
 			    paintStrategy.paint(unit, "knight", g2, null);
 			}
+			else if(unit.getName()=="mosketeer" && manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "mosketeer", g2, manager.getMainPlayer());    
+			}
+			else if(unit.getName()=="mosketeer" && !manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "mosketeer", g2, null);
+			}
+			else if(unit.getName()=="airship" && manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "airship", g2, manager.getMainPlayer());    
+			}
+			else if(unit.getName()=="airship" && !manager.getMainPlayer().getRace().equals(unit.getRace())){
+			    paintStrategy.paint(unit, "airship", g2, null);
+			}
 		}
 		
 		if (selectionStart != null && selectionEnd != null) {

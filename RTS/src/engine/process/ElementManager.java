@@ -287,6 +287,63 @@ public class ElementManager implements MobileInterface {
 		putKnight(new Zone(zone),player);
 	}
 	
+	public synchronized void putMosketeer(Zone zone,Player player) {
+		if(player.getBuildings("archery")==null) {
+			return;
+		}
+		for(Position position : zone.getPositions()) {
+			if(map.isOnBorder(position) || map.isfull(position)) {
+				return; 
+			}
+		}
+		Unit unit=new Unit(zone,"ground",200,200,GameConfiguration.MOSKETEER_COST_WOOD,GameConfiguration.MOSKETEER_COST_ORE,GameConfiguration.MOSKETEER_CONSTRUCT_TIME,player.getRace(),"mosketeer",25,22);
+		units.add(unit);
+		map.addFullUnitsPosition(unit.getZone());
+		player.setWood(player.getWood()-unit.getCost().getWood());
+		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		unitSteppers.put(unit, stepper);
+		Thread thread = new Thread(stepper);
+		thread.start();
+		for(Unit un : units) {
+			System.out.println(un.getName());
+		}
+	}
+	
+	public synchronized void putMosketeer(Position position,Player player) {
+	    logger.debug("Tentative de création d'un mosketeer à la position: " + position);
+		ArrayList<Position> zone=new ArrayList<Position>();
+		zone.add(position);
+		putMosketeer(new Zone(zone),player);
+	}
+	
+	public synchronized void putAirship(Zone zone,Player player) {
+		if(player.getBuildings("runway")==null) {
+			return;
+		}
+		for(Position position : zone.getPositions()) {
+			if(map.isOnBorder(position) || map.isfull(position)) {
+				return; 
+			}
+		}
+		Unit unit=new Unit(zone,"air",500,500,GameConfiguration.AIRSHIP_COST_WOOD,GameConfiguration.AIRSHIP_COST_ORE,GameConfiguration.AIRSHIP_CONSTRUCT_TIME,player.getRace(),"airship",50,20);
+		units.add(unit);
+		map.addFullUnitsPosition(unit.getZone());
+		player.setWood(player.getWood()-unit.getCost().getWood());
+		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		unitSteppers.put(unit, stepper);
+		Thread thread = new Thread(stepper);
+		thread.start();
+		for(Unit un : units) {
+			System.out.println(un.getName());
+		}
+	}
+	
+	public synchronized void putAirship(Position position,Player player) {
+	    logger.debug("Tentative de création d'un airship à la position: " + position);
+		ArrayList<Position> zone=new ArrayList<Position>();
+		zone.add(position);
+		putAirship(new Zone(zone),player);
+	}
 	
 	public synchronized void putWizard(Zone zone,Player player) {
 		if(player.getBuildings("runway")==null) {

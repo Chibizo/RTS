@@ -87,6 +87,9 @@ public class ArcheryBuildingMenuPanel extends JPanel{
 	public JButton getBackButton() {
 		return backButton;
 	}
+	public JButton getHeavyUnitsButton() {
+		return heavyUnitsButton;
+	}
 	
 	
 }

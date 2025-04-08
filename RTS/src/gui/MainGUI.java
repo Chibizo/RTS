@@ -74,6 +74,8 @@ public class MainGUI extends JFrame implements Runnable {
 	
 	private AIPlayer enemyPlayer;
 	private AIManager aiManager;
+	private AIPlayer enemyPlayer2;
+	private AIManager aiManager2;
 	
 	private JButton buildingButton=new JButton("Building");
 	
@@ -96,13 +98,17 @@ public class MainGUI extends JFrame implements Runnable {
 	private boolean isDragging = false;
 	
 	private volatile boolean running = true;
+	
+	private int numberPlayer;
 
-	public MainGUI(String title,String race) {
+	public MainGUI(String title,String race,int numberPlayer) {
 		super(title);
 		raceMainPlayer=race;
 		init();
 		initStyle();
 		initAction();
+		this.numberPlayer=numberPlayer;
+		
 	}
 
 	private void init() {
@@ -164,7 +170,7 @@ public class MainGUI extends JFrame implements Runnable {
 	            enemyStarterPosition.add(position);
 	        }
 	    }
-	    
+	    mainPlayer.getRace().getName();
 	    
 	    String enemyRace ="elf";
 	    enemyPlayer = new AIPlayer(550, 500, new Race(enemyRace), new Zone(enemyStarterPosition));
@@ -215,9 +221,12 @@ public class MainGUI extends JFrame implements Runnable {
 		runwayBuildingMenuPanel.getUnitsButton().addActionListener(new WizardAction());
 		runwayBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		runwayBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeRunwayButton());
+		runwayBuildingMenuPanel.getHeavyUnitsButton().addActionListener(new AirshipAction());
 		archeryBuildingMenuPanel.getUnitsButton().addActionListener(new BowmanAction());
 		archeryBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		archeryBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeArcheryButton());
+		archeryBuildingMenuPanel.getHeavyUnitsButton().addActionListener(new MosketeerAction());
+
 		
 		
 	}
@@ -757,7 +766,7 @@ public class MainGUI extends JFrame implements Runnable {
 				if(warningTime == -1) {
 	                lastInfo = valueInfo;
 	            }
-	            valueInfo="Base is still under construction";
+	            valueInfo="Barrack is still under construction";
 	            infoPlayerPanel.setinfoLabel(valueInfo);
 	            warningTime = System.currentTimeMillis();
 	            return;
@@ -784,7 +793,73 @@ public class MainGUI extends JFrame implements Runnable {
 		}
 	}
 	
+	private class MosketeerAction implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			Building archery = mainPlayer.getBuildings("archery");
+			if(archery.isUnderConstruction() && archery!=null) {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="archery is still under construction";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+	            warningTime = System.currentTimeMillis();
+	            return;
+			}
+			else if(mainPlayer.getWood()>=GameConfiguration.MOSKETEER_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.MOSKETEER_COST_ORE) {
+				Position unitPosition = new Position(
+						archery.getZone().getPositions().get(0).getLine()+4 ,
+						archery.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
+			     
+			        );
+				System.out.println(unitPosition);
+				manager.putMosketeer(unitPosition,mainPlayer);
+				placingUnit=true;
+				
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+	}
 	
+	private class AirshipAction implements ActionListener {
+		public void actionPerformed(ActionEvent e){
+			Building runway = mainPlayer.getBuildings("runway");
+			if(runway.isUnderConstruction() && runway!=null) {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="runway is still under construction";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+	            warningTime = System.currentTimeMillis();
+	            return;
+			}
+			else if(mainPlayer.getWood()>=GameConfiguration.AIRSHIP_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.AIRSHIP_COST_ORE) {
+				Position unitPosition = new Position(
+						runway.getZone().getPositions().get(0).getLine()+4 ,
+						runway.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
+			     
+			        );
+				System.out.println(unitPosition);
+				manager.putAirship(unitPosition,mainPlayer);
+				placingUnit=true;
+				
+			}
+			else {
+				if(warningTime == -1) {
+	                lastInfo = valueInfo;
+	            }
+	            valueInfo="you don't have enough wood";
+	            infoPlayerPanel.setinfoLabel(valueInfo);
+				warningTime = System.currentTimeMillis();
+			}
+		}
+	}
 	
 	private class WizardAction implements ActionListener {
 		public void actionPerformed(ActionEvent e){

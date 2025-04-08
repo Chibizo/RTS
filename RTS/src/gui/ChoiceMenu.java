@@ -244,7 +244,7 @@ public class ChoiceMenu extends JFrame{
 		public void actionPerformed(ActionEvent e) {
 			numberPlayer=2;
 			fenetre.dispose();	
-			MainGUI gameMainGUI = new MainGUI("RTS",race);
+			MainGUI gameMainGUI = new MainGUI("RTS",race,numberPlayer);
 
 			Thread gameThread = new Thread(gameMainGUI);
 			gameThread.start();
@@ -261,7 +261,7 @@ public class ChoiceMenu extends JFrame{
 		public void actionPerformed(ActionEvent e) {
 			numberPlayer=3;
 			fenetre.dispose();	
-			MainGUI gameMainGUI = new MainGUI("RTS",race);
+			MainGUI gameMainGUI = new MainGUI("RTS",race,numberPlayer);
 
 			Thread gameThread = new Thread(gameMainGUI);
 			gameThread.start();
@@ -279,7 +279,7 @@ public class ChoiceMenu extends JFrame{
 		public void actionPerformed(ActionEvent e) {
 			numberPlayer=4;
 			fenetre.dispose();	
-			MainGUI gameMainGUI = new MainGUI("RTS",race);
+			MainGUI gameMainGUI = new MainGUI("RTS",race,numberPlayer);
 
 			Thread gameThread = new Thread(gameMainGUI);
 			gameThread.start();

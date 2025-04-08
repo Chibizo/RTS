@@ -6,6 +6,8 @@ import log.LoggerUtility;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+
 import javax.imageio.ImageIO;
 import org.apache.log4j.Logger;
 import config.GameConfiguration;
@@ -38,5 +40,23 @@ public class GameBuilder {
 			System.err.println("-- Can not read the image file ! --");
 			return null;
 		}
+	}
+	
+	public static String getRandomRace(String excludedRace1, String excludedRace2) {
+	    String[] races = {"human", "elf", "dwarf"};
+	    ArrayList<String> availableRaces = new ArrayList<>();
+	    
+	    for (String race : races) {
+	        if (!race.equals(excludedRace1) && !race.equals(excludedRace2)) {
+	            availableRaces.add(race);
+	        }
+	    }
+	    
+	    if (availableRaces.size() == 1) {
+	        return availableRaces.get(0);
+	    }
+	    
+	    int randomIndex = (int) (Math.random() * availableRaces.size());
+	    return availableRaces.get(randomIndex);
 	}
 }
