@@ -56,11 +56,16 @@ public class Map {
 		magicOrePositions.add(new Position(56, 24)); 
 		magicOrePositions.add(new Position(55, 23));
 		magicOrePositions.add(new Position(56, 23));
-		//IAPlayer magicore
+		//IAPlayer1 magicore
 		magicOrePositions.add(new Position(5, 93)); 
 		magicOrePositions.add(new Position(6, 93)); 
 		magicOrePositions.add(new Position(5, 92));
 		magicOrePositions.add(new Position(6, 92));
+		
+		magicOrePositions.add(new Position(39, 111)); 
+		magicOrePositions.add(new Position(40, 111)); 
+		magicOrePositions.add(new Position(39, 110));
+		magicOrePositions.add(new Position(40, 110));
 	    magicOreLocations=new Zone(magicOrePositions);
 	    
 		
@@ -73,6 +78,12 @@ public class Map {
 		 }
 		 for (int lineIndex = 15; lineIndex <= 17; lineIndex++) {
 		        for (int columnIndex = 112; columnIndex <= 114; columnIndex++) {
+		            Position position = block[lineIndex][columnIndex];
+		            woodPositions.add(position);
+		        }
+		 }
+		 for (int lineIndex = 53; lineIndex <= 55; lineIndex++) {
+		        for (int columnIndex = 94; columnIndex <= 96; columnIndex++) {
 		            Position position = block[lineIndex][columnIndex];
 		            woodPositions.add(position);
 		        }
@@ -134,17 +145,21 @@ public class Map {
 	public boolean isfull(Position position) {
 		
 		for(Zone zone : fullPosition) {
-			for(Position pos : zone.getPositions()) {
-				if(position.equals(pos)) {
-					return true;
+			if (zone != null) {
+				for(Position pos : zone.getPositions()) {
+					if(position.equals(pos)) {
+						return true;
+					}
 				}
 			}
 			
 		}
 		for(Zone zone : fullUnitsPosition) {
-			for(Position pos : zone.getPositions()) {
-				if(position.equals(pos)) {
-					return true;
+			if (zone != null) {
+				for(Position pos : zone.getPositions()) {
+					if(position.equals(pos)) {
+						return true;
+					}
 				}
 			}
 			
@@ -155,9 +170,11 @@ public class Map {
 	public synchronized boolean isfullUnits(Position position) {
 		try {
 			for(Zone zone : fullUnitsPosition) {
-				for(Position pos : zone.getPositions()) {
-					if(position.equals(pos)) {
-						return true;
+				if (zone != null) {
+					for(Position pos : zone.getPositions()) {
+						if(position.equals(pos)) {
+							return true;
+						}
 					}
 				}
 				

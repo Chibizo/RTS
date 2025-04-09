@@ -103,11 +103,11 @@ public class MainGUI extends JFrame implements Runnable {
 
 	public MainGUI(String title,String race,int numberPlayer) {
 		super(title);
+		this.numberPlayer=numberPlayer;
 		raceMainPlayer=race;
 		init();
 		initStyle();
 		initAction();
-		this.numberPlayer=numberPlayer;
 		
 	}
 
@@ -122,11 +122,14 @@ public class MainGUI extends JFrame implements Runnable {
 		
 		
 		map=GameBuilder.buildMap();
-		
+		 
 		mainPlayer=initMainPlayer(raceMainPlayer);
 		
+		initAIPlayerRace();
 		
-		manager= GameBuilder.buildInitMobile(map,mainPlayer,enemyPlayer);
+		manager= GameBuilder.buildInitMobile(map,mainPlayer,enemyPlayer,enemyPlayer2);
+		
+		initAIPlayerStart();
 		
 		dashboard = new GameDisplay(map,manager);
 		MouseControls mouseControls = new MouseControls();
@@ -152,7 +155,7 @@ public class MainGUI extends JFrame implements Runnable {
 		infoPlayerPanel=new InfoPlayerPanel(mainPlayer,this);
 		contentPane.add(infoPlayerPanel,BorderLayout.SOUTH);
 
-		initAIPlayer();
+		
 		
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		pack();
@@ -162,7 +165,7 @@ public class MainGUI extends JFrame implements Runnable {
 		setResizable(false);
 	}
 	
-	public void initAIPlayer() {
+	public void initAIPlayerRace() {
 		ArrayList<Position> enemyStarterPosition = new ArrayList<Position>();
 	    for (int lineIndex = 6; lineIndex <= 9; lineIndex++) {
 	        for (int columnIndex = 108; columnIndex <= 113; columnIndex++) {
@@ -170,15 +173,37 @@ public class MainGUI extends JFrame implements Runnable {
 	            enemyStarterPosition.add(position);
 	        }
 	    }
-	    mainPlayer.getRace().getName();
 	    
-	    String enemyRace ="elf";
+	    String enemyRace=GameBuilder.getRandomRace(mainPlayer.getRace().getName(),"");
 	    enemyPlayer = new AIPlayer(550, 500, new Race(enemyRace), new Zone(enemyStarterPosition));
 	    
-	    manager.putBuilding(enemyPlayer.getStarterZone(), "base", enemyPlayer);
 	    
-	    aiManager = new AIManager(enemyPlayer, manager, map);
+	    System.out.println(numberPlayer);
+	    if(numberPlayer==3) {
+	    	ArrayList<Position> enemy2StarterPosition = new ArrayList<Position>();
+	        for (int lineIndex = 50; lineIndex <= 53; lineIndex++) {
+	            for (int columnIndex = 105; columnIndex <= 110; columnIndex++) {
+	                Position position = new Position(lineIndex, columnIndex);
+	                enemy2StarterPosition.add(position);
+	            }
+	        }
+	        String enemy2Race = GameBuilder.getRandomRace(mainPlayer.getRace().getName(),enemyRace);
+	        enemyPlayer2 = new AIPlayer(550, 500, new Race(enemy2Race), new Zone(enemy2StarterPosition));
+	        
+	   
+	    } 
 	    
+	}
+	
+	public void initAIPlayerStart() {
+		 manager.putBuilding(enemyPlayer.getStarterZone(), "base", enemyPlayer.getRace().getName());
+		    
+		    aiManager = new AIManager(enemyPlayer, manager, map,1);
+		 if(numberPlayer==3) {   
+			 manager.putBuilding(enemyPlayer2.getStarterZone(), "base", enemyPlayer2.getRace().getName());
+		        
+		        aiManager2 = new AIManager(enemyPlayer2, manager, map,2);
+		 }
 	}
 	
 	public Player initMainPlayer(String raceMainPlayer) {
@@ -243,22 +268,30 @@ public class MainGUI extends JFrame implements Runnable {
 			} catch (InterruptedException e) {
 				System.out.println(e.getMessage());
 			}
-			if(manager.getBuildingsMainPlayer().isEmpty() || manager.getBuildingsAIPlayer().isEmpty()) {
-			    manager.terminateGame();
-			    running=false;
-			    this.dispose();	
+			if(manager.getBuildingsMainPlayer().isEmpty() || 
+					   (manager.getBuildingsAIPlayer().isEmpty() && 
+					    (numberPlayer == 2 || manager.getBuildingsAIPlayer2().isEmpty()))) {
+				manager.terminateGame();
+			    running=false; 
+			    this.dispose();
 			    if(manager.getBuildingsMainPlayer().isEmpty()) {
-			    	EndWindow endWindow= new EndWindow("FIN DE PARTIE",manager,mainPlayer,enemyPlayer);
-
-			    }else {
 			    	EndWindow endWindow= new EndWindow("FIN DE PARTIE",manager,enemyPlayer,mainPlayer);
+
+			    }else if(manager.getBuildingsAIPlayer().isEmpty() && manager.getBuildingsAIPlayer2().isEmpty()){
+			    	EndWindow endWindow= new EndWindow("FIN DE PARTIE",manager,mainPlayer,enemyPlayer);
 			    }
 			}
 
 			aiManager.update();
+			if(aiManager2!=null) {
+				aiManager2.update();
+			}
 			manager.updateConstruction();
 			manager.checkCombat();
 			manager.checkCloseEnemy();
+			
+			
+			
 			dashboard.repaint();
 			infoPlayerPanel.update();	
 	        if (warningTime != -1 && System.currentTimeMillis() - warningTime >= 4000) {
@@ -462,7 +495,7 @@ public class MainGUI extends JFrame implements Runnable {
 			
 				if((placingBuilding=="barracks" || placingBuilding=="runway" || placingBuilding=="archery") && !map.isfull(listPosition.get(0)) && (clickedPosition.getColumn()<=35 && clickedPosition.getLine()>=35)) {
 					
-						manager.putBuilding(zone,placingBuilding,mainPlayer);
+						manager.putBuilding(zone,placingBuilding,mainPlayer.getRace().getName());
 						infoPlayerPanel.update();
 						
 						for(Position position : listPosition){

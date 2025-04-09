@@ -27,16 +27,24 @@ public class AIManager {
     private static Logger logger = LoggerUtility.getLogger(Map.class, "html");
     private int stage = 1;
     private boolean defense=true;
+    private int number;
+    private String targetRace;
 
     
-    public AIManager(AIPlayer aiPlayer, MobileInterface mobileManager, Map map) {
+    public AIManager(AIPlayer aiPlayer, MobileInterface mobileManager, Map map,int number) {
         this.aiPlayer = aiPlayer;
         this.mobileManager = mobileManager;
         this.map = map;
         logger.info("Gestionnaire IA initialisé pour le joueur: " + aiPlayer.getRace().getName());
-        
+        this.number=number;
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
-        this.defensivePosition = new Position(basePos.getLine() +8, basePos.getColumn()-16);
+        if(number==1) {
+        	this.defensivePosition=new Position(basePos.getLine() +8, basePos.getColumn()-18);
+        }else {
+        	this.defensivePosition=new Position(basePos.getLine()+2,basePos.getColumn()-8);
+        }
+        this.targetRace = GameBuilder.getRandomRace(aiPlayer.getRace().getName(), null);
+        logger.info("Race initiale ciblée par l'IA: " + targetRace);
     }
     
     public void update() {
@@ -54,17 +62,21 @@ public class AIManager {
         int bowmanCount = countUnitType("bowman");
         int wizardCount = countUnitType("wizard");
 
-
         
-        if (currentSlaveCount < 4 && aiPlayer.getWood() >= GameConfiguration.SLAVE_COST_WOOD) {
+        if (hasBase() && currentSlaveCount < 4 && aiPlayer.getWood() >= GameConfiguration.SLAVE_COST_WOOD) {
             buildSlave();
             logger.info("L'IA décide de construire un esclave (total: " + (currentSlaveCount + 1) + "/4)");
+            System.out.println(aiPlayer.getBuildings());
+
         }
         else if (!hasBarracks() && aiPlayer.getWood() >= GameConfiguration.BARRACKS_COST_WOOD) {
             buildBarracks();
             logger.info("L'IA décide de construire une caserne");
         } else if (hasBarracks() && aiPlayer.getWood() >= GameConfiguration.WARRIOR_COST_WOOD && ((warriorCount<10 || stage==1) || (bowmanCount>17 && stage==2))  && defense) {
             buildWarrior();
+            System.out.println(hasBarracks());
+            System.out.println(aiPlayer.getBuildings());
+
             logger.info("L'IA décide de construire un guerrier (total: " + (warriorCount + 1) + "/10)");
         }else if (!hasArchery() && aiPlayer.getWood() >= GameConfiguration.ARCHERY_COST_WOOD) {
         	buildArchery();
@@ -83,11 +95,17 @@ public class AIManager {
         }
 
         if (warriorCount > 15 && stage==1) {
+            targetRace = GameBuilder.getRandomRace(aiPlayer.getRace().getName(), null);
+
             coordinatedAttack(warriorCount - 10,"warrior");
             stage=2;
             logger.info("L'IA lance une attaque coordonnée avec " + (warriorCount - 10) + " guerriers en surplus");
         }
+        if(stage==2 && warriorCount>10 && bowmanCount==0) {
+            coordinatedAttack(warriorCount - 10,"warrior");
+        }
         if( warriorCount>17 && bowmanCount>17) {
+            targetRace = GameBuilder.getRandomRace(aiPlayer.getRace().getName(), null);
         	coordinatedAttack2(warriorCount - 10,bowmanCount-10);
         	stage=3;
         }
@@ -95,10 +113,12 @@ public class AIManager {
         	coordinatedAttack2(warriorCount - 10,bowmanCount-10);
         }
         if(stage==3 && wizardCount>=14) {
+            targetRace = GameBuilder.getRandomRace(aiPlayer.getRace().getName(), null);
             coordinatedAttack(wizardCount-6,"wizard");
             stage=4;
         }
         if(stage==4 && wizardCount>=9) {
+            targetRace = GameBuilder.getRandomRace(aiPlayer.getRace().getName(), null);
         	coordinatedAttack3();
         }
         if(stage==4 && wizardCount<=1) {
@@ -106,8 +126,32 @@ public class AIManager {
         }
     }
     
+    private List<Unit> getEnemyUnitsByRace(String targetRace) {
+        List<Unit> enemyUnits = new ArrayList<>();
+        for (Unit unit : mobileManager.getAllUnits()) {
+            if (unit.getRace().getName().equals(targetRace)) {
+                enemyUnits.add(unit);
+            }
+        }
+        return enemyUnits;
+    }
+    
+    private List<Building> getEnemyBuildingsByRace(String targetRace) {
+        List<Building> enemyBuildings = new ArrayList<>();
+        for (Building building : mobileManager.getBuildings()) {
+            if (building.getRace().getName().equals(targetRace)) {
+                enemyBuildings.add(building);
+            }
+        }
+        return enemyBuildings;
+    }
+    
     private boolean hasBarracks() {
         return aiPlayer.getBuildings("barracks") != null;
+        
+    }
+    private boolean hasBase() {
+        return aiPlayer.getBuildings("base") != null;
     }
     
     private int countUnitType(String unitType) {
@@ -199,8 +243,15 @@ public class AIManager {
     
     private void buildBarracks() {
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
-        int startLine = basePos.getLine() + 4;
-        int startColumn = basePos.getColumn() - 6;
+        int startLine ;
+    	int startColumn ;
+        if(number==1) {
+        	startLine = basePos.getLine() + 4;
+        	startColumn = basePos.getColumn() - 6;
+        }else {
+        	startLine = basePos.getLine() -10;
+        	startColumn = basePos.getColumn() -11;
+        }
         
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -222,7 +273,7 @@ public class AIManager {
                 
                 if (validZone) {
                     Zone zone = new Zone(listPosition);
-                    mobileManager.putBuilding(zone, "barracks", aiPlayer);
+                    mobileManager.putBuilding(zone, "barracks", aiPlayer.getRace().getName());
                     return;
                 }
             }
@@ -231,8 +282,15 @@ public class AIManager {
     
     private void buildArchery() {
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
-        int startLine = basePos.getLine() + 13;
-        int startColumn = basePos.getColumn() ;
+        int startLine ;
+        int startColumn ;
+        if(number==1) {
+        	startLine = basePos.getLine() +13;
+            startColumn = basePos.getColumn() ;
+        }else {
+        	startLine = basePos.getLine() +2;
+            startColumn = basePos.getColumn()-22 ;
+        }
         
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -255,7 +313,7 @@ public class AIManager {
                 
                 if (validZone) {
                     Zone zone = new Zone(listPosition);
-                    mobileManager.putBuilding(zone, "archery", aiPlayer);
+                    mobileManager.putBuilding(zone, "archery", aiPlayer.getRace().getName());
                     return;
                 }
             }
@@ -264,8 +322,15 @@ public class AIManager {
     
     private void buildRunway() {
         Position basePos = aiPlayer.getStarterZone().getPositions().get(0);
-        int startLine = basePos.getLine()-4;
-        int startColumn = basePos.getColumn() -9;
+        int startLine  ;
+        int startColumn ;
+        if(number==1) {
+        	startLine = basePos.getLine()-4;
+            startColumn = basePos.getColumn() -9;
+        }else {
+        	startLine = basePos.getLine()-5;
+            startColumn = basePos.getColumn() +2;
+        }
         
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
@@ -288,7 +353,7 @@ public class AIManager {
                 
                 if (validZone) {
                     Zone zone = new Zone(listPosition);
-                    mobileManager.putBuilding(zone, "runway", aiPlayer);
+                    mobileManager.putBuilding(zone, "runway", aiPlayer.getRace().getName());
                     return;
                 }
             }
@@ -324,10 +389,18 @@ public class AIManager {
         // Formation diagonale
         for (int i = 0; i < maxDefendersWarriors; i++) {
             Unit warrior = warriors.get(i);
-            Position defPos = new Position(
-                defensivePosition.getLine() + i, 
-                defensivePosition.getColumn() + i
-            );
+            Position defPos ;
+            if(number==1) {
+                defPos = new Position(
+                    defensivePosition.getLine() + i, 
+                    defensivePosition.getColumn() + i
+                );
+            } else {
+                defPos = new Position(
+                    defensivePosition.getLine() - i, 
+                    defensivePosition.getColumn() + i
+                );
+            }
             
             if (!warrior.getZone().getPositions().get(0).equals(defPos)) {
                 warrior.setTargetPosition(defPos);
@@ -337,10 +410,18 @@ public class AIManager {
         }
         for (int i = 0; i < maxDefendersBowman; i++) {
             Unit bowman = bowmans.get(i);
-            Position defPos = new Position(
-                defensivePosition.getLine() + i-2, 
-                defensivePosition.getColumn() + i+2
-            );
+            Position defPos ;
+            if(number==1) {
+                defPos = new Position(
+                    defensivePosition.getLine() + i-2, 
+                    defensivePosition.getColumn() + i+2
+                );
+            } else {
+                defPos = new Position(
+                    defensivePosition.getLine() - i+2, 
+                    defensivePosition.getColumn() + i+2
+                );
+            }
             
             if (!bowman.getZone().getPositions().get(0).equals(defPos)) {
                 bowman.setTargetPosition(defPos);
@@ -353,10 +434,18 @@ public class AIManager {
             for (int line = 0; line < 5 && wizardCount < maxDefendersWizard; line += 2) {
                 for (int col = 0; col < 5 && wizardCount < maxDefendersWizard; col += 2) {
                     Unit wizard = wizards.get(wizardCount);
-                    Position defPos = new Position(
-                        defensivePosition.getLine()+line+5,
-                        defensivePosition.getColumn()+col-5  
-                    );
+                    Position defPos;
+                    if(number==1) {
+                        defPos = new Position(
+                            defensivePosition.getLine()+line+5,
+                            defensivePosition.getColumn()+col-5  
+                        );
+                    } else {
+                        defPos = new Position(
+                            defensivePosition.getLine()-line-5,
+                            defensivePosition.getColumn()-col-5  
+                        );
+                    }
                     
                     if (!wizard.getZone().getPositions().get(0).equals(defPos)) {
                         wizard.setTargetPosition(defPos);
@@ -409,7 +498,13 @@ public class AIManager {
             if (woodHarvesters < 2) {
                 List<Position> woodPositions = map.getWoodLocations().getPositions();
                 if (!woodPositions.isEmpty()) {
-                    Position woodPos = woodPositions.get(woodPositions.size() - 1);
+            		Position woodPos = woodPositions.get(woodPositions.size() - 1);
+                	if(number==1) {
+                		woodPos = woodPositions.get(woodPositions.size() - 12);
+                	}else {
+                		woodPos = woodPositions.get(woodPositions.size() - 1);
+
+                	}
                     slave.setHarvestingResourceType("wood");  
                     mobileManager.startHarvesting(slave, woodPos, aiPlayer);
                     woodHarvesters++;
@@ -418,7 +513,13 @@ public class AIManager {
             } else if (oreHarvesters < 2) {
                 List<Position> magicOrePositions = map.getMagicOreLocations().getPositions();
                 if (!magicOrePositions.isEmpty()) {
-                    Position orePos = magicOrePositions.get(magicOrePositions.size() - 1);
+            		Position orePos = magicOrePositions.get(magicOrePositions.size() - 5);
+                	if(number==1) {
+                		orePos = magicOrePositions.get(magicOrePositions.size() - 5);
+                	}else {
+                		orePos = magicOrePositions.get(magicOrePositions.size() - 1);
+
+                	}
                     slave.setHarvestingResourceType("magicOre"); 
                     mobileManager.startHarvesting(slave, orePos, aiPlayer);
                     oreHarvesters++;
@@ -465,19 +566,8 @@ public class AIManager {
         }
         
         if (!attackForce.isEmpty()) {
-            List<Unit> enemyUnits = new ArrayList<>();
-            for (Unit unit : mobileManager.getAllUnits()) {
-                if (!unit.getRace().getName().equals(aiPlayer.getRace().getName())) {
-                    enemyUnits.add(unit);
-                }
-            }
-            
-            List<Building> enemyBuildings = new ArrayList<>();
-            for (Building building : mobileManager.getBuildings()) {
-                if (!building.getRace().getName().equals(aiPlayer.getRace().getName())) {
-                    enemyBuildings.add(building);
-                }
-            }
+            List<Unit> enemyUnits = getEnemyUnitsByRace(targetRace);
+            List<Building> enemyBuildings = getEnemyBuildingsByRace(targetRace);
             
             Position attackerBasePosition = aiPlayer.getStarterZone().getPositions().get(0);
             Unit nearestEnemyUnit = null;
@@ -498,6 +588,44 @@ public class AIManager {
                 if (distance < minBuildingDistance && !enemyBuilding.isUnderConstruction()) {
                     nearestEnemyBuilding = enemyBuilding;
                     minBuildingDistance = distance;
+                }
+            }
+            
+            if (nearestEnemyUnit == null && nearestEnemyBuilding == null) {
+                logger.info("Aucune cible de race " + targetRace + " trouvée, recherche d'une cible alternative");
+                
+                // Obtenir toutes les unités ennemies, quelle que soit leur race
+                List<Unit> allEnemyUnits = new ArrayList<>();
+                for (Unit unit : mobileManager.getAllUnits()) {
+                    if (!unit.getRace().getName().equals(aiPlayer.getRace().getName())) {
+                        allEnemyUnits.add(unit);
+                    }
+                }
+                
+                // Obtenir tous les bâtiments ennemis, quelle que soit leur race
+                List<Building> allEnemyBuildings = new ArrayList<>();
+                for (Building building : mobileManager.getBuildings()) {
+                    if (!building.getRace().getName().equals(aiPlayer.getRace().getName())) {
+                        allEnemyBuildings.add(building);
+                    }
+                }
+                
+                // Trouver la cible la plus proche parmi toutes les unités ennemies
+                for (Unit enemyUnit : allEnemyUnits) {
+                    int distance = mobileManager.calculateDistance(attackerBasePosition, enemyUnit.getZone().getPositions().get(0));
+                    if (distance < minUnitDistance && !enemyUnit.isUnderConstruction()) {
+                        nearestEnemyUnit = enemyUnit;
+                        minUnitDistance = distance;
+                    }
+                }
+                
+                // Trouver la cible la plus proche parmi tous les bâtiments ennemis
+                for (Building enemyBuilding : allEnemyBuildings) {
+                    int distance = mobileManager.calculateDistance(attackerBasePosition, enemyBuilding.getZone().getPositions().get(0));
+                    if (distance < minBuildingDistance && !enemyBuilding.isUnderConstruction()) {
+                        nearestEnemyBuilding = enemyBuilding;
+                        minBuildingDistance = distance;
+                    }
                 }
             }
             

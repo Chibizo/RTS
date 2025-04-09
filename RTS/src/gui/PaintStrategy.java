@@ -37,7 +37,8 @@ public class PaintStrategy {
 	
 	
 	public void paint(Map map, Graphics graphics, Graphics2D g2) {
-		
+		Zone magicOreLocations=map.getMagicOreLocations();
+		Zone woodLocations=map.getWoodLocations();
 		
 		if(!images.containsKey("src/images/medievalTile_48v2.png")) {
 			images.put("src/images/medievalTile_48v2.png",GameBuilder.readImage("RTS/src/images/medievalTile_48v2.png"));
@@ -75,38 +76,57 @@ public class PaintStrategy {
 				/**
 				 * ressource magic ore
 				 */
-				if(((position.getLine() == 55 || position.getLine() == 56  ) && 
-					    (position.getColumn() == 22 || position.getColumn() == 23)) || (position.getLine() == 5 || position.getLine() == 6) && 
-					    (position.getColumn() == 92 || position.getColumn() == 93)) {
-	                g2.drawImage(images.get("src/images/medievalEnvironment_11.png"),
-	                        position.getColumn() * GameConfiguration.BLOCK_SIZE -15,
-	                        position.getLine() * GameConfiguration.BLOCK_SIZE -30,
-	                        imageSize, imageSize, null);
-				}
-				
-				/**
-				 * ressource wood
-				 */
-				if(((position.getLine() >= 44 && position.getLine() <= 46) && 
-					    (position.getColumn() >= 6 && position.getColumn() <= 8))|| (position.getLine() >= 15 && position.getLine() <= 17) && 
-					    (position.getColumn() >= 112 && position.getColumn() <= 114)) {
-					if ((position.getLine() + position.getColumn()) % 2 == 0) {
-						 g2.drawImage(images.get("src/images/medievalEnvironment_01.png"),
-			                        position.getColumn() * GameConfiguration.BLOCK_SIZE -15,
-			                        position.getLine() * GameConfiguration.BLOCK_SIZE -30,
-			                        imageSize, imageSize, null);
+				if(
+					   // Premier groupe de magic ore (55,23-24 et 56,23-24)
+					   ((position.getLine() == 55 || position.getLine() == 56) && 
+					    (position.getColumn() == 23 || position.getColumn() == 24)) ||
+					   
+					   // Deuxième groupe de magic ore (5,92-93 et 6,92-93)
+					   ((position.getLine() == 5 || position.getLine() == 6) && 
+					    (position.getColumn() == 92 || position.getColumn() == 93)) ||
+					   
+					   // Troisième groupe de magic ore (39,110-111 et 40,110-111)
+					   ((position.getLine() == 39 || position.getLine() == 40) && 
+					    (position.getColumn() == 110 || position.getColumn() == 111))
+					  ) 
+					{
+					    g2.drawImage(images.get("src/images/medievalEnvironment_11.png"), 
+					                 position.getColumn() * GameConfiguration.BLOCK_SIZE - 15, 
+					                 position.getLine() * GameConfiguration.BLOCK_SIZE - 30, 
+					                 imageSize, imageSize, null);
 					}
-					else {
-							g2.drawImage(images.get("src/images/medievalEnvironment_02.png"),
-	                        position.getColumn() * GameConfiguration.BLOCK_SIZE -15,
-	                        position.getLine() * GameConfiguration.BLOCK_SIZE -30,
-	                        imageSize, imageSize, null);
+
+					/** * ressource wood */ 
+					if(
+					   // Premier groupe de bois (44-46, 6-8)
+					   ((position.getLine() >= 44 && position.getLine() <= 46) && 
+					    (position.getColumn() >= 6 && position.getColumn() <= 8)) ||
+					   
+					   // Deuxième groupe de bois (15-17, 112-114)
+					   ((position.getLine() >= 15 && position.getLine() <= 17) && 
+					    (position.getColumn() >= 112 && position.getColumn() <= 114)) ||
+					   
+					   // Troisième groupe de bois (53-55, 94-96)
+					   ((position.getLine() >= 53 && position.getLine() <= 55) && 
+					    (position.getColumn() >= 94 && position.getColumn() <= 96))
+					  ) 
+					{
+					    if ((position.getLine() + position.getColumn()) % 2 == 0) {
+					        g2.drawImage(images.get("src/images/medievalEnvironment_01.png"), 
+					                     position.getColumn() * GameConfiguration.BLOCK_SIZE - 15, 
+					                     position.getLine() * GameConfiguration.BLOCK_SIZE - 30, 
+					                     imageSize, imageSize, null);
+					    } else {
+					        g2.drawImage(images.get("src/images/medievalEnvironment_02.png"), 
+					                     position.getColumn() * GameConfiguration.BLOCK_SIZE - 15, 
+					                     position.getLine() * GameConfiguration.BLOCK_SIZE - 30, 
+					                     imageSize, imageSize, null);
+					    }
 					}
-				}
-				
-				
-				
-		
+			
+			
+			
+	
 			}
 		}
 		
@@ -299,7 +319,7 @@ public class PaintStrategy {
 			images.put("src/images/medievalUnit_05.png", GameBuilder.readImage("RTS/src/images/bowman.png"));
 		}
 		if(!images.containsKey("src/images/medievalUnit_40.png")) {
-			images.put("src/images/medievalUnit_40.png", GameBuilder.readImage("RTS/src/images/mosketeer.png"));
+			images.put("src/images/medievalUnit_40.png", GameBuilder.readImage("RTS/src/images/knight.png"));
 		}
 		if(!images.containsKey("src/images/medievalUnit_42.png")) {
 			images.put("src/images/medievalUnit_42.png", GameBuilder.readImage("RTS/src/images/mosketeer.png"));

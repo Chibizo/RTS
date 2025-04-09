@@ -23,10 +23,12 @@ public class ElementManager implements MobileInterface {
 	private List<Building> buildings=new ArrayList<Building>();
 	private HashMap<String,Building> buildingsMainPlayer=new HashMap<String,Building>();
 	private HashMap<String,Building> buildingsAIPlayer=new HashMap<String,Building>();
+	private HashMap<String,Building> buildingsAIPlayer2=new HashMap<String,Building>();
 	private ArrayList<Unit> units = new ArrayList<Unit>(); 
 	private String raceMainPlayer;
 	private Player mainPlayer;
 	private Player enemyPlayer;
+	private Player enemyPlayer2;
 	private HashMap<Unit, UnitStepper> unitSteppers = new HashMap<>();
 	private MovementManager movementManager;
 	
@@ -35,10 +37,15 @@ public class ElementManager implements MobileInterface {
 
 	
 	
-	public ElementManager(Map map,Player mainPlayer,Player enemyPlayer) {
+	public ElementManager(Map map,Player mainPlayer,Player enemyPlayer,Player enemyPlayer2) {
 		this.map=map;
 		this.mainPlayer=mainPlayer;	
 		this.enemyPlayer=enemyPlayer;
+		if(enemyPlayer2==null) {
+	        enemyPlayer2 = new AIPlayer(0, 0, new Race(""), null);
+
+		}
+		this.enemyPlayer2=enemyPlayer2;
 	    this.movementManager = new MovementManager(map);
 	    logger.info("Gestionnaire d'éléments initialisé avec joueur principal: " + mainPlayer.getRace().getName());
 			
@@ -111,75 +118,108 @@ public class ElementManager implements MobileInterface {
  
      
 	
-	public void putBuilding(Zone zone,String type,Player player) {
+	public void putBuilding(Zone zone,String type,String race) {
 		for(Position position : zone.getPositions()) {
 			if (map.isOnBorder(position)) {
 	            logger.warn("Tentative de construction sur une bordure de carte rejetée");
 				return;
 			}
 		}
-		if(player.getClass().getSimpleName().equals("AIPlayer")) {
+		if(race.equals(enemyPlayer.getRace().getName())) {
 
 			if(type=="barracks") {
 	            logger.info("Caserne construite par l'IA à la position: " + zone.getPositions().get(0));
-				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST_WOOD,GameConfiguration.BARRACKS_COST_ORE,GameConfiguration.BARRACKS_CONSTRUCT_TIME,player.getRace(),"barracks");	
+				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST_WOOD,GameConfiguration.BARRACKS_COST_ORE,GameConfiguration.BARRACKS_CONSTRUCT_TIME,enemyPlayer.getRace(),"barracks");	
 				buildingsAIPlayer.put("barracks",building);
 				buildings.add(building);
-				player.addBuilding(building);
+				enemyPlayer.addBuilding(building);
 				map.addFullPosition(zone);
-				player.setWood(player.getWood()-building.getCost().getWood());
+				enemyPlayer.setWood(enemyPlayer.getWood()-building.getCost().getWood());
 			}else if (type=="runway") {
-				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST_WOOD,GameConfiguration.RUNWAY_COST_ORE,GameConfiguration.RUNWAY_CONSTRUCT_TIME,player.getRace(),"runway");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST_WOOD,GameConfiguration.RUNWAY_COST_ORE,GameConfiguration.RUNWAY_CONSTRUCT_TIME,enemyPlayer.getRace(),"runway");	
 				buildingsAIPlayer.put("runway",building);
 				buildings.add(building);
-				player.addBuilding(building);
+				enemyPlayer.addBuilding(building);
 				map.addFullPosition(zone);
 			}else if (type=="archery") {
-				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST_WOOD,GameConfiguration.ARCHERY_COST_ORE,GameConfiguration.ARCHERY_CONSTRUCT_TIME,player.getRace(),"archery");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST_WOOD,GameConfiguration.ARCHERY_COST_ORE,GameConfiguration.ARCHERY_CONSTRUCT_TIME,enemyPlayer.getRace(),"archery");	
 				buildingsAIPlayer.put("archery",building);
 				buildings.add(building);
-				player.addBuilding(building);
+				enemyPlayer.addBuilding(building);
 				map.addFullPosition(zone);
 			}
 			else if (type=="base") {
-				Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
+				Building building=new Building(zone,1,1000,1000,0,0,0,enemyPlayer.getRace(),"base");	
 				buildingsAIPlayer.put("base",building);
 				buildings.add(building);
-				player.addBuilding(building);
+				enemyPlayer.addBuilding(building);
 				map.addFullPosition(zone);
 			}
 			System.out.println(getBuildingsAIPlayer());
 			
-		}else {
+		}else if(race.equals(enemyPlayer2.getRace().getName())) {
+
+			if(type=="barracks") {
+	            logger.info("Caserne construite par l'IA à la position: " + zone.getPositions().get(0));
+				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST_WOOD,GameConfiguration.BARRACKS_COST_ORE,GameConfiguration.BARRACKS_CONSTRUCT_TIME,enemyPlayer2.getRace(),"barracks");	
+				buildingsAIPlayer2.put("barracks",building);
+				buildings.add(building);
+				enemyPlayer2.addBuilding(building);
+				map.addFullPosition(zone);
+				enemyPlayer2.setWood(enemyPlayer2.getWood()-building.getCost().getWood());
+			}else if (type=="runway") {
+				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST_WOOD,GameConfiguration.RUNWAY_COST_ORE,GameConfiguration.RUNWAY_CONSTRUCT_TIME,enemyPlayer2.getRace(),"runway");	
+				buildingsAIPlayer2.put("runway",building);
+				buildings.add(building);
+				enemyPlayer2.addBuilding(building);
+				map.addFullPosition(zone);
+			}else if (type=="archery") {
+				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST_WOOD,GameConfiguration.ARCHERY_COST_ORE,GameConfiguration.ARCHERY_CONSTRUCT_TIME,enemyPlayer2.getRace(),"archery");	
+				buildingsAIPlayer2.put("archery",building);
+				buildings.add(building);
+				enemyPlayer2.addBuilding(building);
+				map.addFullPosition(zone);
+			}
+			else if (type=="base") {
+				Building building=new Building(zone,1,1000,1000,0,0,0,enemyPlayer2.getRace(),"base");	
+				buildingsAIPlayer2.put("base",building);
+				buildings.add(building);
+				enemyPlayer2.addBuilding(building);
+				map.addFullPosition(zone);
+			}
+			System.out.println(getBuildingsAIPlayer());
+			
+		}
+		else {
 			if(type=="barracks") {
 	            logger.info("Caserne construite par le joueur principal à la position: " + zone.getPositions().get(0));
-				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST_WOOD,GameConfiguration.BARRACKS_COST_ORE,GameConfiguration.BARRACKS_CONSTRUCT_TIME,player.getRace(),"barracks");	
+				Building building=new Building(zone,1,250,250,GameConfiguration.BARRACKS_COST_WOOD,GameConfiguration.BARRACKS_COST_ORE,GameConfiguration.BARRACKS_CONSTRUCT_TIME,mainPlayer.getRace(),"barracks");	
 				buildingsMainPlayer.put("barracks",building);
 				buildings.add(building);
-				player.addBuilding(building);
+				mainPlayer.addBuilding(building);
 				map.addFullPosition(zone);
-				player.setWood(player.getWood()-building.getCost().getWood());
+				mainPlayer.setWood(mainPlayer.getWood()-building.getCost().getWood());
 			}else if (type=="runway") {
-				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST_WOOD,GameConfiguration.RUNWAY_COST_ORE,GameConfiguration.RUNWAY_CONSTRUCT_TIME,player.getRace(),"runway");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.RUNWAY_COST_WOOD,GameConfiguration.RUNWAY_COST_ORE,GameConfiguration.RUNWAY_CONSTRUCT_TIME,mainPlayer.getRace(),"runway");	
 				buildingsMainPlayer.put("runway",building);
 				buildings.add(building);
-				player.addBuilding(building);
+				mainPlayer.addBuilding(building);
 				map.addFullPosition(zone);
-				player.setWood(player.getWood()-building.getCost().getWood());
+				mainPlayer.setWood(mainPlayer.getWood()-building.getCost().getWood());
 			}else if (type=="archery") {
-				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST_WOOD,GameConfiguration.ARCHERY_COST_ORE,GameConfiguration.ARCHERY_CONSTRUCT_TIME,player.getRace(),"archery");	
+				Building building=new Building(zone,1,750,750,GameConfiguration.ARCHERY_COST_WOOD,GameConfiguration.ARCHERY_COST_ORE,GameConfiguration.ARCHERY_CONSTRUCT_TIME,mainPlayer.getRace(),"archery");	
 				buildingsMainPlayer.put("archery",building);
 				buildings.add(building);
-				player.addBuilding(building);
+				mainPlayer.addBuilding(building);
 				map.addFullPosition(zone);
-				player.setWood(player.getWood()-building.getCost().getWood());
+				mainPlayer.setWood(mainPlayer.getWood()-building.getCost().getWood());
 
 			
 			}else if (type=="base") {
-				Building building=new Building(zone,1,1000,1000,0,0,0,player.getRace(),"base");	
+				Building building=new Building(zone,1,1000,1000,0,0,0,mainPlayer.getRace(),"base");	
 				buildingsMainPlayer.put("base",building);
 				buildings.add(building);
-				player.addBuilding(building);
+				mainPlayer.addBuilding(building);
 				map.addFullPosition(zone);
 			}
 			System.out.println(getBuildingsMainPlayer());
@@ -325,7 +365,7 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"air",500,500,GameConfiguration.AIRSHIP_COST_WOOD,GameConfiguration.AIRSHIP_COST_ORE,GameConfiguration.AIRSHIP_CONSTRUCT_TIME,player.getRace(),"airship",50,20);
+		Unit unit=new Unit(zone,"air",500,500,GameConfiguration.AIRSHIP_COST_WOOD,GameConfiguration.AIRSHIP_COST_ORE,GameConfiguration.AIRSHIP_CONSTRUCT_TIME,player.getRace(),"airship",50,25);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
@@ -500,6 +540,9 @@ public class ElementManager implements MobileInterface {
 	
 	public HashMap<String,Building> getBuildingsAIPlayer() {
 		return buildingsAIPlayer;
+	}
+	public HashMap<String,Building> getBuildingsAIPlayer2() {
+		return buildingsAIPlayer2;
 	}
 	
 	public Unit getUnit() {
@@ -751,8 +794,6 @@ public class ElementManager implements MobileInterface {
 	}
 	
 	public void removeBuilding(Building building) {
-		System.out.println(buildingsMainPlayer);
-		System.out.println(buildingsAIPlayer);
 	    logger.info("Bâtiment supprimé: " + building.getName() + " à la position " + building.getZone().getPositions().get(0));
 	    System.out.println("Building removed: " + building.getName());
 	    map.removeFullPosition(building.getZone());
@@ -775,7 +816,18 @@ public class ElementManager implements MobileInterface {
 	        for (String key : buildingsAIPlayer.keySet()) {
 	            if (buildingsAIPlayer.get(key) == building) {
 	                buildingsAIPlayer.remove(key);
+	                enemyPlayer.getBuildings().remove(building);
 	                System.out.println("Removed " + key + " from AI player buildings");
+	                break;
+	            }
+	        }
+	    }
+	    if (buildingsAIPlayer2.containsValue(building)) {
+	        for (String key : buildingsAIPlayer2.keySet()) {
+	            if (buildingsAIPlayer2.get(key) == building) {
+	                buildingsAIPlayer2.remove(key);
+	                enemyPlayer2.getBuildings().remove(building);
+	                System.out.println("Removed " + key + " from AI player 2 buildings");
 	                break;
 	            }
 	        }

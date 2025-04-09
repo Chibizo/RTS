@@ -9,7 +9,7 @@ import data.model.Player;
 public interface MobileInterface {
 
 	
-	void putBuilding(Zone zone,String type,Player player);
+	void putBuilding(Zone zone,String type,String race);
 	
 	public void  putWarrior(Zone zone,Player player);
 	public void  putWarrior(Position position,Player player);
@@ -34,6 +34,8 @@ public interface MobileInterface {
 	
 	public HashMap<String,Building> getBuildingsMainPlayer();
 	public HashMap<String,Building> getBuildingsAIPlayer();
+	public HashMap<String,Building> getBuildingsAIPlayer2();
+
 	
 	Unit getUnit();
 		

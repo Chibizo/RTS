@@ -24,10 +24,10 @@ public class GameBuilder {
 		return new Map(GameConfiguration.LINE_COUNT, GameConfiguration.COLUMN_COUNT);
 	}
 	
-	public static MobileInterface buildInitMobile(Map map,Player mainPlayer,Player enemyPlayer) {
+	public static MobileInterface buildInitMobile(Map map,Player mainPlayer,Player enemyPlayer,Player enemyPlayer2) {
 	    logger.info("Initialisation des éléments mobiles pour " + mainPlayer.getRace().getName());
-		MobileInterface manager=new ElementManager(map,mainPlayer,enemyPlayer);
-		manager.putBuilding(manager.getMainPlayer().getStarterZone(),"base",manager.getMainPlayer());
+		MobileInterface manager=new ElementManager(map,mainPlayer,enemyPlayer,enemyPlayer2);
+		manager.putBuilding(manager.getMainPlayer().getStarterZone(),"base",manager.getMainPlayer().getRace().getName());
 		return manager;
 	}
 	

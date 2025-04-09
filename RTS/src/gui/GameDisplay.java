@@ -93,6 +93,25 @@ public class GameDisplay extends JPanel {
 		        }
 		    }
 		}
+		HashMap<String,Building> buildings3 = manager.getBuildingsAIPlayer2();
+		List<String> buildingKeys3 = new ArrayList<>(buildings3.keySet());
+		
+		for (String typeBuilding : buildingKeys3) {
+		    Building building = buildings3.get(typeBuilding);
+		    if (building != null) { 	
+		        if(typeBuilding=="barracks") {
+		            paintStrategy.paint(building, "barracks", g2);
+		        }else if(typeBuilding=="runway") {
+		        	paintStrategy.paint(building,"runway", g2);
+		        	
+		    	}else if(typeBuilding=="archery") {
+		        	paintStrategy.paint(building,"archery", g2);
+		    		
+		        }else if (typeBuilding=="base") {
+		            paintStrategy.paint(building, "base", g2);
+		        }
+		    }
+		}
 		if(previewBuildingType != null && !previewBuildingType.isEmpty()) {
 			paintStrategy.paint(map,previewBuildingType,previewMousePosition, g2);
 		}
