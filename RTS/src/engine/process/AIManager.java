@@ -85,8 +85,8 @@ public class AIManager {
         	buildBowman();
         }else if(!hasRunway() && aiPlayer.getWood() >= GameConfiguration.RUNWAY_COST_WOOD && stage==3) {
         	buildRunway();
-        }else if(hasRunway() && aiPlayer.getWood() >= GameConfiguration.WIZARD_COST_WOOD && (wizardCount<9 || (stage==3 && wizardCount<=16)) && defense) {
-        	buildWizard();
+        }else if(hasRunway() && aiPlayer.getWood() >= GameConfiguration.PLANE_COST_WOOD && (wizardCount<9 || (stage==3 && wizardCount<=16)) && defense) {
+        	buildPlane();
         }
         
         assignHarvesters();
@@ -226,7 +226,7 @@ public class AIManager {
         }
     }
     
-    private void buildWizard() {
+    private void buildPlane() {
         Building runway = aiPlayer.getBuildings("runway");
         if (runway != null && !runway.isUnderConstruction()) {
             Position runwayPos = runway.getZone().getPositions().get(0);
@@ -236,7 +236,7 @@ public class AIManager {
             );
             
             if (!map.isfull(unitPos) && !map.isOnBorder(unitPos)) {
-                mobileManager.putWizard(unitPos, aiPlayer);
+                mobileManager.putPlane(unitPos, aiPlayer);
             }
         }
     }

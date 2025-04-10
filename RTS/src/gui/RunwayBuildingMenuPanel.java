@@ -17,7 +17,7 @@ public class RunwayBuildingMenuPanel extends JPanel{
 	private MobileInterface manager;
 
 	private JLabel runwayLabel= new JLabel("<html>Archery <br>tier : 1 </html>", JLabel.CENTER);;
-	private JButton unitsButton=new JButton("Wizard"); ;
+	private JButton unitsButton=new JButton("Plane"); ;
 	private JButton  upgradeButton= new JButton("Upgrade Base");
 	private JButton heavyUnitsButton= new JButton("Airship"); 
 	private JButton backButton= new JButton("Back"); ;

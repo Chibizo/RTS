@@ -284,7 +284,7 @@ public class ElementManager implements MobileInterface {
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
-		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		UnitStepper stepper = new UnitStepper(unit,GameConfiguration.WARRIOR_SPEED,map,this,player);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -311,7 +311,7 @@ public class ElementManager implements MobileInterface {
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
-		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		UnitStepper stepper = new UnitStepper(unit,GameConfiguration.KNIGHT_SPEED,map,this,player);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -340,7 +340,7 @@ public class ElementManager implements MobileInterface {
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
-		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		UnitStepper stepper = new UnitStepper(unit,GameConfiguration.MOSKETEER_SPEED,map,this,player);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -369,7 +369,7 @@ public class ElementManager implements MobileInterface {
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
-		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		UnitStepper stepper = new UnitStepper(unit,GameConfiguration.AIRSHIP_SPEED,map,this,player);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -385,7 +385,7 @@ public class ElementManager implements MobileInterface {
 		putAirship(new Zone(zone),player);
 	}
 	
-	public synchronized void putWizard(Zone zone,Player player) {
+	public synchronized void putPlane(Zone zone,Player player) {
 		if(player.getBuildings("runway")==null) {
 			return;
 		}
@@ -394,21 +394,21 @@ public class ElementManager implements MobileInterface {
 				return; 
 			}
 		}
-		Unit unit=new Unit(zone,"air",200,200,GameConfiguration.WIZARD_COST_WOOD,GameConfiguration.WIZARD_COST_ORE,GameConfiguration.WIZARD_CONSTRUCT_TIME,player.getRace(),"wizard",10,5);
+		Unit unit=new Unit(zone,"air",200,200,GameConfiguration.PLANE_COST_WOOD,GameConfiguration.PLANE_COST_ORE,GameConfiguration.PLANE_CONSTRUCT_TIME,player.getRace(),"plane",10,5);
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
-		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		UnitStepper stepper = new UnitStepper(unit,GameConfiguration.PLANE_SPEED,map,this,player);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
 		
 	}
-	public synchronized void putWizard(Position position,Player player) {
+	public synchronized void putPlane(Position position,Player player) {
 	    logger.debug("Tentative de création d'un magicien à la position: " + position);
 		ArrayList<Position> zone=new ArrayList<Position>();
 		zone.add(position);
-		putWizard(new Zone(zone),player);
+		putPlane(new Zone(zone),player);
 	}
 	
 	public synchronized void putBowman(Zone zone,Player player) {
@@ -424,7 +424,7 @@ public class ElementManager implements MobileInterface {
 		units.add(unit);
 		map.addFullUnitsPosition(unit.getZone());
 		player.setWood(player.getWood()-unit.getCost().getWood());
-		UnitStepper stepper = new UnitStepper(unit,map,this,player);
+		UnitStepper stepper = new UnitStepper(unit,GameConfiguration.BOWMAN_SPEED,map,this,player);
 		unitSteppers.put(unit, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -452,7 +452,7 @@ public class ElementManager implements MobileInterface {
 		player.setWood(player.getWood()-slave.getCost().getWood());
 		player.setSlave(player.getSlave()+1);
 		System.out.println(player.getSlave());
-		UnitStepper stepper = new UnitStepper(slave,100,map,this,player);
+		UnitStepper stepper = new UnitStepper(slave,GameConfiguration.SLAVE_SPEED,map,this,player);
 		unitSteppers.put(slave, stepper);
 		Thread thread = new Thread(stepper);
 		thread.start();
@@ -481,7 +481,7 @@ public class ElementManager implements MobileInterface {
 	            targetPosition = unit.getTargetUnit().getZone().getPositions().get(0);
 	            unit.setTargetPosition(targetPosition);
 	            
-	            if (unit.getName().equals("bowman") || unit.getName().equals("wizard")) {
+	            if (unit.getName().equals("bowman") || unit.getName().equals("plane")) {
 	                int distanceToTarget = calculateDistance(currentPosition, targetPosition);
 	                int attackRange = unit.getAttackRange();
 	                

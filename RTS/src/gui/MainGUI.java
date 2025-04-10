@@ -243,7 +243,7 @@ public class MainGUI extends JFrame implements Runnable {
 		barracksBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		barracksBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeBarracksButton());
 		barracksBuildingMenuPanel.getHeavyUnitsButton().addActionListener(new KnightAction());
-		runwayBuildingMenuPanel.getUnitsButton().addActionListener(new WizardAction());
+		runwayBuildingMenuPanel.getUnitsButton().addActionListener(new PlaneAction());
 		runwayBuildingMenuPanel.getBackButton().addActionListener(new BackAction());
 		runwayBuildingMenuPanel.getUpgradeButton().addActionListener(new UpgradeRunwayButton());
 		runwayBuildingMenuPanel.getHeavyUnitsButton().addActionListener(new AirshipAction());
@@ -894,7 +894,7 @@ public class MainGUI extends JFrame implements Runnable {
 		}
 	}
 	
-	private class WizardAction implements ActionListener {
+	private class PlaneAction implements ActionListener {
 		public void actionPerformed(ActionEvent e){
 			Building runway = mainPlayer.getBuildings("runway");
 			if(runway.isUnderConstruction() && runway!=null) {
@@ -906,14 +906,14 @@ public class MainGUI extends JFrame implements Runnable {
 	            warningTime = System.currentTimeMillis();
 	            return;
 			}
-			else if(mainPlayer.getWood()>=GameConfiguration.WIZARD_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.WIZARD_COST_ORE) {
+			else if(mainPlayer.getWood()>=GameConfiguration.PLANE_COST_WOOD && mainPlayer.getMagicOre()>=GameConfiguration.PLANE_COST_ORE) {
 				Position unitPosition = new Position(
 						runway.getZone().getPositions().get(0).getLine()+4 ,
 						runway.getZone().getPositions().get(0).getColumn() + manager.getAllUnits().size()%15 -5 
 			     
 			        );
 				System.out.println(unitPosition);
-				manager.putWizard(unitPosition,mainPlayer);
+				manager.putPlane(unitPosition,mainPlayer);
 				manager.selectMostRecentUnit();
 				placingUnit=true;
 				

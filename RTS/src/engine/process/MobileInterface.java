@@ -24,8 +24,8 @@ public interface MobileInterface {
 	public void  putAirship(Position position,Player player);
 
 	
-	public void  putWizard(Zone zone,Player player);
-	public void  putWizard(Position position,Player player);
+	public void  putPlane(Zone zone,Player player);
+	public void  putPlane(Position position,Player player);
 	
 	public void  putBowman(Zone zone,Player player);
 	public void  putBowman(Position position,Player player);

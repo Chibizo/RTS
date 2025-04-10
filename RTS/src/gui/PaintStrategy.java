@@ -37,101 +37,85 @@ public class PaintStrategy {
 	
 	
 	public void paint(Map map, Graphics graphics, Graphics2D g2) {
-		Zone magicOreLocations=map.getMagicOreLocations();
-		Zone woodLocations=map.getWoodLocations();
-		
-		if(!images.containsKey("src/images/medievalTile_48v2.png")) {
-			images.put("src/images/medievalTile_48v2.png",GameBuilder.readImage("RTS/src/images/medievalTile_48v2.png"));
-		}if(!images.containsKey("src/images/medievalEnvironment_11.png")) {
-			images.put("src/images/medievalEnvironment_11.png",GameBuilder.readImage("RTS/src/images/medievalEnvironment_11.png"));
-		}if(!images.containsKey("src/images/medievalEnvironment_01.png")) {
-			images.put("src/images/medievalEnvironment_01.png",GameBuilder.readImage("RTS/src/images/medievalEnvironment_01.png"));
-		}if(!images.containsKey("src/images/medievalEnvironment_02.png")) {
-			images.put("src/images/medievalEnvironment_02.png",GameBuilder.readImage("RTS/src/images/medievalEnvironment_02.png"));
-		}
-		
-		
-		int blockSize=GameConfiguration.BLOCK_SIZE;
-		Position[][] block=map.getBlock();
-		
-		for(int lineIndex=0; lineIndex<map.getLineCount(); lineIndex++) {
-			for(int columnIndex=0 ;columnIndex<map.getColumnCount();columnIndex++) {
-				Position position=block[lineIndex][columnIndex];
-				graphics.setColor(new Color(34, 139, 34));
-				graphics.fillRect(position.getColumn() * blockSize, position.getLine() * blockSize, blockSize, blockSize);	
-
-			}
-		}
-		for(int lineIndex=0; lineIndex<map.getLineCount(); lineIndex++) {
-			for(int columnIndex=0 ;columnIndex<map.getColumnCount();columnIndex++) {
-				Position position=block[lineIndex][columnIndex];
-				if(map.isOnBorder(position) && (lineIndex+columnIndex)%3==0) {
-					g2.drawImage(images.get("src/images/medievalTile_48v2.png"),
-							position.getColumn() * GameConfiguration.BLOCK_SIZE -(imageSize - GameConfiguration.BLOCK_SIZE)/2 ,
-							position.getLine() * GameConfiguration.BLOCK_SIZE -(imageSize - GameConfiguration.BLOCK_SIZE)/2,   
-							imageSize,
-					        imageSize,
-					        null);
-				}
-				/**
-				 * ressource magic ore
-				 */
-				if(
-					   // Premier groupe de magic ore (55,23-24 et 56,23-24)
-					   ((position.getLine() == 55 || position.getLine() == 56) && 
-					    (position.getColumn() == 23 || position.getColumn() == 24)) ||
-					   
-					   // Deuxième groupe de magic ore (5,92-93 et 6,92-93)
-					   ((position.getLine() == 5 || position.getLine() == 6) && 
-					    (position.getColumn() == 92 || position.getColumn() == 93)) ||
-					   
-					   // Troisième groupe de magic ore (39,110-111 et 40,110-111)
-					   ((position.getLine() == 39 || position.getLine() == 40) && 
-					    (position.getColumn() == 110 || position.getColumn() == 111))
-					  ) 
-					{
-					    g2.drawImage(images.get("src/images/medievalEnvironment_11.png"), 
-					                 position.getColumn() * GameConfiguration.BLOCK_SIZE - 15, 
-					                 position.getLine() * GameConfiguration.BLOCK_SIZE - 30, 
-					                 imageSize, imageSize, null);
-					}
-
-					/** * ressource wood */ 
-					if(
-					   // Premier groupe de bois (44-46, 6-8)
-					   ((position.getLine() >= 44 && position.getLine() <= 46) && 
-					    (position.getColumn() >= 6 && position.getColumn() <= 8)) ||
-					   
-					   // Deuxième groupe de bois (15-17, 112-114)
-					   ((position.getLine() >= 15 && position.getLine() <= 17) && 
-					    (position.getColumn() >= 112 && position.getColumn() <= 114)) ||
-					   
-					   // Troisième groupe de bois (53-55, 94-96)
-					   ((position.getLine() >= 53 && position.getLine() <= 55) && 
-					    (position.getColumn() >= 94 && position.getColumn() <= 96))
-					  ) 
-					{
-					    if ((position.getLine() + position.getColumn()) % 2 == 0) {
-					        g2.drawImage(images.get("src/images/medievalEnvironment_01.png"), 
-					                     position.getColumn() * GameConfiguration.BLOCK_SIZE - 15, 
-					                     position.getLine() * GameConfiguration.BLOCK_SIZE - 30, 
-					                     imageSize, imageSize, null);
-					    } else {
-					        g2.drawImage(images.get("src/images/medievalEnvironment_02.png"), 
-					                     position.getColumn() * GameConfiguration.BLOCK_SIZE - 15, 
-					                     position.getLine() * GameConfiguration.BLOCK_SIZE - 30, 
-					                     imageSize, imageSize, null);
-					    }
-					}
-			
-			
-			
+	    Zone magicOreLocations = map.getMagicOreLocations();
+	    Zone woodLocations = map.getWoodLocations();
+	    
+	    // Chargement initial des images si nécessaire
+	    
+	    int blockSize = GameConfiguration.BLOCK_SIZE;
+	    Position[][] block = map.getBlock();
+	    
+	    // Dessiner le terrain de base
+	    for(int lineIndex=0; lineIndex<map.getLineCount(); lineIndex++) {
+	        for(int columnIndex=0; columnIndex<map.getColumnCount(); columnIndex++) {
+	            Position position = block[lineIndex][columnIndex];
+	            graphics.setColor(new Color(34, 139, 34));
+	            graphics.fillRect(position.getColumn() * blockSize, position.getLine() * blockSize, blockSize, blockSize);    
+	        }
+	    }
+	    
+	    // Dessiner les bordures et ressources
+	    for(int lineIndex=0; lineIndex<map.getLineCount(); lineIndex++) {
+	        for(int columnIndex=0; columnIndex<map.getColumnCount(); columnIndex++) {
+	            Position position = block[lineIndex][columnIndex];
+	            if(map.isOnBorder(position) && (lineIndex+columnIndex)%3==0) {
+	                drawResourceImage("border", position, g2);
+	            }
+	            
+	            // Ressource magic ore
+	            if(((position.getLine() == 55 || position.getLine() == 56) && 
+	                (position.getColumn() == 23 || position.getColumn() == 24)) ||
+	               ((position.getLine() == 5 || position.getLine() == 6) && 
+	                (position.getColumn() == 92 || position.getColumn() == 93)) ||
+	               ((position.getLine() == 39 || position.getLine() == 40) && 
+	                (position.getColumn() == 110 || position.getColumn() == 111))) {
+	                drawResourceImage("magic_ore", position, g2);
+	            }
+	            
+	            // Ressource wood
+	            if(((position.getLine() >= 44 && position.getLine() <= 46) && 
+	                (position.getColumn() >= 6 && position.getColumn() <= 8)) ||
+	               ((position.getLine() >= 15 && position.getLine() <= 17) && 
+	                (position.getColumn() >= 112 && position.getColumn() <= 114)) ||
+	               ((position.getLine() >= 53 && position.getLine() <= 55) && 
+	                (position.getColumn() >= 94 && position.getColumn() <= 96))) {
+	                if ((position.getLine() + position.getColumn()) % 2 == 0) {
+	                    drawResourceImage("wood_1", position, g2);
+	                } else {
+	                    drawResourceImage("wood_2", position, g2);
+	                }
+	            }
+	        }
+	    }
+	}
 	
-			}
-		}
-		
-		
-		
+	public void drawResourceImage(String resourceType, Position position, Graphics2D g2) {
+	    if (!images.containsKey("magic_ore") && resourceType.equals("magic_ore")) {
+	        images.put("magic_ore", GameBuilder.readImage("RTS/src/images/medievalEnvironment_11.png"));
+	    }
+	    if (!images.containsKey("wood_1") && resourceType.equals("wood_1")) {
+	        images.put("wood_1", GameBuilder.readImage("RTS/src/images/medievalEnvironment_01.png"));
+	    }
+	    if (!images.containsKey("wood_2") && resourceType.equals("wood_2")) {
+	        images.put("wood_2", GameBuilder.readImage("RTS/src/images/medievalEnvironment_02.png"));
+	    }
+	    if (!images.containsKey("border") && resourceType.equals("border")) {
+	        images.put("border", GameBuilder.readImage("RTS/src/images/medievalTile_48v2.png"));
+	    }
+	    
+	    int x = position.getColumn() * GameConfiguration.BLOCK_SIZE;
+	    int y = position.getLine() * GameConfiguration.BLOCK_SIZE;
+	    
+	    if (resourceType.equals("magic_ore") && images.containsKey("magic_ore")) {
+	        g2.drawImage(images.get("magic_ore"), x - 15, y - 30, imageSize, imageSize, null);
+	    } else if (resourceType.equals("wood_1") && images.containsKey("wood_1")) {
+	        g2.drawImage(images.get("wood_1"), x - 15, y - 30, imageSize, imageSize, null);
+	    } else if (resourceType.equals("wood_2") && images.containsKey("wood_2")) {
+	        g2.drawImage(images.get("wood_2"), x - 15, y - 30, imageSize, imageSize, null);
+	    } else if (resourceType.equals("border") && images.containsKey("border")) {
+	        g2.drawImage(images.get("border"), x - (imageSize - GameConfiguration.BLOCK_SIZE)/2, 
+	                     y - (imageSize - GameConfiguration.BLOCK_SIZE)/2, imageSize, imageSize, null);
+	    }
 	}
 	
 	
@@ -169,7 +153,7 @@ public class PaintStrategy {
             }
         }else if(previewBuildingType.equals("runway")) {
         	if(validPosition) {
-        		 g2.drawImage(GameBuilder.readImage("RTS/src/images/academy.png"),
+        		 g2.drawImage(GameBuilder.readImage("RTS/src/images/runway_human.png"),
                          x * GameConfiguration.BLOCK_SIZE - 10,
                          y * GameConfiguration.BLOCK_SIZE -15,
                          imageSize,imageSize, null);
@@ -190,109 +174,29 @@ public class PaintStrategy {
 	
 	
 	public void paint(Building building, String type, Graphics2D g2) {
-
-		
-		if(!images.containsKey("src/images/castle_hum.png")) {
-		    images.put("src/images/castle_hum.png", GameBuilder.readImage("RTS/src/images/castle_hum.png"));
-		}
-		if(!images.containsKey("src/images/barracks_hum.png")) {
-		    images.put("src/images/barracks_hum.png", GameBuilder.readImage("RTS/src/images/barracks_hum.png"));
-		}
-		if(!images.containsKey("src/images/academy.png")) {
-		    images.put("src/images/academy.png", GameBuilder.readImage("RTS/src/images/academy.png"));
-		}
-		if(!images.containsKey("src/images/tent.png")) {
-		    images.put("src/images/tent.png", GameBuilder.readImage("RTS/src/images/tent.png"));
-		}
-		
 	    Position position = building.getZone().getPositions().get(0);
 	    
 	    if (building.isUnderConstruction()) {
 	        float progress = building.getConstructionProgress();
-	        
 	        
 	        int barWidth = GameConfiguration.BLOCK_SIZE * 2;
 	        int barHeight = 8;
 	        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE;
 	        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE - 15;
 	        
-	        g2.setColor(Color.GRAY);
-	        g2.fillRect(barX, barY, barWidth, barHeight);
-	        
-	        g2.setColor(Color.BLUE);
-	        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
-	        
-	        int remainingTime = building.getRemainingConstructionTime();
-	        String timeText = remainingTime + "s";
-	        g2.setColor(Color.WHITE);
-	        g2.setFont(new Font("Arial",Font.BOLD,12));
-	        g2.drawString(timeText, barX + barWidth/2 - 10, barY - 5);
+	        drawProgressBar(barX, barY, barWidth, barHeight, progress, Color.BLUE, g2);
+	        drawTimeRemaining(barX + barWidth/2, barY, building.getRemainingConstructionTime(), g2);
 	        
 	        AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
 	        Composite originalComposite = g2.getComposite();
 	        g2.setComposite(alphaComposite);
 	        
-	        if (type == "base") {
-	            g2.drawImage(GameBuilder.readImage("RTS/src/images/castle_hum.png"),
-	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
-	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
-	                100, 100, null);
-	        } else if (type == "barracks") {
-	            g2.drawImage(GameBuilder.readImage("RTS/src/images/barracks_hum.png"),
-	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
-	                position.getLine() * GameConfiguration.BLOCK_SIZE,
-	                75, 75, null);
-	        }else if (type == "runway" ) {
-	        	g2.drawImage(GameBuilder.readImage("RTS/src/images/academy.png"),
-		                position.getColumn() * GameConfiguration.BLOCK_SIZE -10,
-		                position.getLine() * GameConfiguration.BLOCK_SIZE-15,
-		                75, 75, null);
-	        }else if (type == "archery" ) {
-	        	g2.drawImage(GameBuilder.readImage("RTS/src/images/tent.png"),
-		                position.getColumn() * GameConfiguration.BLOCK_SIZE -10,
-		                position.getLine() * GameConfiguration.BLOCK_SIZE-15,
-		                75, 75, null);
-	        }
+	        drawBuildingImage(type, position, g2);
 	        
 	        g2.setComposite(originalComposite);
 	    } else {
-	        if (type == "base") {
-
-	            g2.drawImage(GameBuilder.readImage("RTS/src/images/castle_hum.png"),
-	                position.getColumn() * GameConfiguration.BLOCK_SIZE + 5,
-	                position.getLine() * GameConfiguration.BLOCK_SIZE - 22,
-	                100, 100, null);
-	            
-	        } else if (type == "barracks") {
-	            g2.drawImage(images.get("src/images/barracks_hum.png"),
-	                position.getColumn() * GameConfiguration.BLOCK_SIZE - 6,
-	                position.getLine() * GameConfiguration.BLOCK_SIZE,
-	                75, 75, null);
-	            /**
-	            for (Position pos : building.getZone().getPositions()) {
-	                g2.setColor(Color.GREEN);
-	                ((Graphics2D) g2).setStroke(new BasicStroke(2));
-	                g2.drawRect(
-	                    pos.getColumn() * GameConfiguration.BLOCK_SIZE,
-	                    pos.getLine() * GameConfiguration.BLOCK_SIZE,
-	                    GameConfiguration.BLOCK_SIZE + 10,
-	                    GameConfiguration.BLOCK_SIZE + 10);
-	            }
-	            **/
-	        } else if (type == "runway") {
-	            g2.drawImage(images.get("src/images/academy.png"),
-		                position.getColumn() * GameConfiguration.BLOCK_SIZE -10,
-		                position.getLine() * GameConfiguration.BLOCK_SIZE-15,
-		                75, 75, null);
-           
-		    }else if (type == "archery") {
-	            g2.drawImage(images.get("src/images/tent.png"),
-		                position.getColumn() * GameConfiguration.BLOCK_SIZE -10,
-		                position.getLine() * GameConfiguration.BLOCK_SIZE-15,
-		                75, 75, null);
-	           
-           
-		    }
+	        drawBuildingImage(type, position, g2);
+	        
 	        if (building.isTargeted()) {
 	            g2.setColor(Color.RED);
 	            ((Graphics2D) g2).setStroke(new BasicStroke(2));
@@ -308,169 +212,142 @@ public class PaintStrategy {
 	    }
 	}
 	
-	public void paint(Unit unit,String name, Graphics2D g2,Player mainPlayer) {
-		if(!images.containsKey("src/images/medievalUnit_08.png")) {
-			images.put("src/images/medievalUnit_08.png", GameBuilder.readImage("RTS/src/images/warrior.png"));
-		}
-		if(!images.containsKey("src/images/medievalUnit_07.png")) {
-			images.put("src/images/medievalUnit_07.png", GameBuilder.readImage("RTS/src/images/wizard.png"));
-			
-		}if(!images.containsKey("src/images/medievalUnit_05.png")) {
-			images.put("src/images/medievalUnit_05.png", GameBuilder.readImage("RTS/src/images/bowman.png"));
-		}
-		if(!images.containsKey("src/images/medievalUnit_40.png")) {
-			images.put("src/images/medievalUnit_40.png", GameBuilder.readImage("RTS/src/images/knight.png"));
-		}
-		if(!images.containsKey("src/images/medievalUnit_42.png")) {
-			images.put("src/images/medievalUnit_42.png", GameBuilder.readImage("RTS/src/images/mosketeer.png"));
-		}
-		if(!images.containsKey("src/images/medievalUnit_44.png")) {
-			images.put("src/images/medievalUnit_44.png", GameBuilder.readImage("RTS/src/images/airship.png"));
-		}
+	
+	
+	public void drawBuildingImage(String type, Position position, Graphics2D g2) {
+	    if (!images.containsKey("base") && type.equals("base")) {
+	        images.put("base", GameBuilder.readImage("RTS/src/images/castle_hum.png"));
+	    }
+	    if (!images.containsKey("barracks") && type.equals("barracks")) {
+	        images.put("barracks", GameBuilder.readImage("RTS/src/images/barracks_hum.png"));
+	    }
+	    if (!images.containsKey("runway") && type.equals("runway")) {
+	        images.put("runway", GameBuilder.readImage("RTS/src/images/runway_human.png"));
+	    }
+	    if (!images.containsKey("archery") && type.equals("archery")) {
+	        images.put("archery", GameBuilder.readImage("RTS/src/images/tent.png"));
+	    }
+	    
+	    int x = position.getColumn() * GameConfiguration.BLOCK_SIZE;
+	    int y = position.getLine() * GameConfiguration.BLOCK_SIZE;
+	    
+	    if (type.equals("base") && images.containsKey("base")) {
+	        g2.drawImage(images.get("base"), x + 5, y - 22, 100, 100, null);
+	    } else if (type.equals("barracks") && images.containsKey("barracks")) {
+	        g2.drawImage(images.get("barracks"), x - 6, y, 75, 75, null);
+	    } else if (type.equals("runway") && images.containsKey("runway")) {
+	        g2.drawImage(images.get("runway"), x - 10, y - 15, 75, 75, null);
+	    } else if (type.equals("archery") && images.containsKey("archery")) {
+	        g2.drawImage(images.get("archery"), x - 10, y - 15, 75, 75, null);
+	    }
+	}
+	
+	
+	public void paint(Unit unit, String name, Graphics2D g2, Player mainPlayer) {
+
+
+	    Position position = unit.getZone().getPositions().get(0);
+
+	    if (unit.isUnderConstruction()) {
+	        float progress = unit.getConstructionProgress();
+
+	        int barWidth = GameConfiguration.BLOCK_SIZE;
+	        int barHeight = 8;
+	        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE;
+	        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE - 15;
+
+	        drawProgressBar(barX, barY, barWidth, barHeight, progress, Color.BLUE, g2);
+	        drawTimeRemaining(barX + barWidth/2, barY, unit.getRemainingConstructionTime(), g2);
+
+	        AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
+	        Composite originalComposite = g2.getComposite();
+	        g2.setComposite(alphaComposite);
+
+	        drawUnitImage(name, position, g2,unit.getRace().getName());
+
+	        g2.setComposite(originalComposite);
+	    } else {
+	        drawUnitImage(name, position, g2,unit.getRace().getName());
+
+	        if (unit.isSelected()) {
+	            g2.setColor(Color.GREEN);
+	            g2.setStroke(new BasicStroke(2));
+	            g2.drawRect(
+	                position.getColumn() * GameConfiguration.BLOCK_SIZE,
+	                position.getLine() * GameConfiguration.BLOCK_SIZE,
+	                GameConfiguration.BLOCK_SIZE + 10,
+	                GameConfiguration.BLOCK_SIZE + 10
+	            );
+	        }
+
+	        if (unit.isTargeted()) {
+	            g2.setColor(Color.RED);
+	            g2.setStroke(new BasicStroke(2));
+	            g2.drawRect(
+	                position.getColumn() * GameConfiguration.BLOCK_SIZE,
+	                position.getLine() * GameConfiguration.BLOCK_SIZE,
+	                GameConfiguration.BLOCK_SIZE + 10,
+	                GameConfiguration.BLOCK_SIZE + 10
+	            );
+	        }
+
+	        int barWidth = GameConfiguration.BLOCK_SIZE;
+	        int barHeight = 5;
+	        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE + 5;
+	        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE - 11;
+
+	        g2.setColor(Color.GRAY);
+	        g2.fillRect(barX, barY, barWidth, barHeight);
+
+	        float progress = (float) unit.getCurrentHealth() / 200.0f;
+	        g2.setColor(mainPlayer != null ? Color.GREEN : Color.RED);
+	        g2.fillRect(barX, barY, (int) (barWidth * progress), barHeight);
+	    }
+	}
+
+	public void drawUnitImage(String name, Position position, Graphics2D g2,String race) {
 		
+		String imageName=name+"_"+race;
 		
-		
-		 Position position = unit.getZone().getPositions().get(0);
-		    
-		    if (unit.isUnderConstruction()) {
-		        float progress = unit.getConstructionProgress();
-		        
-		        int barWidth = GameConfiguration.BLOCK_SIZE;
-		        int barHeight = 8;
-		        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE;
-		        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE - 15;
-		        
-		        g2.setColor(Color.GRAY);
-		        g2.fillRect(barX, barY, barWidth, barHeight);
-		        
-		        g2.setColor(Color.BLUE);
-		        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
-		        
-		        int remainingTime = unit.getRemainingConstructionTime();
-		        String timeText = remainingTime + "s";
-		        g2.setColor(Color.WHITE);
-		        g2.setFont(new Font("Arial", Font.BOLD, 12));
-		        g2.drawString(timeText, barX + barWidth/2 - 10, barY - 5);
-		        
-		        AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
-		        Composite originalComposite = g2.getComposite();
-		        g2.setComposite(alphaComposite);
-		        
-		        if(name=="warrior") {
-			        g2.drawImage(images.get("src/images/medievalUnit_08.png"),
-			            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-			            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-			            30, 30, null);
-		    	}else if(name=="wizard") {
-		    		g2.drawImage(images.get("src/images/medievalUnit_07.png"),
-				            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-				            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-				            30, 30, null);
-		    	}else if(name=="bowman") {
-		    		g2.drawImage(images.get("src/images/medievalUnit_05.png"),
-				            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-				            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-				            30, 30, null);
-		    	}else if(name=="knight") {
-		    		g2.drawImage(images.get("src/images/medievalUnit_40.png"),
-				            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-				            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-				            35, 35, null);
-		    	}else if(name=="mosketeer") {
-		    		g2.drawImage(images.get("src/images/medievalUnit_42.png"),
-				            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-				            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-				            30, 30, null);
-		    	}
-		    	else if(name=="airship") {
-		    		g2.drawImage(images.get("src/images/medievalUnit_44.png"),
-				            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-				            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-				            40, 40, null);
-		    	}
-		        
-		        g2.setComposite(originalComposite);
-		    } else {
-		    	if(name=="warrior") {
-			        g2.drawImage(images.get("src/images/medievalUnit_08.png"),
-			            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-			            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-			            30, 30, null);
-		    	}else if(name=="wizard") {
-		    		 g2.drawImage(images.get("src/images/medievalUnit_07.png"),
-					            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-					            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-					            30, 30, null);
-		    	}else if(name=="bowman") {
-		    		 g2.drawImage(images.get("src/images/medievalUnit_05.png"),
-					            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-					            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-					            30, 30, null);
-		    	}else if(name=="knight") {
-		    		g2.drawImage(images.get("src/images/medievalUnit_40.png"),
-				            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-				            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-				            35, 35, null);
-		    	}else if(name=="mosketeer") {
-		    		g2.drawImage(images.get("src/images/medievalUnit_42.png"),
-				            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-				            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-				            40, 40, null);
-		    	}else if(name=="airship") {
-		    		g2.drawImage(images.get("src/images/medievalUnit_44.png"),
-				            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-				            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-				            40, 40, null);
-		    	}
-			    
-			    if (unit.isSelected()) {
-			        g2.setColor(Color.GREEN);
-			        ((Graphics2D) g2).setStroke(new BasicStroke(2));
-			        g2.drawRect(
-			            position.getColumn() * GameConfiguration.BLOCK_SIZE,
-			            position.getLine() * GameConfiguration.BLOCK_SIZE,
-			            GameConfiguration.BLOCK_SIZE + 10,
-			            GameConfiguration.BLOCK_SIZE + 10
-			        );
-			    }
-			    
-			    if (unit.isTargeted()) {
-		            g2.setColor(Color.RED);
-		            ((Graphics2D) g2).setStroke(new BasicStroke(2));
-		            g2.drawRect(
-		                position.getColumn() * GameConfiguration.BLOCK_SIZE,
-		                position.getLine() * GameConfiguration.BLOCK_SIZE,
-		                GameConfiguration.BLOCK_SIZE + 10,
-		                GameConfiguration.BLOCK_SIZE + 10
-		            );
-		        }
-			    
-			    
-			    int barWidth = GameConfiguration.BLOCK_SIZE;
-		        int barHeight = 5;
-		        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE+5;
-		        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE -11;
-		        
-		        g2.setColor(Color.GRAY);
-		        g2.fillRect(barX, barY, barWidth, barHeight);
-		        
-		        float progress = (float) unit.getCurrentHealth() / 200.0f;
-		        if(mainPlayer!=null) {
-		        	g2.setColor(Color.GREEN);
-		        }else {
-		        	g2.setColor(Color.RED);
-		        }
-		        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
-		    }
-			 
-		
+	    if (!images.containsKey(imageName)) {
+	    	String imagePath="RTS/src/images/"+imageName+".png";
+	        images.put(imageName, GameBuilder.readImage(imagePath));
+	    }
+
+	    
+	    
+	    int x = position.getColumn() * GameConfiguration.BLOCK_SIZE;
+	    int y = position.getLine() * GameConfiguration.BLOCK_SIZE;
+	    
+	    if (images.containsKey(imageName)) {
+	        if (name.equals("warrior")) {
+	            g2.drawImage(images.get(imageName), x, y, 30, 30, null);
+	        } else if (name.equals("plane")) {
+	            g2.drawImage(images.get(imageName), x, y, 50, 50, null);
+	        } else if (name.equals("bowman")) {
+	            g2.drawImage(images.get(imageName), x, y, 30, 30, null);
+	        } else if (name.equals("knight")) {
+	            g2.drawImage(images.get(imageName), x, y, 35, 35, null);
+	        } else if (name.equals("mosketeer")) {
+	            g2.drawImage(images.get(imageName), x, y, 30, 30, null);
+	        } else if (name.equals("airship")) {
+	            g2.drawImage(images.get(imageName), x, y, 50, 50, null);
+	        } else {
+	            g2.drawImage(images.get(imageName), x, y, 30, 30, null);
+	        }
+	    }
 	}
 	
 	public void paint(Slave unit, Graphics2D g2,Player mainPlayer) {
-		if(!images.containsKey("src/images/medievalUnit_06.png")) {
-			images.put("src/images/medievalUnit_06.png", GameBuilder.readImage("RTS/src/images/paysan.png"));
-		}
+		
 	    Position position = unit.getZone().getPositions().get(0);
+	    
+	    String imageName = "slave_" + unit.getRace().getName();
+	    
+	    if (!images.containsKey(imageName)) {
+	        String imagePath = "RTS/src/images/" + imageName + ".png";
+	        images.put(imageName, GameBuilder.readImage(imagePath));
+	    }
 	    
 	    if (unit.isUnderConstruction()) {
 	        float progress = unit.getConstructionProgress();
@@ -480,37 +357,26 @@ public class PaintStrategy {
 	        int barX = position.getColumn() * GameConfiguration.BLOCK_SIZE;
 	        int barY = position.getLine() * GameConfiguration.BLOCK_SIZE - 15;
 	        
-	        g2.setColor(Color.GRAY);
-	        g2.fillRect(barX, barY, barWidth, barHeight);
-	        
-	        g2.setColor(Color.BLUE);
-	        g2.fillRect(barX, barY, (int)(barWidth * progress), barHeight);
-	        
-	        int remainingTime = unit.getRemainingConstructionTime();
-	        String timeText = remainingTime + "s";
-	        g2.setColor(Color.WHITE);
-	        g2.setFont(new Font("Arial", Font.BOLD, 12));
-	        g2.drawString(timeText, barX + barWidth/2 - 10, barY - 5);
+	        drawProgressBar(barX, barY, barWidth, barHeight, progress, Color.BLUE, g2);
+	        drawTimeRemaining(barX + barWidth/2, barY, unit.getRemainingConstructionTime(), g2);
 	        
 	        AlphaComposite alphaComposite = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
 	        Composite originalComposite = g2.getComposite();
 	        g2.setComposite(alphaComposite);
 	        
-	        g2.drawImage(images.get("src/images/medievalUnit_06.png"),
-	            position.getColumn() * GameConfiguration.BLOCK_SIZE ,
-	            position.getLine() * GameConfiguration.BLOCK_SIZE ,
-	            30, 30, null);
+	        g2.drawImage(images.get(imageName),
+	                position.getColumn() * GameConfiguration.BLOCK_SIZE,
+	                position.getLine() * GameConfiguration.BLOCK_SIZE,
+	                30, 30, null);
 	        
 	        g2.setComposite(originalComposite);
 	    } else {
 	    	
 	     
-		    g2.drawImage(images.get("src/images/medievalUnit_06.png"),
-		    	position.getColumn() * GameConfiguration.BLOCK_SIZE,   
-		        position.getLine() * GameConfiguration.BLOCK_SIZE, 
-		        30,
-		        30,
-		        null);
+	    	g2.drawImage(images.get(imageName),
+	                position.getColumn() * GameConfiguration.BLOCK_SIZE,
+	                position.getLine() * GameConfiguration.BLOCK_SIZE,
+	                30, 30, null);
 		    
 		    if (unit.isSelected()) {
 		        g2.setColor(Color.GREEN);
@@ -585,6 +451,21 @@ public class PaintStrategy {
 		g2.setStroke(new BasicStroke(2));
 		g2.drawRect(x, y, width, height);
 	}
+    
+    public void drawProgressBar(int x, int y, int width, int height, float progress, Color fillColor, Graphics2D g2) {
+        g2.setColor(Color.GRAY);
+        g2.fillRect(x, y, width, height);
+        
+        g2.setColor(fillColor);
+        g2.fillRect(x, y, (int)(width * progress), height);
+    }
+
+    public void drawTimeRemaining(int x, int y, int remainingTime, Graphics2D g2) {
+        String timeText = remainingTime + "s";
+        g2.setColor(Color.WHITE);
+        g2.setFont(new Font("Arial", Font.BOLD, 12));
+        g2.drawString(timeText, x - 10, y - 5);
+    }
 	
 	
 

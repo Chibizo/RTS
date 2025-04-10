@@ -52,42 +52,47 @@ public class GameConfiguration {
     public static final int RUNWAY_UPGRADE_TIME=1000;
 
 
-
+    public static final int SLAVE_SPEED=100;
     public static final int SLAVE_COST_WOOD=100;
     public static final int SLAVE_COST_ORE=0;
 
     public static final int SLAVE_CONSTRUCT_TIME=100;
 
     
-    
+    public static final int WARRIOR_SPEED=100;
     public static final int WARRIOR_COST_WOOD=0;
     public static final int WARRIOR_COST_ORE=0;
 
     public static final int WARRIOR_CONSTRUCT_TIME=100;
     
+    public static final int KNIGHT_SPEED=100;
     public static final int KNIGHT_COST_WOOD=0;
     public static final int KNIGHT_COST_ORE=0;
 
     public static final int KNIGHT_CONSTRUCT_TIME=100;
 
     
-    public static final int WIZARD_COST_WOOD=0;
-    public static final int WIZARD_COST_ORE=0;
+    public static final int PLANE_SPEED=100;
+    public static final int PLANE_COST_WOOD=0;
+    public static final int PLANE_COST_ORE=0;
 
-    public static final int WIZARD_CONSTRUCT_TIME=100;
+    public static final int PLANE_CONSTRUCT_TIME=100;
     
+    public static final int AIRSHIP_SPEED=100;
     public static final int AIRSHIP_COST_WOOD=0;
     public static final int AIRSHIP_COST_ORE=0;
 
     public static final int AIRSHIP_CONSTRUCT_TIME=100;
 
     
-    
+    public static final int BOWMAN_SPEED=100;
     public static final int BOWMAN_COST_WOOD=0;
     public static final int BOWMAN_COST_ORE=0;
 
     public static final int BOWMAN_CONSTRUCT_TIME=100;
     
+    
+    public static final int MOSKETEER_SPEED=100;
     public static final int MOSKETEER_COST_WOOD=0;
     public static final int MOSKETEER_COST_ORE=0;
 

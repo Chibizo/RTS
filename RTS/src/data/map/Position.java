@@ -1,6 +1,5 @@
 package data.map;
 
-import java.util.Objects;
 
 public class Position {
 	
@@ -34,10 +33,7 @@ public class Position {
 		return "Block [line=" + line + ", column=" + column + "]";
 	}
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(column, line);
-	}
+	
 
 	@Override
 	public boolean equals(Object obj) {
