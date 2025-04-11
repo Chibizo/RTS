@@ -91,16 +91,16 @@ public class PaintStrategy {
 	
 	public void drawResourceImage(String resourceType, Position position, Graphics2D g2) {
 	    if (!images.containsKey("magic_ore") && resourceType.equals("magic_ore")) {
-	        images.put("magic_ore", GameBuilder.readImage("RTS/src/images/medievalEnvironment_11.png"));
+	        images.put("magic_ore", GameBuilder.readImage("src/images/medievalEnvironment_11.png"));
 	    }
 	    if (!images.containsKey("wood_1") && resourceType.equals("wood_1")) {
-	        images.put("wood_1", GameBuilder.readImage("RTS/src/images/medievalEnvironment_01.png"));
+	        images.put("wood_1", GameBuilder.readImage("src/images/medievalEnvironment_01.png"));
 	    }
 	    if (!images.containsKey("wood_2") && resourceType.equals("wood_2")) {
-	        images.put("wood_2", GameBuilder.readImage("RTS/src/images/medievalEnvironment_02.png"));
+	        images.put("wood_2", GameBuilder.readImage("src/images/medievalEnvironment_02.png"));
 	    }
 	    if (!images.containsKey("border") && resourceType.equals("border")) {
-	        images.put("border", GameBuilder.readImage("RTS/src/images/medievalTile_48v2.png"));
+	        images.put("border", GameBuilder.readImage("src/images/medievalTile_48v2.png"));
 	    }
 	    
 	    int x = position.getColumn() * GameConfiguration.BLOCK_SIZE;
@@ -146,21 +146,21 @@ public class PaintStrategy {
         
         if (previewBuildingType.equals("barracks")) {
             if (validPosition) {
-                g2.drawImage(GameBuilder.readImage("RTS/src/images/barracks_hum.png"),
+                g2.drawImage(GameBuilder.readImage("src/images/barracks_hum.png"),
                     x * GameConfiguration.BLOCK_SIZE - 6,
                     y * GameConfiguration.BLOCK_SIZE,
                     imageSize,imageSize, null);
             }
         }else if(previewBuildingType.equals("runway")) {
         	if(validPosition) {
-        		 g2.drawImage(GameBuilder.readImage("RTS/src/images/runway_human.png"),
+        		 g2.drawImage(GameBuilder.readImage("src/images/runway_human.png"),
                          x * GameConfiguration.BLOCK_SIZE - 10,
                          y * GameConfiguration.BLOCK_SIZE -15,
                          imageSize,imageSize, null);
         	}
         }else if(previewBuildingType.equals("archery")) {
         	if(validPosition) {
-       		 g2.drawImage(GameBuilder.readImage("RTS/src/images/tent.png"),
+       		 g2.drawImage(GameBuilder.readImage("src/images/tent.png"),
                         x * GameConfiguration.BLOCK_SIZE - 10,
                         y * GameConfiguration.BLOCK_SIZE -15,
                         imageSize,imageSize, null);
@@ -216,16 +216,16 @@ public class PaintStrategy {
 	
 	public void drawBuildingImage(String type, Position position, Graphics2D g2) {
 	    if (!images.containsKey("base") && type.equals("base")) {
-	        images.put("base", GameBuilder.readImage("RTS/src/images/castle_hum.png"));
+	        images.put("base", GameBuilder.readImage("src/images/castle_hum.png"));
 	    }
 	    if (!images.containsKey("barracks") && type.equals("barracks")) {
-	        images.put("barracks", GameBuilder.readImage("RTS/src/images/barracks_hum.png"));
+	        images.put("barracks", GameBuilder.readImage("src/images/barracks_hum.png"));
 	    }
 	    if (!images.containsKey("runway") && type.equals("runway")) {
-	        images.put("runway", GameBuilder.readImage("RTS/src/images/runway_human.png"));
+	        images.put("runway", GameBuilder.readImage("src/images/runway_human.png"));
 	    }
 	    if (!images.containsKey("archery") && type.equals("archery")) {
-	        images.put("archery", GameBuilder.readImage("RTS/src/images/tent.png"));
+	        images.put("archery", GameBuilder.readImage("src/images/tent.png"));
 	    }
 	    
 	    int x = position.getColumn() * GameConfiguration.BLOCK_SIZE;
@@ -310,7 +310,7 @@ public class PaintStrategy {
 		String imageName=name+"_"+race;
 		
 	    if (!images.containsKey(imageName)) {
-	    	String imagePath="RTS/src/images/"+imageName+".png";
+	    	String imagePath="src/images/"+imageName+".png";
 	        images.put(imageName, GameBuilder.readImage(imagePath));
 	    }
 
@@ -345,7 +345,7 @@ public class PaintStrategy {
 	    String imageName = "slave_" + unit.getRace().getName();
 	    
 	    if (!images.containsKey(imageName)) {
-	        String imagePath = "RTS/src/images/" + imageName + ".png";
+	        String imagePath = "src/images/" + imageName + ".png";
 	        images.put(imageName, GameBuilder.readImage(imagePath));
 	    }
 	    
